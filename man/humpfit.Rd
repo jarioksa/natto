@@ -7,6 +7,7 @@
 \alias{plot.humpfit}
 \alias{points.humpfit}
 \alias{predict.humpfit}
+\alias{profile.humpfit}
 
 \title{No-interaction Model for Hump-backed Species Richness vs. Biomass }
 \description{
@@ -23,6 +24,7 @@ humpfit(mass, spno, family = poisson)
     l.col = "blue", p.col = 1, type = "b", ...)
 \method{points}{humpfit}(x, ...)
 \method{lines}{humpfit}(x, segments=101,  ...)
+\method{profile}{humpfit}(fitted, parm = 1:3, alpha = 0.01, maxsteps = 20, del = zmax/5, ...)
 }
 
 \arguments{
@@ -31,7 +33,7 @@ humpfit(mass, spno, family = poisson)
   \item{family}{Family of error distribution. Any \code{\link{family}}
     can be used, but the link function is always Fisher's diversity
     model, and other \code{link} functions are silently ignored. }
-  \item{x, object}{Result object of \code{humpfit}}
+  \item{x, object, fitted}{Result object of \code{humpfit}}
   \item{newdata}{Values of \code{mass} used in \code{predict}. The
     original data values are used if missing.}
   \item{xlab,ylab}{Axis labels in \code{plot}}
@@ -41,6 +43,8 @@ humpfit(mass, spno, family = poisson)
     \code{"l"} for fitted lines, \code{"b"} for both, and \code{"n"} for
     only setting axes.}
   \item{segments}{Number of segments used for fitted lines.}
+  \item{parm}{Profiled parameters.}
+  \item{alpha, maxsteps, del}{Parameters for profiling range and density.}
   \item{...}{Other parameters to functions.}
 }
 \details{
@@ -69,6 +73,16 @@ humpfit(mass, spno, family = poisson)
   function should not be used for estimating Fisher's
   \eqn{\alpha}{alpha}.  Probably the only meaningful and interesting
   parameter is the location of the \code{hump}.
+
+  Function may be very
+  difficult to fit and easily gets trapped into local solutions, or
+  fails with non-Poisson families, and function \code{profile} should be
+  used to inspect the fitted models. If you have loaded \code{package}
+  \code{MASS}, you can use functions
+  \code{\link[MASS]{plot.profile.glm}},
+  \code{\link[MASS]{pairs.profile.glm}} for graphical inspection of the
+  profiles, and \code{\link[MASS]{confint.profile.glm}} for the profile
+  based confidence intervals. 
 
   The original model intended to show that there is no need to speculate
   about `competition' and `stress' (Al-Mufti et al. 1977), but humped
@@ -116,15 +130,14 @@ humpfit(mass, spno, family = poisson)
     values and can fail. This really should be improved.
     \item The estimation is unconstrained, but both \code{scale} and
     \code{alpha} should always be positive.  Perhaps they should be
-    fitted as logarithmic (which could improve the symmetry of
-    confidence limits, too, but this needs research, and a
-    \code{\link{profile}} function). Fitting \code{\link{Gamma}}
+    fitted as logarithmic. Fitting \code{\link{Gamma}}
     \code{\link{family}} models might become easier, too.
     }
 }
 
 
-\seealso{\code{\link{fisherfit}}. }
+\seealso{\code{\link{fisherfit}}, \code{\link[MASS]{profile.glm}},
+  \code{\link[MASS]{confint.glm}}. }
 \examples{
 ##
 ## Data approximated from Al-Mufti et al. (1977)
@@ -134,6 +147,12 @@ spno <- c(1,  4,  3,  9, 18, 30, 20, 14,  3,  2,  3,  2,  5,  2)
 sol <- humpfit(mass, spno)
 summary(sol) # Almost infinite alpha...
 plot(sol)
+# confint is in MASS, and impicitly calls profile.humpfit.
+# Parameter 3 (alpha) is too extreme for profile and confint, and we
+# must use only "hump" and "scale".
+library(MASS)
+plot(profile(sol, parm=1:2))
+confint(sol, parm=c(1,2))
 }
 \keyword{models }
 \keyword{regression }
