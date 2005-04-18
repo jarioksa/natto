@@ -17,7 +17,7 @@
   density. 
 }
 \usage{
-humpfit(mass, spno, family = poisson)
+humpfit(mass, spno, family = poisson, start)
 \method{summary}{humpfit}(object, ...)
 \method{predict}{humpfit}(object, newdata = NULL, ...) 
 \method{plot}{humpfit}(x, xlab = "Biomass", ylab = "Species Richness", lwd = 2, 
@@ -30,6 +30,7 @@ humpfit(mass, spno, family = poisson)
 \arguments{
   \item{mass}{Biomass. }
   \item{spno}{Species richness.}
+  \item{start}{Vector of starting values for all three parameters.}
   \item{family}{Family of error distribution. Any \code{\link{family}}
     can be used, but the link function is always Fisher's diversity
     model, and other \code{link} functions are silently ignored. }
@@ -78,31 +79,33 @@ humpfit(mass, spno, family = poisson)
   difficult to fit and easily gets trapped into local solutions, or
   fails with non-Poisson families, and function \code{profile} should be
   used to inspect the fitted models. If you have loaded \code{package}
-  \code{MASS}, you can use functions
+  \pkg{MASS}, you can use functions
   \code{\link[MASS]{plot.profile.glm}},
   \code{\link[MASS]{pairs.profile.glm}} for graphical inspection of the
   profiles, and \code{\link[MASS]{confint.profile.glm}} for the profile
   based confidence intervals. 
 
-  The original model intended to show that there is no need to speculate
-  about `competition' and `stress' (Al-Mufti et al. 1977), but humped
-  response can be produced as an artifact of using fixed plot size for
-  varying plant sizes and densities.  
-}
-\value{
-  The function returns an object of class \code{"humpfit"} inheriting
-  from class \code{"glm"}. The result object has specific
-  \code{summary}, \code{predict}, \code{plot}, \code{points} and
-  \code{lines} methods. In addition, it can be accessed by the following
-  methods for \code{\link{glm}} objects: \code{\link{AIC}},
-  \code{\link{extractAIC}}, \code{\link{deviance}}, \code{\link{coef}},
-  \code{\link{residuals.glm}} (except \code{type = "partial"}),
-  \code{\link{fitted}}, and perhaps some others. 
-}
-\references{
-  Al-Mufti, M.M., Sykes, C.L, Furness, S.B., Grime, J.P & Band,
-  S.R. (1977) A quantitative analysis of shoot phenology and dominance
-  in herbaceous vegetation. \emph{Journal of Ecology} 65,759--791.
+  The original model intended to show that there is no need to
+  speculate about `competition' and `stress' (Al-Mufti et al. 1977),
+  but humped response can be produced as an artifact of using fixed
+  plot size for varying plant sizes and densities.  } \value{ The
+  function returns an object of class \code{"humpfit"} inheriting from
+  class \code{"glm"}. The result object has specific \code{summary},
+  \code{predict}, \code{plot}, \code{points} and \code{lines}
+  methods. In addition, it can be accessed by the following methods
+  for \code{\link{glm}} objects: \code{\link{AIC}},
+  \code{\link{extractAIC}}, \code{\link{deviance}},
+  \code{\link{coef}}, \code{\link{residuals.glm}} (except \code{type =
+  "partial"}), \code{\link{fitted}}, and perhaps some others. In
+  addition, function \code{\link[ellipse]{ellipse.glm}} (package
+  \pkg{ellipse}) can be used to draw approximate confidence ellipses
+  for pairs of parameters, if the normal assumptions look appropriate.
+  } 
+\references{ 
+  Al-Mufti, M.M., Sykes, C.L, Furness, S.B., Grime, J.P
+  & Band, S.R. (1977) A quantitative analysis of shoot phenology and
+  dominance in herbaceous vegetation. \emph{Journal of Ecology}
+  65,759--791.
   
   Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943) The relation
   between the number of species and the number of individuals in a
@@ -127,7 +130,8 @@ humpfit(mass, spno, family = poisson)
     difficult to optimize in some cases (the lines will always join, but
     the derivative jumps).
     \item The function does not try very hard to find sensible starting
-    values and can fail. This really should be improved.
+    values and can fail. The user may supply starting values in
+    argument \code{start} if fitting fails.
     \item The estimation is unconstrained, but both \code{scale} and
     \code{alpha} should always be positive.  Perhaps they should be
     fitted as logarithmic. Fitting \code{\link{Gamma}}
