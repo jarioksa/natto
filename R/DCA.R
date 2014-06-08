@@ -1,5 +1,5 @@
 `DCA` <-
-    function(Y, ...)
+    function(Y, pairwise = FALSE, ...)
 {
     require(vegan) || stop("requires wascores function in vegan")
     EPS <- sqrt(.Machine$double.eps)
@@ -19,12 +19,18 @@
             v <- v/sqrt(sum(c*v*v))
             u <- wascores(v, t(Y))
             if (k > 1) {
-                u <- residuals(lo <- loess(u ~ U[,1:(k-1)], weights = r,  ...))
+                if (pairwise && k > 2) {
+                   for(kk in c(1:(k-1), (k-2):1))
+                       u <- residuals(loess(u ~ U[,kk], weights = r, ...))
+                }
+                else
+                    u <- residuals(lo <- loess(u ~ U[,1:(k-1)], weights = r,
+                                           normalize = FALSE,  ...))
                 plot(u ~ U[,1], cex=0.3)
                 points(U[,1], fitted(lo), pch=16, col=2)
             }
             vprime <- wascores(u, Y)
-            eig <- sum(c*v*vprime)
+            eig <- abs(sum(c*v*vprime))
             if ((tol <- abs(eig - eig.old)) < EPS || CYCLES <
                 (cycles <- cycles+1)) {
                 break
