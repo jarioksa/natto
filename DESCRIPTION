@@ -1,0 +1,14 @@
+Package: natto
+Title: An extreme vegan package of experimental code
+Version: 0.1
+Authors@R: "Jari Oksanen <jari.oksanen@oulu.fi> [aut, cre]"
+Description: Package contains random code that is too experimental or
+    too alien to be included in the vegan package.
+Depends: rworldmap,rgdal
+Imports: raster,rgeos,sp
+License: GPL-2
+URL: https://github.com/jarioksa/natto
+LazyData: true
+Packaged: 2014-10-13 09:35:23 UTC; jarioksa
+Author: "Jari Oksanen" [aut, cre]
+Maintainer: "Jari Oksanen" <jari.oksanen@oulu.fi>

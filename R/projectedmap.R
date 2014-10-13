@@ -1,0 +1,91 @@
+#' Return a projected map with given extent
+#'
+#' The function takes either limits of extent or a two-column matrix
+#' and returns a projected map containing the original limits or the
+#' points.
+#'
+#' @param extent Either a four element numeric vector of east min,
+#' east max, north min, north max or a two-column matrix of
+#' coordinates of points that should be shown on the map.
+#'
+#' @param CRS CRS string defining the output projection.
+#'
+#' @param inCRS CRS string describing the input projection of
+#' \code{extent}. This will not be used if CRS is already defined for
+#' the \code{extent}.
+#'
+#' @param resolution Resolution of the map as defined in
+#' \code{\link[rworldmap]{getMap}}.
+#'
+#' @param pad extend climits by this proportion of coordinate range.
+#'
+#' @import sp
+#' @importFrom rgeos gIntersection
+#' @importFrom raster extent as.vector
+#' @import rgdal
+#' @importFrom rworldmap getMap
+#'
+#' @export
+`projectedmap` <-
+    function(extent, CRS = "+proj=longlat +datum=WGS84",
+             inCRS = "+proj=longlat +datum=WGS84",
+             resolution = "low", pad = 0.04)
+{
+    NADD <- 21
+    ## get map
+    map <- getMap(resolution)
+    map4 <- proj4string(map)
+    ## if extent is a vector of four elements, expand it to two-column
+    ## matrix by adding points along the margins so that the map will
+    ## completely show defined area.
+    if (is.vector(extent) && length(extent) == 4) {
+        x <- seq(extent[1], extent[2], length=NADD)
+        y <- seq(extent[3], extent[4], length=NADD)
+        extent <- data.frame("E" = c(x, rep(extent[2], NADD),
+                             rev(x), rep(extent[1], NADD)),
+                             "N" = c(rep(extent[3], NADD), y,
+                             rep(extent[4], NADD), rev(y)))
+    }
+    ## now extent should be two-column data.frame or a matrix.
+    if (ncol(extent) != 2)
+        stop("extent should have two columns or four elements")
+    ## take care extent is SpatialPoints object
+    if (!inherits(extent, "SpatialPoints")) {
+        if (is.matrix(extent))
+            extent <- as.data.frame(extent)
+            coordinates(extent) <-
+                as.formula(paste("~", paste(colnames(extent), collapse = "+")))
+    }
+    ## use default inCRS if extent has no proj4string
+    if (is.na(proj4string(extent)))
+        proj4string(extent) <- inCRS
+    ## change extent to the output projection, and keep the points
+    extent <- spTransform(extent, CRS(CRS))
+    ## Look for limits to give the projected extent
+    clip <- as.vector(extent(extent))
+    if (pad > 0) {
+        mn <- mean(clip[1:2])
+        clip[1:2] <- (1+pad)*(clip[1:2] - mn) + mn
+        mn <- mean(clip[3:4])
+        clip[3:4] <- (1+pad)*(clip[3:4] - mn) + mn
+    }
+    x <- seq(clip[1], clip[2], length=NADD)
+    y <- seq(clip[3], clip[4], length=NADD)
+    clip <- data.frame("E" = c(x, rep(clip[2], NADD),
+                         rev(x), rep(clip[1], NADD)),
+                         "N" = c(rep(clip[3], NADD), y,
+                         rep(clip[4], NADD), rev(y)))
+    coordinates(clip) <- ~ E + N
+    proj4string(clip) <- CRS
+    ## transform projected rectangle to map coordinates
+    clip <- spTransform(clip, CRS(map4))
+    ## make clip into SpatialPolygons
+    clip <- Polygons(list(Polygon(clip, hole=FALSE)), ID="clip")
+    clip <- SpatialPolygons(list(clip), proj4string=CRS(map4))
+    map <- gIntersection(map, clip, byid = TRUE)
+    if(is.na(proj4string(map)))
+       proj4string(map) <- map4
+    map <- spTransform(map, CRS(CRS))
+    attr(map, "input") <- extent
+    map
+}
