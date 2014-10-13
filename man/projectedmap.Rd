@@ -27,4 +27,26 @@ The function takes either limits of extent or a two-column matrix
 and returns a projected map containing the original limits or the
 points.
 }
+\examples{
+## Lambert Azimuthal Equal Area: EU recommendation
+pl <-projectedmap(c(5,31,54,71), CRS="+init=epsg:3035", pad=0)
+plot(pl, col="gray")
+## display extent defined by latitude and longitude ranges
+llgridlines(pl, east=c(5,31), north=c(54,71), lty=1)
+
+## Research areas in Virtanen et al., J. Veg. Sci. 17, 519-528 (2006)
+sites <- structure(list(lon = c(41, 46, 50, 54, 67, 70, 102,
+112, 117, 141, 142, 149, 163, 179, 16, 138), lat =
+c(67.3, 68.15, 69.15, 68.5, 70.45, 73, 77.2, 76, 73, 72, 75, 71, 69,
+71, 78, 75)), .Names = c("longit", "latid"), row.names = c("Kack",
+"Kani", "Kolg", "Pech", "WYam", "NYam", "Chel",
+"Neta", "Olon", "Yana", "Fadd", "Lopa", "Koly",
+"Wran", "Sval", "Kote"), class = "data.frame")
+## LAEA North Pole Russia -- default padding will extend the area to an
+## illegal polygon, and we need less padding
+pl <- projectedmap(sites, CRS= "+init=epsg:3576", pad=0.03)
+plot(pl)
+points(attr(pl, "input"), pch=16, col=4)
+#'
+}
 

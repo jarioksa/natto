@@ -4,8 +4,10 @@ Version: 0.1
 Authors@R: "Jari Oksanen <jari.oksanen@oulu.fi> [aut, cre]"
 Description: Package contains random code that is too experimental or
     too alien to be included in the vegan package.
-Depends: rworldmap,rgdal
-Imports: raster,rgeos,sp
+Depends:
+    rworldmap,rgdal
+Imports:
+    raster,rgeos,sp
 License: GPL-2
 URL: https://github.com/jarioksa/natto
 LazyData: true
