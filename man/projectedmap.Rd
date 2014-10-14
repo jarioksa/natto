@@ -43,8 +43,8 @@ c(67.3, 68.15, 69.15, 68.5, 70.45, 73, 77.2, 76, 73, 72, 75, 71, 69,
 "Neta", "Olon", "Yana", "Fadd", "Lopa", "Koly",
 "Wran", "Sval", "Kote"), class = "data.frame")
 ## LAEA North Pole Russia -- default padding will extend the area to an
-## illegal polygon, and we need less padding
-pl <- projectedmap(sites, CRS= "+init=epsg:3576", pad=0.03)
+## illegal polygon
+pl <- projectedmap(sites, CRS= "+init=epsg:3576", pad=0)
 plot(pl)
 points(attr(pl, "input"), pch=16, col=4)
 #'
