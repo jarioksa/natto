@@ -84,11 +84,11 @@
     extent <- spTransform(extent, CRS(CRS))
     ## Look for limits to give the projected extent
     clip <- as.vector(extent(extent))
+    ## maps are in equal aspect ratio, and padding is defined in
+    ## absolute projected units
     if (pad > 0) {
-        mn <- mean(clip[1:2])
-        clip[1:2] <- (1+pad)*(clip[1:2] - mn) + mn
-        mn <- mean(clip[3:4])
-        clip[3:4] <- (1+pad)*(clip[3:4] - mn) + mn
+        pad <- pad * max(diff(clip[1:2]), diff(clip[1:2])) / 2
+        clip <- clip + c(-pad, pad, -pad, pad)
     }
     x <- seq(clip[1], clip[2], length=NADD)
     y <- seq(clip[3], clip[4], length=NADD)
