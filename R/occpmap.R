@@ -18,12 +18,12 @@
 #' latitude and longitude (e.g., \code{pruning = 0.1} keeps only cases
 #' that are not duplicated with 0.1 degree attitude).
 #'
-#' @param dots Arguments passed to \code{\link[spocc]{occ}} and
+#' @param \dots Arguments passed to \code{\link[spocc]{occ}} and
 #' \code{\link{projectedmap}}
 #'
 #' @importFrom spocc occ occ2df
-#'
-#' export
+#' 
+#' @export
 `occpmap` <- function(query, CRS = "+proj=longlat", geometry = NULL,
                       limit = 1000, pruning, ...)
 {

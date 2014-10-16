@@ -21,7 +21,7 @@ corner points of the longitude-latitude polygon.}
 latitude and longitude (e.g., \code{pruning = 0.1} keeps only cases
 that are not duplicated with 0.1 degree attitude).}
 
-\item{dots}{Arguments passed to \code{\link[spocc]{occ}} and
+\item{\dots}{Arguments passed to \code{\link[spocc]{occ}} and
 \code{\link{projectedmap}}}
 }
 \description{
