@@ -7,9 +7,11 @@ projectedmap(extent, CRS = "+proj=longlat +datum=WGS84",
   inCRS = "+proj=longlat +datum=WGS84", resolution = "low", pad = 0.04)
 }
 \arguments{
-\item{extent}{Either a four element numeric vector of east min,
-east max, north min, north max or a two-column matrix of
-coordinates of points that should be shown on the map.}
+\item{extent}{Either (1) a four element numeric vector of east min,
+east max, north min, north max or (2) a two-column matrix of
+coordinates of points that should be shown on the map, or (3) a
+species occurence data from \code{\link[spocc]{occ}} (\pkg{spocc}
+package).}
 
 \item{CRS}{CRS string defining the output projection.}
 

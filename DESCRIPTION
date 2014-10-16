@@ -7,7 +7,7 @@ Description: Package contains random code that is too experimental or
 Depends:
     rworldmap,rgdal
 Imports:
-    raster,rgeos,sp
+    raster,rgeos,sp,spocc
 License: GPL-2
 URL: https://github.com/jarioksa/natto
 LazyData: true

@@ -4,9 +4,11 @@
 #' and returns a projected map containing the original limits or the
 #' points.
 #'
-#' @param extent Either a four element numeric vector of east min,
-#' east max, north min, north max or a two-column matrix of
-#' coordinates of points that should be shown on the map.
+#' @param extent Either (1) a four element numeric vector of east min,
+#' east max, north min, north max or (2) a two-column matrix of
+#' coordinates of points that should be shown on the map, or (3) a
+#' species occurence data from \code{\link[spocc]{occ}} (\pkg{spocc}
+#' package).
 #'
 #' @param CRS CRS string defining the output projection.
 #'
@@ -24,6 +26,7 @@
 #' @importFrom raster extent as.vector
 #' @import rgdal
 #' @importFrom rworldmap getMap
+#' @importFrom spocc occ2df
 #'
 #' @examples
 #' ## Lambert Azimuthal Equal Area: EU recommendation
@@ -66,6 +69,11 @@
                              rev(x), rep(extent[1], NADD)),
                              "N" = c(rep(extent[3], NADD), y,
                              rep(extent[4], NADD), rev(y)))
+    } else if (inherits(extent, "occdat")) {
+        ## species occurrence data obtained by spocc::occ() query
+        ## belong to class 'occdat'. Change it to a data frame of
+        ## longitude and latitude
+        extent <- occ2df(extent)[,2:3, drop=FALSE]
     }
     ## now extent should be two-column data.frame or a matrix.
     if (ncol(extent) != 2)
