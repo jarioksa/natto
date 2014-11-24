@@ -2,6 +2,7 @@
 
 export(occpmap)
 export(projectedmap)
+export(projectedrect2wkt)
 import(rgdal)
 import(sp)
 importFrom(raster,as.vector)
