@@ -3,16 +3,17 @@
 \alias{occpmap}
 \title{Plot a projected map of species occurrences}
 \usage{
-occpmap(query, CRS = "+proj=longlat", geometry = NULL, limit = 1000,
-  pruning, ...)
+occpmap(query, CRS = "+proj=longlat", extent, limit = 1000, pruning,
+  clip = TRUE, ...)
 }
 \arguments{
 \item{query}{Species to be plotted.}
 
 \item{CRS}{Projection used in \code{\link{projectedmap}}.}
 
-\item{geometry}{As defined in \code{\link[spocc]{occ}}, typically
-corner points of the longitude-latitude polygon.}
+\item{extent}{A four element numeric vector of east min, east max,
+north min, north max, or other structure accepted by
+\code{\link{projectedmap}}.}
 
 \item{limit}{Maximum number of occurrences returned as defined in
 \code{\link[spocc]{occ}}.}
@@ -20,6 +21,9 @@ corner points of the longitude-latitude polygon.}
 \item{pruning}{Remove duplicated points rounded to precision in
 latitude and longitude (e.g., \code{pruning = 0.1} keeps only cases
 that are not duplicated with 0.1 degree attitude).}
+
+\item{clip}{(logical) Clip map to the occurrences of species
+instead of using the original \code{extent}.}
 
 \item{\dots}{Arguments passed to \code{\link[spocc]{occ}} and
 \code{\link{projectedmap}}}
