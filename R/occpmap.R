@@ -39,7 +39,7 @@
     occs <- occ(query, geometry = geom, limit = limit, ...)
     odf <- occ2df(occs)
     if (!missing(pruning)) {
-        dup <- round(odf[,2:3]/pruning)
+        dup <- duplicated(round(odf[,2:3]/pruning))
         odf <- odf[!dup,, drop=FALSE]
     }
     ## projected map
