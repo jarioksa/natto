@@ -22,6 +22,9 @@
 #' @param clip (logical) Clip map to the occurrences of species
 #' instead of using the original \code{extent}.
 #'
+#' @param resolution Resolution of the map as defined in
+#' \code{\link[rworldmap]{getMap}}.
+#' 
 #' @param \dots Arguments passed to \code{\link[spocc]{occ}} and
 #' \code{\link{projectedmap}}
 #'
@@ -29,21 +32,26 @@
 #' 
 #' @export
 `occpmap` <- function(query, CRS = "+proj=longlat", extent,
-                      limit = 1000, pruning, clip = TRUE, ...)
+                      limit = 1000, pruning, clip = TRUE, resolution = "low",
+                      ...)
 {
     ## Get map for the occurrence data
-    map <- projectedmap(extent, CRS = CRS, ...)
+    map <- projectedmap(extent, CRS = CRS, resolution = resolution, ...)
     ## polygon corresponding to the map borders
     geom <- projectedrect2wkt(map)
     ## get occurrence data for the map area
     occs <- occ(query, geometry = geom, limit = limit, ...)
     odf <- occ2df(occs)
+    if (NROW(odf) == 0)
+        stop("no data for ", query)
+    if (NROW(odf) == limit)
+        warning("number of records equals limit (", limit, "): data may be truncated")
     if (!missing(pruning)) {
         dup <- duplicated(round(odf[,2:3]/pruning))
         odf <- odf[!dup,, drop=FALSE]
     }
     ## projected map
-    map2 <- projectedmap(odf[,2:3], CRS = CRS, ...)
+    map2 <- projectedmap(odf[,2:3], CRS = CRS, resolution = resolution, ...)
     if (clip) {
         map <- map2
         attr(map, "input") <- attr(map2, "input")

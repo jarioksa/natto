@@ -57,7 +57,7 @@
 {
     NADD <- 21
     ## get map
-    map <- getMap(resolution)
+    map <- getMap(resolution = resolution)
     map4 <- proj4string(map)
     ## if extent is a vector of four elements, expand it to two-column
     ## matrix by adding points along the margins so that the map will
