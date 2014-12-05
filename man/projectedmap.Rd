@@ -4,7 +4,8 @@
 \title{Return a projected map with given extent}
 \usage{
 projectedmap(extent, CRS = "+proj=longlat +datum=WGS84",
-  inCRS = "+proj=longlat +datum=WGS84", resolution = "low", pad = 0.04)
+  inCRS = "+proj=longlat +datum=WGS84", resolution = "low", pad = 0.04,
+  ...)
 }
 \arguments{
 \item{extent}{Either (1) a four element numeric vector of east min,
@@ -23,6 +24,8 @@ the \code{extent}.}
 \code{\link[rworldmap]{getMap}}.}
 
 \item{pad}{extend climits by this proportion of coordinate range.}
+
+\item{\dots}{Other arguments passed to the function (ignored).}
 }
 \description{
 The function takes either limits of extent or a two-column matrix

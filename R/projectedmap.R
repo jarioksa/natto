@@ -21,6 +21,8 @@
 #'
 #' @param pad extend climits by this proportion of coordinate range.
 #'
+#' @param \dots Other arguments passed to the function (ignored).
+#' 
 #' @import sp
 #' @importFrom rgeos gIntersection
 #' @importFrom raster extent as.vector
@@ -53,7 +55,7 @@
 `projectedmap` <-
     function(extent, CRS = "+proj=longlat +datum=WGS84",
              inCRS = "+proj=longlat +datum=WGS84",
-             resolution = "low", pad = 0.04)
+             resolution = "low", pad = 0.04, ...)
 {
     NADD <- 21
     ## get map
