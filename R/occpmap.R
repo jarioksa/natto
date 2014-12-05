@@ -24,15 +24,28 @@
 #'
 #' @param resolution Resolution of the map as defined in
 #' \code{\link[rworldmap]{getMap}}.
+#'
+#' @param border Border colour in the map.
+#'
+#' @param land Land colour in the map.
+#'
+#' @param pch Plotting character for points.
+#'
+#' @param pcol Point colour.
+#'
+#' @param annotate Add species name as the title and projection as the
+#' right margin text in the map.
 #' 
 #' @param \dots Arguments passed to \code{\link[spocc]{occ}} and
-#' \code{\link{projectedmap}}
+#' \code{\link{projectedmap}}.
 #'
 #' @importFrom spocc occ occ2df
 #' 
 #' @export
 `occpmap` <- function(query, CRS = "+proj=longlat", extent,
                       limit = 1000, pruning, clip = TRUE, resolution = "low",
+                      border = 1, land="grey90", pch=16, pcol = 2,
+                      annotate = TRUE,
                       ...)
 {
     ## Get map for the occurrence data
@@ -42,6 +55,11 @@
     ## get occurrence data for the map area
     occs <- occ(query, geometry = geom, limit = limit, ...)
     odf <- occ2df(occs)
+    taxonname <- unique(odf[,1])
+    if (length(taxonname) > 1) {
+        warning("records contain several names, using first: ", taxonname)
+        taxonname <- taxonname[1]
+    }
     if (NROW(odf) == 0)
         stop("no data for ", query)
     if (NROW(odf) == limit)
@@ -56,7 +74,11 @@
         map <- map2
         attr(map, "input") <- attr(map2, "input")
     }
-    plot(map, ...)
-    points(attr(map, "input"), ...)
+    plot(map, col = land, border = border, ...)
+    points(attr(map, "input"), pch = pch, col = pcol, ...)
+    if (annotate) {
+        mtext(proj4string(map), 4, line=-3.5, cex=0.8)
+        title(main=taxonname, line=-1)
+    }
     invisible(map)
 }

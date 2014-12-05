@@ -4,7 +4,8 @@
 \title{Plot a projected map of species occurrences}
 \usage{
 occpmap(query, CRS = "+proj=longlat", extent, limit = 1000, pruning,
-  clip = TRUE, ...)
+  clip = TRUE, resolution = "low", border = 1, land = "grey90",
+  pch = 16, pcol = 2, annotate = TRUE, ...)
 }
 \arguments{
 \item{query}{Species to be plotted.}
@@ -25,8 +26,22 @@ that are not duplicated with 0.1 degree attitude).}
 \item{clip}{(logical) Clip map to the occurrences of species
 instead of using the original \code{extent}.}
 
+\item{resolution}{Resolution of the map as defined in
+\code{\link[rworldmap]{getMap}}.}
+
+\item{border}{Border colour in the map.}
+
+\item{land}{Land colour in the map.}
+
+\item{pch}{Plotting character for points.}
+
+\item{pcol}{Point colour.}
+
+\item{annotate}{Add species name as the title and projection as the
+right margin text in the map.}
+
 \item{\dots}{Arguments passed to \code{\link[spocc]{occ}} and
-\code{\link{projectedmap}}}
+\code{\link{projectedmap}}.}
 }
 \description{
 Function queries species occurrence data with
