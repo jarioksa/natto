@@ -72,8 +72,8 @@
     map2 <- projectedmap(odf[,2:3], CRS = CRS, resolution = resolution, ...)
     if (clip) {
         map <- map2
-        attr(map, "input") <- attr(map2, "input")
     }
+    attr(map, "input") <- attr(map2, "input")
     plot(map, col = land, border = border, ...)
     points(attr(map, "input"), pch = pch, col = pcol, ...)
     if (annotate) {
