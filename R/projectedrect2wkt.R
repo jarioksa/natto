@@ -17,7 +17,7 @@
 #' 
 #' @export
 `projectedrect2wkt` <-
-    function(object, knots = 7, ...)
+    function(object, knots = 7)
 {
     ext <- as.vector(extent(object))
     ## A projected rectangle in map unitis

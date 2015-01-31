@@ -4,7 +4,7 @@
 \alias{projectedrect2wkt}
 \title{Returns a WKT polygon in long/lat of a projected rectangle}
 \usage{
-projectedrect2wkt(object, knots = 7, ...)
+projectedrect2wkt(object, knots = 7)
 }
 \arguments{
 \item{object}{An object with an extent in projected coordinates}
