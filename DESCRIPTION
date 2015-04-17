@@ -6,10 +6,6 @@ Authors@R: person(given = "Jari", family = "Oksanen",
                   email = "jhoksane@gmail.com")
 Description: Random code that is too experimental or
     too wierd to be included in the vegan package.
-Depends:
-    rworldmap,rgdal
-Imports:
-    raster,rgeos,sp,spocc
 License: GPL-2
 URL: https://github.com/jarioksa/natto
 LazyData: true

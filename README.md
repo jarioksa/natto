@@ -9,11 +9,5 @@ the package is not a code kindergarten with guaranteed tenure track to
 
 Currently **natto** contains
 
- * Functions to draw projected map with given extent and automatically
-   producing distribution maps with **rgbif** using proper
-   cartographic projections.
-
- * Drawing simplifed colourful Walter diagrams for slides etc.
-
  * Mean Rank Shift function of Collins et al., *Ecology* **89,**
    3534-3541 (2008).
