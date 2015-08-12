@@ -73,7 +73,7 @@
 #' @param obsline Draw line on observed statistic in the
 #' \code{\link{density}} plot. 
 #' @param \dots Other parameters passed to \code{\link{plot}}.
-#' @importFrom graphics plot abline
+#' @importFrom graphics plot abline par
 #' @importFrom stats density
 #' 
 #' @rdname slopediff
