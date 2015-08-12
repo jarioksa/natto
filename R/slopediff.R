@@ -24,7 +24,7 @@
 #' @param ydist,xdist Dependent and indpendent dissimilarities.
 #' @param block Blocking of sites.
 #' @param nperm Number of simple permutations.
-#'
+#' 
 #' @importFrom stats as.dist coef lm
 #' @rdname slopediff
 #' @export
@@ -71,8 +71,8 @@
 #' @param x Result output from \code{slopediff} or \code{slopediff2}.
 #' @param col Plotting colour.
 #' @param obsline Draw line on observed statistic in the
-#' \code{\link{density}} plot. .
-#'
+#' \code{\link{density}} plot. 
+#' @param \dots Other parameters passed to \code{\link{plot}}.
 #' @importFrom graphics plot abline
 #' @importFrom stats density
 #' 

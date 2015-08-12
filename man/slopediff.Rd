@@ -27,9 +27,11 @@ slopediff2(ydist, xdist, block, nperm = 999)
 \item{col}{Plotting colour.}
 
 \item{obsline}{Draw line on observed statistic in the
-\code{\link{density}} plot. .}
+\code{\link{density}} plot.}
 
 \item{object}{Result object from \code{slopediff} or \code{slopediff2}.}
+
+\item{\dots}{Other parameters passed to \code{\link{plot}}.}
 }
 \description{
 Functions fit linear regression on distances within blocks and
