@@ -5,7 +5,17 @@
 #'
 #' @param x An unconstrained \code{\link[vegan]{rda}} result object.
 #'
+#' 
+#' @rdname as.prcomp
+#' @export
+`as.prcomp` <-
+    function(x)
+{
+    UseMethod("as.prcomp")
+}
+
 #' @importFrom vegan scores
+#' @rdname as.prcomp
 #' @export
 `as.prcomp.rda` <-
     function(x)
