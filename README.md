@@ -11,3 +11,7 @@ Currently **natto** contains
 
  * Mean Rank Shift function of Collins et al., *Ecology* **89,**
    3534-3541 (2008).
+ * Testing differences of slopes in Mantel style regression between
+   dissimilarities.
+ * Casting unconstrained `vegan::rda()` result object to `stats::prcomp` 
+   object.
