@@ -1,3 +1,51 @@
+#' Constrained and Residual Dissimilarities
+#'
+#' Function constrains dissimilarities by external variables, or
+#' alternatively removes effects of constraining variables and returns
+#' residual dissimilarities. The analysis is based on McArdle &
+#' Anderson (2001), and the analysis of constrained dissimilarities is
+#' equal to distance-based Redundancy Analysis
+#' (\code{\link[vegan]{dbrda}}).
+#'
+#' @details Function uses the method of McArdle & Anderson (2001) to
+#' constrain dissimilarities by external variables, or alternatively,
+#' to find residual dissimilarities after constraints. With Euclidean
+#' distances, the method is equal to performing linear regressions on
+#' each column in the raw data and then calculationg the distances,
+#' but works directly on distances. With other methods, there is no
+#' similar direct connection to the raw data, but it is possible to
+#' work with non-Euclidean metrics. The same basic method is used
+#' within db-RDA (\code{\link[vegan]{dbrda}} in \CRANpkg{vegan}), but
+#' this function exposes the internal calculations to users.
+#'
+#' Non-Euclidean indices can produce negative eigenvalues in
+#' db-RDA. Would negative eigenvalues be produced, this function can
+#' return negative squared distances resulting in \code{NaN} when
+#' taking the square root. Db-RDA works with the internal presentation
+#' of the dissimilarities, and its analysis does not suffer from the
+#' imaginary distances, but these can ruin the analysis of
+#' dissimilarities returned from this function.
+#' 
+#' @references McArdle, B.H. & Anderson, M.J. (2001). Fitting
+#'   multivariate models to community data: a comment on distance-based
+#'   redundancy analysis. \emph{Ecology} 82, 290--297.
+#'
+#' @importFrom stats delete.response terms model.frame model.matrix
+#' formula as.dist
+#'
+#' @param formula The left-hand-side must be dissimilarities and the
+#' right-hand-side should list the constraining variables.
+#'
+#' @param data Data frame containing the constrainging variables in
+#' the \code{formula}.
+#'
+#' @param residuals Return residuals after constraints.
+#'
+#' @param squared Return squared dissimilarities instead of
+#' dissimilarities. This allows handling negative squared distances by
+#' the user instead of setting them \code{NaN}.
+#' 
+#' @export
 `distconstrain` <-
     function(formula, data, residuals = FALSE, squared = FALSE)
 {
