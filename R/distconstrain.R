@@ -39,6 +39,12 @@
 #' @param data Data frame containing the constrainging variables in
 #' the \code{formula}.
 #'
+#' @param add an additive constant is added to the non-diagonal
+#'    dissimilarities such that all \eqn{n-1} eigenvalues are
+#'    non-negative. Alternatives are \code{"lingoes"} (default, also
+#'    used with \code{TRUE}) and \code{"cailliez"} (which is the only
+#'    alternative in \code{\link{cmdscale}}).
+#' 
 #' @param residuals Return residuals after constraints.
 #'
 #' @param squared Return squared dissimilarities instead of
@@ -47,7 +53,8 @@
 #' 
 #' @export
 `distconstrain` <-
-    function(formula, data, residuals = FALSE, squared = FALSE)
+    function(formula, data, add = FALSE, residuals = FALSE,
+             squared = FALSE)
 {
     ## evaluate data and get the model matrix
     if (missing(data))
@@ -60,6 +67,22 @@
     ## perform the Gower standardization
     dis <- eval(formula[[2]])
     dis <- as.matrix(dis)
+    ## handle add constant to make dis Euclidean
+    if (is.logical(add) && isTRUE(add))
+        add <- "lingoes"
+    if (is.character(add)) {
+        nd <- row(dis) != col(dis)
+        add <- match.arg(add, c("lingoes", "cailliez"))
+        if (add == "lingoes") {
+            ac <- vegan:::addLingoes(dis)
+            dis[nd] <- sqrt(dis[nd]^2 + 2 * ac)
+        } else if (add == "cailliez") {
+            ac <- vegan:::addCailliez(dis)
+            dis[nd] <- dis[nd] + ac
+        }
+    } else {
+        ac <- NA
+    }
     dis <- -vegan:::GowerDblcen(dis^2)/2
     ## QR decomposition
     Q <- qr(mm)
@@ -73,6 +96,10 @@
     dis <- -2 * dis + outer(de, de, "+")
     ## check and return
     dis <- as.dist(dis)
+    if (!is.na(ac) && ac > 0) {
+        attr(dis, "add") <- add
+        attr(dis, "ac") <- ac
+    }
     if (squared && any(dis < 0))
         warning("some dissimilarities were negative, use 'squared = TRUE'?")
     if (!squared)

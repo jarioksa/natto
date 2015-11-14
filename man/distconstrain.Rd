@@ -4,7 +4,8 @@
 \alias{distconstrain}
 \title{Constrained and Residual Dissimilarities}
 \usage{
-distconstrain(formula, data, residuals = FALSE, squared = FALSE)
+distconstrain(formula, data, add = FALSE, residuals = FALSE,
+  squared = FALSE)
 }
 \arguments{
 \item{formula}{The left-hand-side must be dissimilarities and the
@@ -12,6 +13,12 @@ right-hand-side should list the constraining variables.}
 
 \item{data}{Data frame containing the constrainging variables in
 the \code{formula}.}
+
+\item{add}{an additive constant is added to the non-diagonal
+dissimilarities such that all \eqn{n-1} eigenvalues are
+non-negative. Alternatives are \code{"lingoes"} (default, also
+used with \code{TRUE}) and \code{"cailliez"} (which is the only
+alternative in \code{\link{cmdscale}}).}
 
 \item{residuals}{Return residuals after constraints.}
 
