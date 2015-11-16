@@ -56,6 +56,8 @@
     function(formula, data, add = FALSE, residuals = FALSE,
              squared = FALSE)
 {
+    ## zap near-zero values to zero
+    ZAP <- 1e-14
     ## evaluate data and get the model matrix
     if (missing(data))
         data <- .GlobalEnv
@@ -100,8 +102,10 @@
         attr(dis, "add") <- add
         attr(dis, "ac") <- ac
     }
+    ## zap & check negative distances
+    dis[abs(dis) < ZAP] <- 0
     if (squared && any(dis < 0))
-        warning("some dissimilarities were negative, use 'squared = TRUE'?")
+        warning("some dissimilarities were negative")
     if (!squared)
         dis <- sqrt(dis)
     dis
