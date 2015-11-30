@@ -28,6 +28,7 @@
 `infoclust` <-
     function(x)
 {
+    requireNamespace("vegan") || stop("requires vegan package")
     x <- ifelse(x > 0, 1, 0)
     N <- nrow(x)
     ## shortcut to pairwise 'infodist'
@@ -63,7 +64,7 @@
     }
     out <- list(merge = merge,
                 height = height,
-                order = hclustMergeOrder(merge),
+                order = vegan:::hclustMergeOrder(merge),
                 labels = rownames(x),
                 dist.method = "information",
                 call = match.call(),
