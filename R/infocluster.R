@@ -55,13 +55,10 @@
         dis[g2,] <- NA
         dis[,g2] <- NA
         for (j in 1:N) {
-            if (is.na(dis[g1,j]) || g1 == j)
+            if (is.na(dis[max(g1,j), min(g1,j)]) || g1 == j)
                 next
             d <- infodist(x[g1,] + x[j,], w[g1] + w[j])
-            if (g1 > j)
-                dis[g1,j] <- d
-            else
-                dis[j,g1] <- d
+            dis[max(g1,j), min(g1,j)] <- d
         }
     }
     out <- list(merge = merge,
