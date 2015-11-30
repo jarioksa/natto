@@ -1,0 +1,76 @@
+#' Information Clusterings of Ecological Communities
+#'
+#' Function performs a cluster analysis based on information analysis
+#' as defined by Lambert et al. (1966). The current implementation is
+#' based on Legendre & Legendre (2012).
+#'
+#' @param x Community data
+#'
+#' @references Williams, W.T., Lambert, J.M. & Lance,
+#' G.N. (1966). Multivariate methods in plant ecology. V. Similarity
+#' analyses and information-analysis. \emph{J. Ecol.} 54, 427--445.
+#'
+#' Legendre, P. & Legendre, L. (2012). \emph{Numerical Ecology.} 3rd
+#' English Ed., Elsevier.
+#'
+#' @importFrom vegan designdist
+#' 
+
+`infodist` <-
+    function(a, n)
+{
+    length(a) * n * log(n) -
+        sum(a * log(a), na.rm=TRUE) -
+        sum((n-a)*log(n-a), na.rm = TRUE)
+}
+
+#' @export
+`infoclust` <-
+    function(x)
+{
+    x <- ifelse(x > 0, 1, 0)
+    N <- nrow(x)
+    ## shortcut to pairwise 'infodist'
+    dis <- matrix(NA, N, N)
+    dis[lower.tri(dis)] <- -2 * log(0.5) *
+        designdist(x, "A+B-2*J", "binary", name = "information")
+    adj <- numeric(N)
+    merge <- matrix(NA, nrow = N - 1, ncol = 2)
+    height <- rep(NA, N - 1)
+    id <- -seq_len(N)
+    w <- rep(1, N)
+    for (lev in 1:(N-1)) {
+        ## pick minimum distance
+        g <- which.min(dis - outer(adj, adj, "+"))
+        g1 <- row(dis)[g]
+        g2 <- col(dis)[g]
+        ## update tree
+        merge[lev,] <- c(id[g1], id[g2])
+        height[lev] <- dis[g1,g2]
+        id[g1] <- lev
+        ## update distances
+        adj[g1] <- adj[g2] <- dis[g1,g2]
+        x[g1,] <- x[g1,] + x[g2,]
+        w[g1] <- w[g1] + w[g2]
+        dis[g2,] <- NA
+        dis[,g2] <- NA
+        for (j in 1:N) {
+            if (is.na(dis[g1,j]) || g1 == j)
+                next
+            d <- infodist(x[g1,] + x[j,], w[g1] + w[j])
+            if (g1 > j)
+                dis[g1,j] <- d
+            else
+                dis[j,g1] <- d
+        }
+    }
+    out <- list(merge = merge,
+                height = height,
+                order = hclustMergeOrder(merge),
+                labels = rownames(x),
+                dist.method = "information",
+                call = match.call(),
+                method = "infoclust")
+    class(out) <- c("hclust", "infoclust")
+    out
+}
