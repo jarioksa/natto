@@ -5,6 +5,11 @@
 #' based on Legendre & Legendre (2012).
 #'
 #' @param x Community data
+#' @param delta Use increase in information (Delta I) instead of the
+#' value of information shown in the tree when merging clusters as
+#' recommended by Lambert et al. (1966, see Legendre & Legendre 2012
+#' for details). If \code{TRUE}, some \code{\link{hclust}} may not
+#' work correctly with the result.
 #'
 #' @references Williams, W.T., Lambert, J.M. & Lance,
 #' G.N. (1966). Multivariate methods in plant ecology. V. Similarity
@@ -26,7 +31,7 @@
 
 #' @export
 `infoclust` <-
-    function(x)
+    function(x, delta = TRUE)
 {
     requireNamespace("vegan") || stop("requires vegan package")
     x <- ifelse(x > 0, 1, 0)
@@ -50,7 +55,8 @@
         height[lev] <- dis[g1,g2]
         id[g1] <- lev
         ## update distances
-        adj[g1] <- adj[g2] <- dis[g1,g2]
+        if (delta)
+            adj[g1] <- adj[g2] <- dis[g1,g2]
         x[g1,] <- x[g1,] + x[g2,]
         w[g1] <- w[g1] + w[g2]
         dis[g2,] <- NA
