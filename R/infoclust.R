@@ -21,14 +21,6 @@
 #' @importFrom vegan designdist
 #' 
 
-`infodist` <-
-    function(a, n)
-{
-    length(a) * n * log(n) -
-        sum(a * log(a), na.rm=TRUE) -
-        sum((n-a)*log(n-a), na.rm = TRUE)
-}
-
 #' @export
 `infoclust` <-
     function(x, delta = TRUE)
@@ -47,7 +39,10 @@
     w <- rep(1, N)
     for (lev in 1:(N-1)) {
         ## pick minimum distance
-        g <- which.min(dis - outer(adj, adj, "+"))
+        if (delta)
+            g <- which.min(dis - outer(adj, adj, "+"))
+        else
+            g <- which.min(dis)
         g1 <- row(dis)[g]
         g2 <- col(dis)[g]
         ## update tree
@@ -77,4 +72,13 @@
                 method = "infoclust")
     class(out) <- c("hclust", "infoclust")
     out
+}
+
+## unexported internal function
+`infodist` <-
+    function(a, n)
+{
+    length(a) * n * log(n) -
+        sum(a * log(a), na.rm=TRUE) -
+        sum((n-a)*log(n-a), na.rm = TRUE)
 }
