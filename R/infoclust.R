@@ -63,6 +63,20 @@
             dis[max(g1,j), min(g1,j)] <- d
         }
     }
+    ## height and merge should be ordered in hclust objects, but with
+    ## 'delta' the clusters are not formed at the height order. We
+    ## need to reorder these so that other R functions know how to
+    ## handle the result.
+    if (delta && is.unsorted(height)) {
+        o <- order(height)
+        oo <- order(o)
+        for (i in 1:nrow(merge))
+            for (j in 1:2)
+                if (merge[i,j] > 0) # merge a (reordered?) cluster
+                    merge[i,j] <- oo[merge[i,j]]
+        merge <- merge[o,]
+        height <- height[o]
+    }
     out <- list(merge = merge,
                 height = height,
                 order = vegan:::hclustMergeOrder(merge),
