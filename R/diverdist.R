@@ -45,22 +45,9 @@
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE) 
 {
     x <- as.matrix(x) ## huge speed-up over data frame
-    ## equalize: divide each row by a scaling factor that allows
-    ## getting arithmetic averages for baseline of beta diversity and
-    ## pool rows; the scaling factor depends on 'renyi'
+    ## equalize
     if (equalize) {
-        if (renyi==1)
-            x <- decostand(x, "total")
-        else if(renyi==2)
-            x <- decostand(x, "norm", MARGIN=1)
-        else if (renyi==Inf)
-            x <- decostand(x, "max", MARGIN=1)
-        else if (renyi==0)
-            x <- decostand(x, "pa")
-        else {
-            tmp <- (rowSums(x^renyi))^(1/renyi)
-            x <- sweep(x, 1, tmp, "/")
-        }
+        x <- renyiEqualize(x, renyi = renyi)
     }
     cli <- seq_len(nrow(x))
     dh <- matrix(NA, nrow(x), nrow(x))
@@ -100,4 +87,26 @@
     attr(dh, "Labels") <- rownames(x)
     attr(dh, "call") <- match.call()
     dh
+}
+
+### internal function for equalizing community data: divide each row
+### by a scaling factor that allows getting arithmetic averages for
+### baseline of beta diversity and pool rows; the scaling factor
+### depends on 'renyi'
+
+`renyiEqualize` <-
+    function(x, renyi = 1)
+{
+    if (renyi==1)
+        decostand(x, "total")
+    else if(renyi==2)
+        decostand(x, "norm", MARGIN=1)
+    else if (renyi==Inf)
+        decostand(x, "max", MARGIN=1)
+    else if (renyi==0)
+        decostand(x, "pa")
+    else {
+        tmp <- (rowSums(x^renyi))^(1/renyi)
+        sweep(x, 1, tmp, "/")
+    }
 }
