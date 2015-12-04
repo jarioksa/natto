@@ -3,6 +3,7 @@
           trace = TRUE, ...) 
 {
     require(vegan) || stop("I need vegan")
+    x <- as.matrix(x) ## huge speed-up over data frame
     ## equalize: divide each row by a scaling factor that allows
     ## getting arithmetic averages for baseline of beta diversity and
     ## pool rows; the scaling factor depends on 'renyi'
