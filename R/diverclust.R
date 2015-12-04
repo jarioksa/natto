@@ -2,45 +2,26 @@
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE,
           trace = TRUE, ...) 
 {
-    require(vegan) || stop("I need vegan")
     x <- as.matrix(x) ## huge speed-up over data frame
-    ## equalize: divide each row by a scaling factor that allows
-    ## getting arithmetic averages for baseline of beta diversity and
-    ## pool rows; the scaling factor depends on 'renyi'
-    if (equalize) {
-        if (renyi==1)
-           x <- decostand(x, "total")
-        else if(renyi==2)
-           x <- decostand(x, "norm", MARGIN=1)
-        else if (renyi==Inf)
-           x <- decostand(x, "max", MARGIN=1)
-        else if (renyi==0)
-           x <- decostand(x, "pa")
-        else {
-           tmp <- (rowSums(x^renyi))^(1/renyi)
-           x <- sweep(x, 1, tmp, "/")
-        }
-    }
+    ## equalize here, but no more in diverdist
+    if (equalize)
+        x <- renyiEqualize(x, renyi = renyi)
     cli <- seq_len(nrow(x))
     id <- -cli
     cnt <- rep(1, nrow(x))
     merge <- matrix(NA, nrow=nrow(x)-1, ncol=2)
     height <- rep(NA, nrow(x)-1)
     dh <- matrix(NA, nrow(x), nrow(x))
-    ## for beta diversity we need 'base' of alpha diversities
-    if (beta)
-       base <- renyi(x, scale = renyi, hill=hill)
-    else
-       base <- numeric(nrow(x))
-    ## Inial pooled (beta) diversities of all n*(n-1)/2 pairs of sites.
     if (trace)
-        cat("Getting pooled diversity of all pairs of sites: this may take time\n")
-    for(i in 2:length(cli))
-        for(j in 1:(i-1)) {
-            dh[i,j] <- renyi(x[i,]+x[j,], scales = renyi, hill = hill)
-            dh[i,j] <- dh[i,j] - (base[i] + base[j])/2
-    }
+        cat("Getting pooled diversities for all n*(n-1)/2 pairs of sites...")
+    dis <- diverdist(x, renyi = renyi, equalize = FALSE, beta = beta,
+                     hill = hill)
+    dh[lower.tri(dh)] <- dis
+    ## base: alpha diversities (or 0 if beta = FALSE)
+    base <- attr(dis, "alpha")
     ## Cluster
+    if (trace)
+        cat(" done\nStarting clustering\n")
     for(lev in 1:(nrow(x)-1)) {
         ## g1 and g2 are indices of smallest (possibly tied) pooled
         ## (beta) diversity
@@ -73,56 +54,14 @@
            dh[max(g1,i), min(g1,i)] <- tmp - w[1]*base[g1] - w[2]*base[i] 
         }
     }
-    if(hill) {
-        dm <- switch(as.character(renyi),
-                     "0" = "Species Richness",
-                     "1" = "exp Shannon",
-                     "2" = "Simpson",
-                     "Inf" = "Berger-Parker",
-                     paste("Hill", as.character(renyi)))
-    } else {
-        dm <- switch(as.character(renyi),
-                     "0" = "log Species Richness",
-                     "1" = "Shannon",
-                     "2" = "log Simpson",
-                     "Inf" = "log Berger-Parker",
-                     paste("Renyi", as.character(renyi)))
-    }
-    if(beta)
-        dm <- paste(dm, "beta")
 
     out <- list(merge = merge, 
                 height = height,
-                order=hclustMergeOrder(merge),
+                order = vegan:::hclustMergeOrder(merge),
                 labels = rownames(x),
-                dist.method = dm,
+                dist.method = attr(dis, "method"),
                 call = match.call(),
                 method = "diverclust")
     class(out) <- c("hclust", "diverclust")
     out
-}
-
-### Internal vegan function to get the 'order' from a merge matrix of
-### an hclust tree
-
-`hclustMergeOrder` <-
-    function(merge)
-{
-    ## Get order of leaves with recursive search from the root
-    order <- numeric(nrow(merge)+1)
-    ind <- 0
-    ## "<<-" updates data only within hclustMergeOrder, but outside
-    ## the visit() function.
-    visit <- function(i, j) {
-        if (merge[i,j] < 0) {
-            ind <<- ind+1
-            order[ind] <<- -merge[i,j]
-        } else {
-            visit(merge[i,j], 1)
-            visit(merge[i,j], 2)
-        }
-    }
-    visit(nrow(merge), 1)
-    visit(nrow(merge), 2)
-    return(order)
 }
