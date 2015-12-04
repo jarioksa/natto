@@ -21,7 +21,7 @@
 #' related additive partitioning of beta diversity.
 `diverclust` <-
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE,
-          trace = TRUE, ...) 
+          trace = TRUE)
 {
     x <- as.matrix(x) ## huge speed-up over data frame
     ## equalize here, but no more in diverdist
