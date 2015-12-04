@@ -48,6 +48,17 @@ species with 0.5 relative frequency, so that the analysis tries to
 build clusters where species is either always present or always
 absent. This often gives easily interpretable clusters.
 }
+\examples{
+## example used to demonstrate the calculation of
+## information analysis by Legendre & Legendre (2012, p. 372).
+data(pond)
+cl <- infoclust(pond)
+plot(cl, hang = -1)
+## Lance & Williams suggest a limit below which clustering is
+## insignificant and should not be interpreted
+abline(h=qchisq(0.95, ncol(pond)), col=2)
+
+}
 \references{
 Williams, W.T., Lambert, J.M. & Lance,
 G.N. (1966). Multivariate methods in plant ecology. V. Similarity

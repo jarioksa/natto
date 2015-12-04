@@ -48,6 +48,16 @@
 #' methods, but some may fail or work in unexpected ways because the
 #' analysis is not based on dissimilarities but on binary data matrix.
 #'
+#' @examples
+#' ## example used to demonstrate the calculation of
+#' ## information analysis by Legendre & Legendre (2012, p. 372).
+#' data(pond)
+#' cl <- infoclust(pond)
+#' plot(cl, hang = -1)
+#' ## Lance & Williams suggest a limit below which clustering is
+#' ## insignificant and should not be interpreted
+#' abline(h=qchisq(0.95, ncol(pond)), col=2)
+#'
 #' @importFrom vegan designdist
 #' 
 
