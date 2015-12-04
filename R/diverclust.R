@@ -1,3 +1,24 @@
+#' beta and gamma Diversity Clustering
+#'
+#' Function forms hierarchic clustering so that each fusion minimizes
+#' beta deiversity or gamma diversity.
+#'
+#' @inheritParams diverdist
+#' @param trace Trace calculations.
+#'
+#' @details The function forms clusters so that pooled diversity or
+#' its change to the baseline alpha diversity is minimized at each
+#' level of clustering. The change of pooled diversity with respect to
+#' the baseline alpha diversity is called beta diversity, and the
+#' overall diversity is called gamma diversity. For beta diversity,
+#' the clustering implies an additive partitioning.
+#'
+#' @return Function returns an \code{\link{hclust}} object.
+#' @author Jari Oksanen.
+#' @seealso \code{\link{hclust}} for cluster analysis and its support
+#' methods, \code{\link[vegan]{renyi}} for estimating Renyi
+#' diversities and Hill numbers, and \code{\link[vegan]{adipart}} for
+#' related additive partitioning of beta diversity.
 `diverclust` <-
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE,
           trace = TRUE, ...) 
