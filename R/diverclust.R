@@ -19,6 +19,8 @@
 #' methods, \code{\link[vegan]{renyi}} for estimating Renyi
 #' diversities and Hill numbers, and \code{\link[vegan]{adipart}} for
 #' related additive partitioning of beta diversity.
+#'
+#' @export
 `diverclust` <-
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE,
           trace = TRUE)
