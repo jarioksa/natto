@@ -1,0 +1,22 @@
+% -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
+%\VignetteEngine{knitr::knitr} 
+%\VignetteIndexEntry{beta and gamma diversity clustering}
+%\VignettePackage{natto}
+
+\documentclass[a4paper,10pt,twocolumn]{article}
+\author{Jari Oksanen}
+\title{Cluster Analysis based on beta or gamma Diversity}
+\begin{document}
+<<prelim, echo = FALSE, results = "hide">>=
+library("knitr")
+opts_chunk$set(fig.lp = "fig:", size = "small", out.width = ".7\\linewidth",
+               fig.align = "center", fig.show = "hold")
+@
+
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+
+\end{document}

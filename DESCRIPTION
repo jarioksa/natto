@@ -8,6 +8,8 @@ Description: Random code that is too experimental or
     too wierd to be included in the vegan package.
 License: GPL-2
 Imports: vegan
+Suggests: knitr
+VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
 RoxygenNote: 5.0.0
