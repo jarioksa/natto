@@ -24,10 +24,12 @@
 \newcommand{\fun}[1]{\texttt{#1}}
 \newcommand{\R}{\textsf{R}}
 %%
-<<prelim, echo = FALSE, results = "hide">>=
+<<prelim, echo = FALSE, results = "hide", message=FALSE>>=
 library("knitr")
-opts_chunk$set(fig.lp = "fig:", size = "small", out.width = ".7\\linewidth",
+opts_chunk$set(fig.lp = "fig:", size = "small", out.width = "1.1\\linewidth",
                fig.align = "center", fig.show = "hold")
+require(vegan)
+require(natto)
 @
 
 \maketitle
@@ -56,11 +58,11 @@ The main steps are:
   pool together two sampling units (optionally with equalization,
   \S~\ref{sec:equalize}). The increase in diversity in pooling is
   conventionally called as beta diversity.
-\item Select the smallest of pooled values and make it a cluster.
+\item Select the smallest of pooled beta diversity values and make it a cluster.
 \item Pool the sampling units of the new merged cluster by summing up
   abundance values (optionally with equalization
   \S~\ref{sec:equalize}), and re-evaluate its beta diversities with
-  all other sites.
+  all other units.
 \item Go back to step 3 until all sampling units are merged.
 \end{enumerate}
 
@@ -80,16 +82,18 @@ or the corresponding Hill number.  R{\'e}nyi diversity of order $a$ is
 H_a = \frac{1}{1-a} \log \sum_{j=1}^S p_j^a \,,
 \end{equation}
 and the corresponding Hill number is $N_a = \exp(H_a)$.  Many common
-diversity indices are special cases of Hill numbers: $N_0 = S$,
-$N_1 = \exp(H')$, $N_2 = 1/\sum_{j=1}^S p_j^2$, and $N_\infty = 1/(\max p_j)$. The
+diversity indices are special cases of Hill numbers: $N_0 = S$ is
+number of species, $N_1 = \exp(H')$ is exponent of Shannon diversity,
+$N_2 = 1/\sum_{j=1}^S p_j^2$ is the Simpson diversity, and
+$N_\infty = 1/(\max p_j)$ is the Berger-Parker index. The
 corresponding R\'{e}nyi diversities are $H_0 = \log(S)$, $H_1 = H'$,
 $H_2 = - \log(\sum p_j^2)$, and $H_\infty = -\log(\max p_j)$.
 
 The beta diversity is defined as an increase of diversity when pooling
-sampling units. Pooling happens by summing up abundance values of
+sampling units. Pooling is performed by summing up abundance values of
 species, and the beta diversity $\beta$ for a cluster of $M$ sampling
-units is defined as a difference of gamma and mean alpha diversities
-$\beta = \gamma - \bar \alpha$:
+units is defined as a difference of the pooled gamma diversity and
+mean of alpha diversities $\beta = \gamma - \bar \alpha$:
 \begin{equation}
   \label{eq:partition}
   \beta_a = \underbrace{H_a \left(\sum_{i=1}^M x_{ij}
@@ -152,6 +156,19 @@ modify its behaviour:
   \item Either Rényi diversities or Hill numbers can be selected.
 \end{itemize}
 
+The following example performs diversity clustering with defaults: it
+uses beta diversity based on Rényi index $H_1$ (Shannon diversity) and
+equalizes sample plots, and displays the dendrogram
+(Fig.~\ref{fig:renyi1}). 
+<<renyi1,fig.cap="Diversity clustering of Barro Colorado Island forests based on $H_1$. The sampling units are named by their most abundant tree species.">>=
+data(BCI)
+colnames(BCI) <- make.cepnames(colnames(BCI))
+dom <- colnames(BCI)[apply(BCI, 1, which.max)]
+rownames(BCI) <- paste0(dom, 1:50)
+cl <- diverclust(BCI, trace=FALSE)
+plot(cl,hang = -1, cex=0.8)
+@ 
+
 \section{Other Methods}
 
 One reason for writing this vignette was to find out if the
@@ -190,7 +207,14 @@ updates the merge table to correspond to the merge heights.
 
 \citet{WilliamsEa66} and \citet{LanceWilliams66} describe their method
 very briefly, and the current implementation is \pkg{natto} is based
-on the worked out example of \citet{Legendres}. 
+on the worked example of \citet{Legendres}. The use is similar as for
+\code{diverclust}: 
+<<infoclust,fig.cap="Information Analysis Clustering of the Barro Colorado Island forests.">>=
+cli <- infoclust(BCI)
+plot(cli, hang=-1, cex=0.8)
+@ 
+The function uses only presence-absence information. The clusters are
+often very compact (Fig.~\ref{fig:infoclust}).
 
 \subsection{Dissimilarity Measures}
 
