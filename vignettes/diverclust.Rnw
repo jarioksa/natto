@@ -72,22 +72,23 @@ to evaluate any Rényi diversity or the corresponding Hill
 number.  R{\'e}nyi diversity of order $a$ is \cite{Hill73number}:
 \begin{equation}
   \label{eq:renyi}
-H_a = \frac{1}{1-a} \log \sum_{i=1}^S p_i^a \,,
+H_a = \frac{1}{1-a} \log \sum_{j=1}^S p_j^a \,,
 \end{equation}
 and the corresponding Hill number is $N_a = \exp(H_a)$.  Many common
 diversity indices are special cases of Hill numbers: $N_0 = S$,
-$N_1 = \exp(H')$, $N_2 = D_2$, and $N_\infty = 1/(\max p_i)$. The
+$N_1 = \exp(H')$, $N_2 = 1/\sum_{j=1}^S p_j^2$, and $N_\infty = 1/(\max p_j)$. The
 corresponding R\'{e}nyi diversities are $H_0 = \log(S)$, $H_1 = H'$,
 $H_2 = - \log(\sum p_i^2)$, and $H_\infty = -\log(\max p_i)$.
 
 The beta diversity is defined as an increase of diversity when pooling
 sampling units. Pooling happens by summing up abundance values of
-species, and the beta diversity $\beta$ for a cluster of $N$ sampling
-units is defined as
+species, and the beta diversity $\beta$ for a cluster of $M$ sampling
+units is defined as a difference of gamma and mean alpha diversities
+$\beta = \gamma - \bar \alpha$:
 \begin{equation}
   \label{eq:partition}
-  \beta_a = \underbrace{H_a \left(\sum_{i=1}^N x_{ij}
-    \right)}_{\gamma} - \underbrace{\frac{1}{N} \sum_{i=1}^N H_a
+  \beta_a = \underbrace{H_a \left(\sum_{i=1}^M x_{ij}
+    \right)}_{\gamma} - \underbrace{\frac{1}{M} \sum_{i=1}^M H_a
     (x_{ij})}_{\bar \alpha}\,,
 \end{equation}
 where $x$ are the community data. Alternatively we can use Hill
@@ -108,13 +109,13 @@ The total pooled diversity ($\gamma$) in eq.~\ref{eq:partition}
 includes both the within-unit diversity ($\alpha$) and between-unit
 differences ($\beta$). This requires that pooled diversity really is
 additive: it maintains the within-unit diversity and adds between-unit
-differences. This really seem to be the case with Renyi diversities,
+differences. This really seem to be the case with Rényi diversities,
 but not necessarily for the Hill numbers beyond $N_0 = S$ (species
 richness). However, if equalize the sampling units, the
 additivity is greatly improved. Equalization scales units with
 different total abundances to a more similar magnitude for pooling,
 but does not influence their alpha diversities. The suggested
-equalization is dependent on the scale $a$ of the Renyi diversity, and
+equalization is dependent on the scale $a$ of the Rényi diversity, and
 all values for a unit are divided by weight
 \begin{equation}
   \label{eq:equalize}
@@ -136,12 +137,12 @@ function \code{infodist} in the \pkg{natto} package.
 \subsection{Clustering Based on Information Analysis}
 
 Information analysis can only analyse binary community data
-matrix. The information content $I$ of a cluster of $M$ sites is
-defined as \cite{WilliamsEa66, LanceWilliams66}: 
+matrix. The information content $I$ of a cluster of $M$ sampling units
+is defined as \cite{WilliamsEa66, LanceWilliams66}:
 \begin{multline}
   \label{eq:information}
   I = S M \log M \\ - \sum_{j=1}^S Mp_j \log Mp_j + M(1-p_j) \log M(1-p_j)\,,
-\end{multline}
+\end{multline} 
 where $p_j$ is the relative frequency of species $j$ in the
 cluster. The contribution to $I$ is 0 for species absent from the
 cluster ($p=0$) and for species present on every unit in the cluster
@@ -162,6 +163,10 @@ clusters are not formed in the order of their merge heights. This
 conflicts with \R{} conventions, and the \code{infoclust} function
 updates the merge table to correspond to the merge heights. 
 
+\citet{WilliamsEa66} and \citet{LanceWilliams66} describe their method
+very briefly, and the current implementation is \pkg{natto} is based
+on the worked out example of \citet{Legendres}. 
+
 \subsection{Dissimilarity Measures}
 
 The diversity clustering methods can also be expressed as
@@ -174,11 +179,12 @@ common dissimilarity measures. In this chapter we see how the
 diversity measures can be expressed as dissimilarities with binary
 data. 
 
-This defines a community with maximum equitability, so that all Renyi
+This defines a community with maximum equitability, so that all Rényi
 indices will be $N = \log S$ and Hill numbers $H = S$ irrespective of
-the Rényi scale.  average alpha diversity for two sampling units with
+the Rényi scale.  Average alpha diversity for two sampling units with
 $S_1$ and $S_2$ species is
 \begin{align}
+  \label{eq:alphaH}
   \bar \alpha_H &= \tfrac{1}{2}(\log S_1 + \log S_2)\\
   \bar \alpha_N &= \tfrac{1}{2}(S_1 + S_2)\,.
 \end{align}
@@ -197,13 +203,43 @@ Some special cases simplify into more compact forms:
   d(H_0) &= \log(S_1 + S_2 -J) - \bar \alpha_H\\ 
          &= \log \left(\frac{A+B-J}{\sqrt{S_1 S_2}} \right) \\ 
   d(N_0) &= \tfrac{1}{2}(S_1 + S_2 - 2J)\\
-           &= \bar \alpha_N - J\\
+           &= \bar \alpha_N - J \\
+  \label{eq:dH1}
   d(H_1) &= \log(S_1 + S_2) - \frac{J \log 4}{S_1+S_2} - \bar \alpha_H\\
   d(H_2) &= 2 \log (S_1+S_2) - \log(S_1 + S_2 + 2J) - \bar \alpha_H\\
   d(N_2) &= \frac{(S_1 + S_2)^2}{S_1 + S_2 + 2J}  - \bar \alpha_N\\
   d(H_\infty) &= \log(S_1 + S_2) - \log 2 - \bar \alpha_H\\
   d(N_\infty) &= 0 \,.
 \end{align}
+These may be regarded as ``new'' dissimilarity measures, although
+there hardly is a deficit of dissimilarity indices. However, $d(N_0)$
+is only half of the number of non-shared species, or half of the
+squared Euclidean distance between binary vectors. Most importantly,
+these are special cases for binary data and two pooled sampling
+units. Although the indices can be calculated for binary data, they
+really are intended for quantitative data. More importantly, they are
+intended for comparisons among multiple sampling units, and this can
+only be done via pooling original sampling units.
+
+The implicit dissimilarity measure in information analysis is
+\begin{equation}
+  d(I) = (S_1 + S_2 - 2J) \log(4) \,.
+\end{equation}
+This is $d(N_0)$ scaled. However, the similarity disappears when more
+than two sampling units are compared.
+
+Dissimilarities based on diversity or information have been sometimes
+suggested. \citet{KoleffEa03} suggest the following that they ascribe
+to \citet{Routledge84}:
+\begin{multline}
+  \label{eq:routledge}
+  d(I) = \log(S_1 + S_2) - \frac{J \log 4}{S_1 + S_2} \\ 
+  - \frac{S_1}{S_1 + S_2} \log S_1 - \frac{S_2}{S_1+S_2} \log S_2\,.
+\end{multline}
+This resembles a lot our $d(H_1)$. The only difference is that
+$d(H_1)$ (eq.~\ref{eq:dH1}) uses unweighted average alpha diversity
+$\bar \alpha_H$ (eq.~\ref{eq:alphaH}), whereas eq.~\ref{eq:routledge}
+weights sampling units by their species richness values.
 
 \bibliography{diverclust}
 
