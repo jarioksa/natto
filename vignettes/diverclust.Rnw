@@ -4,9 +4,26 @@
 %\VignettePackage{natto}
 
 \documentclass[a4paper,10pt,twocolumn]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[round]{natbib}
+\renewcommand{\cite}{\citep}
+
 \author{Jari Oksanen}
 \title{Cluster Analysis based on beta or gamma Diversity}
 \begin{document}
+\bibliographystyle{jss}
+
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+\newcommand{\fun}[1]{\texttt{#1}}
+\newcommand{\R}{\textsf{R}}
+%%
 <<prelim, echo = FALSE, results = "hide">>=
 library("knitr")
 opts_chunk$set(fig.lp = "fig:", size = "small", out.width = ".7\\linewidth",
@@ -18,5 +35,176 @@ opts_chunk$set(fig.lp = "fig:", size = "small", out.width = ".7\\linewidth",
 
 \section{Introduction}
 
+The \pkg{natto} package includes function \code{diverclust} that
+introduces a potentially new method of beta and gamma diversity
+clustering.  The idea of this new method is obvious and I have long
+assumed that such a method must have been invented previously.
+However, I have failed to find such a method, and therefore I added
+the function in \pkg{natto}.  This document describes the method as
+implemented in \pkg{natto} for two purposes: to explain what was done
+in \pkg{natto} and to help finding its predecessors.
+
+\section{The Method}
+
+\subsection{The Stages of Clustering}
+
+The main steps are:
+\begin{enumerate}
+\item Initially estimate diversity of all sampling units
+  (\S~\ref{sec:diversity}).
+\item First evaluate the \emph{increase} in diversity when you
+  pool together two sampling units (optionally with equalization,
+  \S~\ref{sec:equalize}). The increase in diversity in pooling is
+  conventionally called as beta diversity.
+\item Select the smallest of pooled values and make it a cluster.
+\item Pool the sampling units of the new merged cluster by summing up
+  abundance values (optionally with equalization
+  \S~\ref{sec:equalize}), and re-evaluate its beta diversities with
+  all other sites.
+\item Go back to step 3 until all sampling units are merged.
+\end{enumerate}
+
+\subsection{Measurement of Diversity}
+\label{sec:diversity}
+
+The \code{diverclust} function uses \pkg{vegan} function \code{renyi}
+to evaluate any Rényi diversity or the corresponding Hill
+number.  R{\'e}nyi diversity of order $a$ is \cite{Hill73number}:
+\begin{equation}
+  \label{eq:renyi}
+H_a = \frac{1}{1-a} \log \sum_{i=1}^S p_i^a \,,
+\end{equation}
+and the corresponding Hill number is $N_a = \exp(H_a)$.  Many common
+diversity indices are special cases of Hill numbers: $N_0 = S$,
+$N_1 = \exp(H')$, $N_2 = D_2$, and $N_\infty = 1/(\max p_i)$. The
+corresponding R\'{e}nyi diversities are $H_0 = \log(S)$, $H_1 = H'$,
+$H_2 = - \log(\sum p_i^2)$, and $H_\infty = -\log(\max p_i)$.
+
+The beta diversity is defined as an increase of diversity when pooling
+sampling units. Pooling happens by summing up abundance values of
+species, and the beta diversity $\beta$ for a cluster of $N$ sampling
+units is defined as
+\begin{equation}
+  \label{eq:partition}
+  \beta_a = \underbrace{H_a \left(\sum_{i=1}^N x_{ij}
+    \right)}_{\gamma} - \underbrace{\frac{1}{N} \sum_{i=1}^N H_a
+    (x_{ij})}_{\bar \alpha}\,,
+\end{equation}
+where $x$ are the community data. Alternatively we can use Hill
+numbers $N_a$ in place of $H_a$. The first includes both the
+within-unit diversity and the between-unit differences and represents
+the overall diversity also known as the gamma diversity, and the
+second term is the averaged within-site diversity, and the equation is
+of the form $\beta = \gamma -\bar \alpha$ which seems to imply
+additive partitioning of diversity. However, Rényi diversities are on
+$\log$ scale which translates a multiplicative model into an additive
+model. If you use Hill numbers in eq.~\ref{eq:partition}, the model is
+truly additive.
+
+\subsection{Equalizing Observations}
+\label{sec:equalize}
+
+The total pooled diversity ($\gamma$) in eq.~\ref{eq:partition}
+includes both the within-unit diversity ($\alpha$) and between-unit
+differences ($\beta$). This requires that pooled diversity really is
+additive: it maintains the within-unit diversity and adds between-unit
+differences. This really seem to be the case with Renyi diversities,
+but not necessarily for the Hill numbers beyond $N_0 = S$ (species
+richness). However, if equalize the sampling units, the
+additivity is greatly improved. Equalization scales units with
+different total abundances to a more similar magnitude for pooling,
+but does not influence their alpha diversities. The suggested
+equalization is dependent on the scale $a$ of the Renyi diversity, and
+all values for a unit are divided by weight
+\begin{equation}
+  \label{eq:equalize}
+  w_i = \left( \sum_{j=1}^S x_{ij}^a \right)^{1/a}\,.
+\end{equation}
+For $a=1$ (Shannon diversity) $w$ scales to unit sum, for $a=2$
+(Simpson diversity) $w$ scales to unit sum of squares (norm), and for
+$a=\infty$ (Berger-Parker diversity) $w$ is the maximum for each
+sampling unit. No equalization is needed for $a=0$ (species
+richness). 
+
+\section{Other Methods}
+
+One reason for writing this vignette was to find out if the
+\code{diverclust} function re-invents an existing method. Information
+Analysis \cite{WilliamsEa66, LanceWilliams66} that is implemented as
+function \code{infodist} in the \pkg{natto} package.
+
+\subsection{Clustering Based on Information Analysis}
+
+Information analysis can only analyse binary community data
+matrix. The information content $I$ of a cluster of $M$ sites is
+defined as \cite{WilliamsEa66, LanceWilliams66}: 
+\begin{multline}
+  \label{eq:information}
+  I = S M \log M \\ - \sum_{j=1}^S Mp_j \log Mp_j + M(1-p_j) \log M(1-p_j)\,,
+\end{multline}
+where $p_j$ is the relative frequency of species $j$ in the
+cluster. The contribution to $I$ is 0 for species absent from the
+cluster ($p=0$) and for species present on every unit in the cluster
+($p=1$), and it is maximal for species with frequency $p=0.5$. The
+clustering minimizes the information criterion $I$ and therefore it
+tries to produce clusters where species are either absent or nearly
+absent, or constant or nearly so. This often produces clusters that
+are easy to interpret in floristic terms.
+
+The clustering is produced similarly is in \code{diverclust}: two
+sampling units or clusters are pooled, the species frequencies are
+recalculated, and the information content with the pooled group and
+all other groups are re-evaluated. The most important difference is
+that the groups selected for merging is not not the one with lowest
+$I$, but the group that gives the lowest increase $\Delta I$. The
+merge still happens at the level of pooled new unit $I$, and the
+clusters are not formed in the order of their merge heights. This
+conflicts with \R{} conventions, and the \code{infoclust} function
+updates the merge table to correspond to the merge heights. 
+
+\subsection{Dissimilarity Measures}
+
+The diversity clustering methods can also be expressed as
+dissimilarity measures for two pooled sampling units. Such
+dissimilarity measures do not produce the diversity clustering,
+because the indices cannot be directly updated two dissimilarities
+between clusters, but they must be updated with the original
+data. However, it may be instructive to compare these indices with
+common dissimilarity measures. In this chapter we see how the
+diversity measures can be expressed as dissimilarities with binary
+data. 
+
+This defines a community with maximum equitability, so that all Renyi
+indices will be $N = \log S$ and Hill numbers $H = S$ irrespective of
+the Rényi scale.  average alpha diversity for two sampling units with
+$S_1$ and $S_2$ species is
+\begin{align}
+  \bar \alpha_H &= \tfrac{1}{2}(\log S_1 + \log S_2)\\
+  \bar \alpha_N &= \tfrac{1}{2}(S_1 + S_2)\,.
+\end{align}
+In two sampling units of $S_1$ and $S_2$ species and $J$ shared
+species, there will be $S_1 + S_2 - 2J$ species that occur only one of
+the units and with proportion $p = \frac{1}{S_1 + S_2}$ and $J$
+species that occur in both sampling units with
+$p = \frac{2}{S_1 + S_2}$.  The general form partition of
+eq.~\ref{eq:partition} of distances between two binary observations
+with Rényi diversity (eq.~\ref{eq:renyi}) is
+\begin{multline}
+  d(H_a) = \frac{1}{1-a} [\log(S_1+S_2 + (2^a - 2) J) \\- a \log (S_1+S_2)] - \bar \alpha_H
+\end{multline}
+Some special cases simplify into more compact forms:
+\begin{align}
+  d(H_0) &= \log(S_1 + S_2 -J) - \bar \alpha_H\\ 
+         &= \log \left(\frac{A+B-J}{\sqrt{S_1 S_2}} \right) \\ 
+  d(N_0) &= \tfrac{1}{2}(S_1 + S_2 - 2J)\\
+           &= \bar \alpha_N - J\\
+  d(H_1) &= \log(S_1 + S_2) - \frac{J \log 4}{S_1+S_2} - \bar \alpha_H\\
+  d(H_2) &= 2 \log (S_1+S_2) - \log(S_1 + S_2 + 2J) - \bar \alpha_H\\
+  d(N_2) &= \frac{(S_1 + S_2)^2}{S_1 + S_2 + 2J}  - \bar \alpha_N\\
+  d(H_\infty) &= \log(S_1 + S_2) - \log 2 - \bar \alpha_H\\
+  d(N_\infty) &= 0 \,.
+\end{align}
+
+\bibliography{diverclust}
 
 \end{document}
