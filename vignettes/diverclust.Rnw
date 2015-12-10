@@ -67,9 +67,14 @@ The main steps are:
 \subsection{Measurement of Diversity}
 \label{sec:diversity}
 
-The \code{diverclust} function uses \pkg{vegan} function \code{renyi}
-to evaluate any Rényi diversity or the corresponding Hill
-number.  R{\'e}nyi diversity of order $a$ is \cite{Hill73number}:
+Diversity indices are based on proportional abundances $p_j$ of for
+species $j = 1 \ldots S$, where $S$ is the number of species. The
+species proportions are normally found from community matrix
+$\{x_{ij}\}$ by dividing by the sum of row sums
+$p_j = x_{ij}/\sum_{i=1}^N x_{ij}$.  The \code{diverclust} function
+uses \pkg{vegan} function \code{renyi} to evaluate any Rényi diversity
+or the corresponding Hill number.  R{\'e}nyi diversity of order $a$ is
+\cite{Hill73number}:
 \begin{equation}
   \label{eq:renyi}
 H_a = \frac{1}{1-a} \log \sum_{j=1}^S p_j^a \,,
@@ -78,7 +83,7 @@ and the corresponding Hill number is $N_a = \exp(H_a)$.  Many common
 diversity indices are special cases of Hill numbers: $N_0 = S$,
 $N_1 = \exp(H')$, $N_2 = 1/\sum_{j=1}^S p_j^2$, and $N_\infty = 1/(\max p_j)$. The
 corresponding R\'{e}nyi diversities are $H_0 = \log(S)$, $H_1 = H'$,
-$H_2 = - \log(\sum p_i^2)$, and $H_\infty = -\log(\max p_i)$.
+$H_2 = - \log(\sum p_j^2)$, and $H_\infty = -\log(\max p_j)$.
 
 The beta diversity is defined as an increase of diversity when pooling
 sampling units. Pooling happens by summing up abundance values of
@@ -126,6 +131,26 @@ For $a=1$ (Shannon diversity) $w$ scales to unit sum, for $a=2$
 $a=\infty$ (Berger-Parker diversity) $w$ is the maximum for each
 sampling unit. No equalization is needed for $a=0$ (species
 richness). 
+
+\subsection{Clustering Based on gamma Diversity}
+
+If we omit the $\bar \alpha$ term for average alpha diversity in
+eq.~\ref{eq:partition}, we can base the clustering on total or gamma
+diversity. It may be difficult to see what would be the utility of such a
+clustering, but perhaps it could be used to form low-diversity classes
+that differ from each other. 
+
+\subsection{Implementation}
+
+Function \code{diverclust} implements beta and gamma diversity
+clustering as described above. The following options can be used to
+modify its behaviour:
+\begin{itemize}
+  \item The scale $a$ of Rényi diversity (eq.~\ref{eq:renyi}) can be given.
+  \item The equalization of eq.~ref{eq:equalize} can be turned off or on.
+  \item beta or gamma diversity clustering can be selected.
+  \item Either Rényi diversities or Hill numbers can be selected.
+\end{itemize}
 
 \section{Other Methods}
 
