@@ -147,7 +147,7 @@ clustering as described above. The following options can be used to
 modify its behaviour:
 \begin{itemize}
   \item The scale $a$ of Rényi diversity (eq.~\ref{eq:renyi}) can be given.
-  \item The equalization of eq.~ref{eq:equalize} can be turned off or on.
+  \item The equalization of eq.~\ref{eq:equalize} can be turned off or on.
   \item beta or gamma diversity clustering can be selected.
   \item Either Rényi diversities or Hill numbers can be selected.
 \end{itemize}
