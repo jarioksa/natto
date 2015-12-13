@@ -4,7 +4,8 @@
 #' beta deiversity or gamma diversity.
 #'
 #' @inheritParams diverdist
-#' @param trace Trace calculations.
+#' @param trace Trace calculations. Either logical or an integer:
+#' \code{trace=2} also traces merges.
 #'
 #' @details The function forms clusters so that pooled diversity or
 #' its change to the baseline alpha diversity is minimized at each
@@ -67,7 +68,7 @@
         dh[,g2] <- NA
         cli[g2] <- NA
         base[g1] <- w[1] * base[g1] + w[2] * base[g2]
-        if (trace)
+        if (trace > 1)
             cat(lev,": ", merge[lev,], " at ", height[lev], "\n")
         ## update pooled diversities for recently pooled data
         for(i in 1:nrow(x)) {
