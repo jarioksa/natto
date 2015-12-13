@@ -49,7 +49,6 @@
     if (equalize) {
         x <- renyiEqualize(x, renyi = renyi)
     }
-    cli <- seq_len(nrow(x))
     dh <- matrix(NA, nrow(x), nrow(x))
     ## for beta diversity we need 'base' of alpha diversities
     if (beta)
@@ -57,11 +56,12 @@
     else
         alpha <- numeric(nrow(x))
     ## pooled (beta) diversities of all n*(n-1)/2 pairs of sites.
-    for(i in 2:length(cli))
-        for(j in 1:(i-1)) {
-            dh[i,j] <- renyi(x[i,]+x[j,], scales = renyi, hill = hill)
-            dh[i,j] <- dh[i,j] - (alpha[i] + alpha[j])/2
-        }
+    dh[lower.tri(dh)] <-
+        do.call(c, lapply(seq_len(nrow(x)-1), function(i)
+            renyi(sweep(x[-seq_len(i),,drop =FALSE], 2, x[i,], "+"),
+                  scale = renyi, hill = hill)))
+    if (beta)
+        dh <- dh - outer(alpha, alpha, "+")/2
     ## make to 'dist'
     dh <- as.dist(dh)
     ## method name
