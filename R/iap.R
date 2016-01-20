@@ -12,11 +12,12 @@
     sim <- numeric(permutations)
     for (i in 1:ntake) {
         k <- idx[i]
-        q <- mean(spno[comm[,k]>0])
+        othersp <- spno - (comm[,k] > 0)
+        q <- mean(othersp[comm[,k]>0])
         out[i,2] <- q 
         out[i,1] <- freq[k]
         for (j in 1:permutations)
-            sim[j] <- mean(sample(spno, freq[k], prob=spno))
+            sim[j] <- mean(sample(othersp, freq[k], prob=othersp))
         out[i,3] <- mean(sim)
         out[i,4:5] <- quantile(sim, c(0.05, 0.95))
         p <- if (q < median(sim)) sum(q < sim) else sum(q > sim)
