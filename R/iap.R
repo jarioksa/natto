@@ -19,9 +19,9 @@
         for (j in 1:permutations)
             sim[j] <- mean(sample(othersp, freq[k], prob=othersp))
         out[i,3] <- mean(sim)
-        out[i,4:5] <- quantile(sim, c(0.05, 0.95))
-        p <- if (q < median(sim)) sum(q < sim) else sum(q > sim)
-        out[i,6] <- min(1, 2*(1 - p/permutations))
+        out[i,4:5] <- quantile(c(sim, q), c(0.05, 0.95))
+        p <- if (q < median(sim)) sum(q >= sim) else sum(q <= sim)
+        out[i,6] <- min(1, (2*p+1)/(permutations+1))
     }
     class(out) <- "iap"
     out
