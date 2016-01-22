@@ -15,8 +15,15 @@
 #' scaled weighted sum of species indicator values.
 #'
 #' Function \code{iapq} finds the \eqn{Q} values for all species in a
-#' community data set. This is a general measure of indicator value
-#' for species richness and can well be used outside lichen
+#' community data set. Function \code{iap} applies these values for a
+#' community data set to evalute the IAP values for each site. The
+#' species are matched by names. LeBlanc & De Sloover (1970) used
+#' scaled abundance values and divided the weighted sum by 10, but
+#' this is not done in the current function, but this is left to the
+#' user.
+#'
+#' Function \code{iapq} is a general measure of indicator value for
+#' species richness and can well be used outside lichen
 #' bioindication. The \eqn{Q} value is the average species richness in
 #' sampling units where the species is present, excluding the species
 #' itself from the richness. For rare species, \eqn{Q} is based on
@@ -73,6 +80,16 @@
     }
     class(out) <- "iapq"
     out
+}
+
+#' @param iapq Result of \code{iapq}.
+#' @rdname iap
+#' @export
+`iap` <-
+    function(comm, iapq)
+{
+    comm <- as.matrix(comm[, rownames(iapq)])
+    drop(comm %*% iapq[, 2, drop=FALSE])
 }
 
 #' @importFrom graphics matlines
