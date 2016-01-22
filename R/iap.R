@@ -99,7 +99,7 @@
 #' @param object \code{iapq} result object.
 #' @rdname iap
 #' @export
-summary.iapq` <-
+`summary.iapq` <-
     function (object, ...) 
 {
     x <- object[object[,6] <= 0.1,]
