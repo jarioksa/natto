@@ -67,7 +67,7 @@ same size as the frequency (number of occurrence) of the focal
 species and finding the average richness (without the focal
 species) in these samples. Because species are more likely to be
 present in species-rich sampling units than in species-poor, the
-random sampling uses the observed species richness (without the
+random sampling uses the observed species richness (with the
 focal species) as weights in random sampling. Testing is two-sided
 and the number of greater or less random values is multiplied with
 two. The observed value of \eqn{Q} is included in the random sample

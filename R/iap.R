@@ -34,7 +34,7 @@
 #' species and finding the average richness (without the focal
 #' species) in these samples. Because species are more likely to be
 #' present in species-rich sampling units than in species-poor, the
-#' random sampling uses the observed species richness (without the
+#' random sampling uses the observed species richness (with the
 #' focal species) as weights in random sampling. Testing is two-sided
 #' and the number of greater or less random values is multiplied with
 #' two. The observed value of \eqn{Q} is included in the random sample
@@ -72,7 +72,7 @@
         out[i,2] <- q 
         out[i,1] <- freq[k]
         for (j in 1:permutations)
-            sim[j] <- mean(sample(othersp, freq[k], prob=othersp))
+            sim[j] <- mean(sample(othersp, freq[k], prob=spno))
         out[i,3] <- mean(sim)
         out[i,4:5] <- quantile(c(sim, q), c(0.05, 0.95))
         p <- if (q < median(sim)) sum(q >= sim) else sum(q <= sim)
