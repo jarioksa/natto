@@ -46,8 +46,8 @@
 #' @importFrom stats median quantile
 #' @rdname iap
 #' @export
-"iap" <-
-    function (comm, freq.min=20, permutations=1000) 
+`iap` <-
+    function (comm, freq.min = 5, permutations = 999)
 {
     spno <- rowSums(comm > 0)
     freq <- colSums(comm > 0)
@@ -80,7 +80,7 @@
 #' @param \dots Other arguments to the function.
 #' @rdname iap
 #' @export
-"plot.iap" <-
+`plot.iap` <-
     function (x, ...) 
 {
     plot.default(x, ...)
@@ -89,7 +89,7 @@
 }
 
 #' @importFrom stats printCoefmat
-"print.iap" <-
+`print.iap` <-
     function (x, ...) 
 {
     printCoefmat(x, ...)
@@ -99,7 +99,7 @@
 #' @param object \code{iap} result object.
 #' @rdname iap
 #' @export
-"summary.iap" <-
+summary.iap` <-
     function (object, ...) 
 {
     x <- object[object[,6] <= 0.1,]
