@@ -14,14 +14,14 @@
 #' present, and then finds the IAP values for each sampling unit as
 #' scaled weighted sum of species indicator values.
 #'
-#' Function \code{iap} finds the \eqn{Q} values for all species in a
+#' Function \code{iapq} finds the \eqn{Q} values for all species in a
 #' community data set. This is a general measure of indicator value
 #' for species richness and can well be used outside lichen
 #' bioindication. The \eqn{Q} value is the average species richness in
 #' sampling units where the species is present, excluding the species
 #' itself from the richness. For rare species, \eqn{Q} is based on
 #' small sample size, and is therefore more variable than for common
-#' species. The \code{iap} function assesses the non-randomness
+#' species. The \code{iapq} function assesses the non-randomness
 #' (\sQuote{significance}) of \eqn{Q} by taking random samples of the
 #' same size as the frequency (number of occurrence) of the focal
 #' species and finding the average richness (without the focal
@@ -46,7 +46,7 @@
 #' @importFrom stats median quantile
 #' @rdname iap
 #' @export
-`iap` <-
+`iapq` <-
     function (comm, freq.min = 5, permutations = 999)
 {
     spno <- rowSums(comm > 0)
@@ -71,16 +71,16 @@
         p <- if (q < median(sim)) sum(q >= sim) else sum(q <= sim)
         out[i,6] <- min(1, (2*p+1)/(permutations+1))
     }
-    class(out) <- "iap"
+    class(out) <- "iapq"
     out
 }
 
 #' @importFrom graphics matlines
-#' @param x \code{iap} result object.
+#' @param x \code{iapq} result object.
 #' @param \dots Other arguments to the function.
 #' @rdname iap
 #' @export
-`plot.iap` <-
+`plot.iapq` <-
     function (x, ...) 
 {
     plot.default(x, ...)
@@ -89,23 +89,23 @@
 }
 
 #' @importFrom stats printCoefmat
-`print.iap` <-
+`print.iapq` <-
     function (x, ...) 
 {
     printCoefmat(x, ...)
     invisible(x)
 }
 
-#' @param object \code{iap} result object.
+#' @param object \code{iapq} result object.
 #' @rdname iap
 #' @export
-summary.iap` <-
+summary.iapq` <-
     function (object, ...) 
 {
     x <- object[object[,6] <= 0.1,]
     i <- order(x[,2])
     x <- x[i,]
-    class(x) <- "iap"
+    class(x) <- "iapq"
     x
 }
 
