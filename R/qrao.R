@@ -1,8 +1,8 @@
 #' Rao's Quadratic Entropy
 #'
-#' Rao's quadratic entropy is a generalization of Simpson's (or Gini's
-#' and Simpson's) diversity index to a situation where species are not
-#' completely independent. Simpson's diversity index is the
+#' Rao's quadratic entropy (Rao 1982) is a generalization of Simpson
+#' (or Gini-Simpson) diversity index to a situation where species are
+#' not completely independent. Simpson's diversity index is the
 #' probability that two random species are different, but in Rao's
 #' index the magnitude of difference (\eqn{0..1}) is used as a weight
 #' to these probabilities.
@@ -15,6 +15,19 @@
 #' Simpson's index.
 #'
 #' @return Vector of Rao's quadratic entropy values.
+#'
+#' @references Rao, C.R. (1982) Diversity and dissimilarity
+#' coefficients: a unified approach. \emph{Theoretical Population
+#' Biology} 21, 24--43.
+#'
+#' @seealso There are other implementations of this function in
+#' \R. Most notably function \code{\link[ade4]{divc}} in \pkg{ade4}.
+#' 
+#' @examples
+#' if (require(vegan)) {
+#' data(dune, dune.phylodis)
+#' qrao(dune, dune.phylodis)
+#' }
 #' 
 #' @importFrom vegan decostand
 #'
