@@ -1,4 +1,4 @@
-#' Rao's Quadratic Entropy
+#' Rao's Quadratic Entropy and Dissimilarity
 #'
 #' Rao's quadratic entropy (Rao 1982) is a generalization of Simpson
 #' (or Gini-Simpson) diversity index to a situation where species are
@@ -52,4 +52,17 @@
     for(i in seq_len(n))
         div[i] <- 2*sum(outer(x[i,], x[i,])[ltri] * d)
     div
+}
+
+#' @rdname qrao
+#' @export
+`distrao` <-
+    function(x, d)
+{
+    x <- as.matrix(x)
+    d <- as.matrix(as.dist(d))
+    H <- x %*% d %*% t(x)
+    diaH <- diag(H)
+    out <- H - outer(diaH, diaH, "+")/2
+    as.dist(out)
 }
