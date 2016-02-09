@@ -53,16 +53,30 @@
         div[i] <- 2*sum(outer(x[i,], x[i,])[ltri] * d)
     div
 }
-
+#' @param method Distance measure to be used.
 #' @rdname qrao
 #' @export
 `distrao` <-
-    function(x, d)
+    function(x, d, method = c("jensen", "euclidean", "standardized"))
 {
+    method <- match.arg(method)
+    ## Handle as in qrao
     x <- as.matrix(x)
-    d <- as.matrix(as.dist(d))
+    x <- decostand(x, "tot")
+    d <- as.dist(d)
+    if (max(d) > 1)
+        d <- d/max(d)
+    d <- as.matrix(d)
+    ## qrao found only diagonal elements, but now we need off-diagonal, too.
     H <- x %*% d %*% t(x)
+    ## Distances
+    if (method == "standardized")
+        H <- log(H)
     diaH <- diag(H)
     out <- H - outer(diaH, diaH, "+")/2
-    as.dist(out)
+    if (method == "euclidean")
+        out <- sqrt(2*out)
+    out <- as.dist(out)
+    attr(out, "method") <- paste("rao", method)
+    out
 }
