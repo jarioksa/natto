@@ -60,6 +60,7 @@
 #' if (require(vegan)) {
 #' data(dune, dune.phylodis)
 #' qrao(dune, dune.phylodis)
+#' tabasco(dune, hclust(distrao(dune, dune.phylodis)), hclust(dune.phylodis))
 #' }
 #' 
 #' @importFrom vegan decostand
