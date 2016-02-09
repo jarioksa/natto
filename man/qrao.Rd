@@ -47,7 +47,7 @@ they are divided by the observed maximum if this exceeds 1. The
 square roots of distances should be Euclidean, but this is not
 verified. They are Euclidean if there are no negative eigenvalues
 in the principal coordinates analysis, and \pkg{ade4} package has
-function \code{\link[ade4]{is.euclidean}} for a canned test. If all
+function \code{\link[ade4]{is.euclid}} for a canned test. If all
 distances are 1, species are independent and \code{qrao} will
 return Simpson diversity.
 
@@ -78,7 +78,7 @@ Biology} 21, 24--43.
 \seealso{
 There are other implementations of this function in
 \R. Most notably functions \code{\link[ade4]{divc}} and
-\code{\link{disc}} in \pkg{ade4}. However, these may square input
-dissimilarities and divide results by 2 depending on options.
+\code{\link[ade4]{disc}} in \pkg{ade4}. However, these may square
+input dissimilarities and divide results by 2 depending on options.
 }
 
