@@ -40,8 +40,9 @@
 #' the matrix.
 #' @param d Dissimilarities among species (columns). If some some
 #' dissimilarities are \eqn{>1}, these are divided with the maximum
-#' dissimilarity. If all \eqn{d = 1}, the result will be equal to
-#' Simpson's index.
+#' dissimilarity. If all \eqn{d = 1} or \code{d} is missing,
+#' \code{qrao} will return Simpson's index, and \code{qraodist} a
+#' basic dissimilarity index.
 #'
 #' @return \code{qrao} returns a vector of Rao's quadratic entropy
 #' values and \code{distrao} distances of class \code{"dist"}.
@@ -73,9 +74,13 @@
     ## dissimilarities among species columns. These should be in 0..1,
     ## where 1 imeans completely different species, and 0 completely
     ## identical.
-    d <- as.dist(d)
-    if (max(d) > 1)
-        d <- d/max(d)
+    if (missing(d)) {
+        d <- 1
+    } else {
+        d <- as.dist(d)
+        if (max(d) > 1)
+            d <- d/max(d)
+    }
     ## diversities
     n <- nrow(x)
     p <- ncol(x)
@@ -95,10 +100,15 @@
     ## Handle as in qrao
     x <- as.matrix(x)
     x <- decostand(x, "tot")
-    d <- as.dist(d)
-    if (max(d) > 1)
-        d <- d/max(d)
-    d <- as.matrix(d)
+    if (missing(d)) {
+        d <- matrix(1, ncol(x), ncol(x))
+        diag(d) <- 0
+    } else {
+        d <- as.dist(d)
+        if (max(d) > 1)
+            d <- d/max(d)
+        d <- as.matrix(d)
+    }
     ## qrao found only diagonal elements, but now we need off-diagonal, too.
     H <- x %*% d %*% t(x)
     ## Distances
