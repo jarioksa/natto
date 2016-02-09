@@ -9,6 +9,7 @@ the package is not a code kindergarten with guaranteed tenure track to
 
 Currently **natto** contains
 
+ * Rao's quadratic entropy and corresponding dissimilarities.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
  * IAP functions to find the indicator values for species and statistics
