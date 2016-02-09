@@ -120,5 +120,6 @@
         out <- sqrt(2*out)
     out <- as.dist(out)
     attr(out, "method") <- paste("rao", method)
+    attr(out, "call") <- match.call()
     out
 }
