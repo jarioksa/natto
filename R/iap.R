@@ -92,7 +92,7 @@
     drop(comm %*% iapq[, 2, drop=FALSE])
 }
 
-#' @importFrom graphics matlines
+#' @importFrom graphics matlines plot.default
 #' @param x \code{iapq} result object.
 #' @param \dots Other arguments to the function.
 #' @rdname iap
