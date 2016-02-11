@@ -102,8 +102,7 @@
     x <- as.matrix(x)
     x <- decostand(x, "tot")
     if (missing(d)) {
-        d <- matrix(1, ncol(x), ncol(x))
-        diag(d) <- 0
+        d <- 1 - diag(nrow = ncol(x))
     } else {
         d <- as.dist(d)
         if (max(d) > 1)
