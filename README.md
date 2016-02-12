@@ -23,3 +23,14 @@ Currently **natto** contains
    dissimilarities.
  * Casting unconstrained `vegan::rda()` result object to `stats::prcomp` 
    object.
+
+### Installation
+
+There are no binary packages available at the moment, but if you install 
+Hadley Wickham's **devtools** package from `CRAN`, you can install **natto**
+directly from `github`:
+```R
+install.packages("devtools") # if you have not yet installed devtools
+library(devtools)
+install_github("jarioksa/natto")
+```
