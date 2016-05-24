@@ -23,6 +23,8 @@ Currently **natto** contains
    dissimilarities.
  * Casting unconstrained `vegan::rda()` result object to `stats::prcomp` 
    object.
+ * Casting Delaunay triangulation from `deldir::deldir` result object to
+   `stats::dist` object.
 
 ### Installation
 
