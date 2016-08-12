@@ -1,4 +1,5 @@
 LICENSE
+Makefile
 ^README\.md$
 ^\.travis\.yml$
 ^travis-tool\.sh
