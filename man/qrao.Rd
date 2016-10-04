@@ -5,7 +5,7 @@
 \alias{qrao}
 \title{Rao's Quadratic Entropy and Dissimilarity}
 \usage{
-qrao(x, d)
+qrao(x, d, na.rm = FALSE)
 
 distrao(x, d, method = c("jensen", "euclidean", "standardized"))
 }
@@ -18,6 +18,8 @@ dissimilarities are \eqn{>1}, these are divided with the maximum
 dissimilarity. If all \eqn{d = 1} or \code{d} is missing,
 \code{qrao} will return Simpson's index, and \code{qraodist} a
 basic dissimilarity index.}
+
+\item{na.rm}{Should missing values be removed?}
 
 \item{method}{Distance measure to be used (see Details).}
 }

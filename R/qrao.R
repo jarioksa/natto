@@ -43,6 +43,7 @@
 #' dissimilarity. If all \eqn{d = 1} or \code{d} is missing,
 #' \code{qrao} will return Simpson's index, and \code{qraodist} a
 #' basic dissimilarity index.
+#' @param na.rm Should missing values be removed?
 #'
 #' @return \code{qrao} returns a vector of Rao's quadratic entropy
 #' values and \code{distrao} distances of class \code{"dist"}.
@@ -67,7 +68,7 @@
 #'
 #' @export
 `qrao` <-
-    function(x, d)
+    function(x, d, na.rm = FALSE)
 {
     ## handle community matrix
     x <- as.matrix(x)
@@ -79,8 +80,8 @@
         d <- 1
     } else {
         d <- as.dist(d)
-        if (max(d) > 1)
-            d <- d/max(d)
+        if (max(d, na.rm = na.rm) > 1)
+            d <- d/max(d, na.rm = na.rm)
     }
     ## diversities
     n <- nrow(x)
@@ -88,7 +89,7 @@
     ltri <- lower.tri(matrix(0, p, p))
     div <- numeric(n)
     for(i in seq_len(n))
-        div[i] <- 2*sum(outer(x[i,], x[i,])[ltri] * d)
+        div[i] <- 2*sum(outer(x[i,], x[i,])[ltri] * d, na.rm = na.rm)
     div
 }
 #' @param method Distance measure to be used (see Details).
