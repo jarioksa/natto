@@ -6,31 +6,34 @@
 }
 \description{
   Classification of \code{\link[vegan]{BCI}} species based on
-  APG III (2009) and Soltis \emph{et al.} (2011).
+  APG IV (2016) and Chase & Reveal (2009).
 }
 \usage{data("BCI.taxon")}
+
 \format{
   A data frame with 225 observations on the following 7 variables.
   \describe{
-    \item{\code{genus}}{Genus}
-    \item{\code{family}}{APG III family}
-    \item{\code{order}}{APG III order}
-    \item{\code{unrank1}}{unranked level above previous}
-    \item{\code{unrank2}}{unranked level above previous}
-    \item{\code{unrank3}}{unranked level above previous}
-    \item{\code{subclass}}{Either \code{eudicotyledons},
-      \code{Magnoliidae} or \code{Monocotyledons} which sometimes are
-      regarded as subclasses (but this may be too high a status). }
-  }
+    \item{\code{genus}}{Genus.}
+    \item{\code{family}}{APG IV family.}
+    \item{\code{order}}{APG IV order.}
+    \item{\code{superorder}}{Superorder (Chase & Reveal, 2009).}
+    \item{\code{unrank}}{Either \code{eudicotyledons},
+      \code{Magnoliidae} or \code{monocotyledons} which correspond to
+      traditional major clades, but have no formal status in the
+      classification of the subclass of Angiosperms. }
+   }
 }
 
 \references{
-  APG III [Angiosperm Phylogeny Group] (2009) An update of the Angiosperm
-  Phylogeny Group classification for the orders and families of flowering
-  plants: APG III. \emph{Bot. J. Linnean Soc.} \strong{161}: 105--121.
+  APG IV [Angiosperm Phylogeny Group] (2016) An update of the
+  Angiosperm Phylogeny Group classification for the orders and
+  families of flowering plants: APG IV. \emph{Bot. J. Linnean Soc.}
+  \strong{181}: 1--20.
 
-  Soltis, D.E \emph{et al.} (2011) Angiosperm phylogeny: 17 genes, 640
-  taxa. \emph{Amer. J. Bot.} \strong{98}: 704--730.
+  Chase, M.W. & Reveal, J. L. (2009) A phylogenetic classification of
+  the land plants to accompany APG III. \emph{Bot. J. Linnean Soc.}
+  \strong{161}: 122--127.
+
 }
 \examples{
 data(BCI.taxon)
