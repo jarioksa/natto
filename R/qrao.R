@@ -16,13 +16,16 @@
 #' \eqn{k} are indices of species, \eqn{p} is the proportion of
 #' species in the sampling unit, and \eqn{d} are distances among
 #' species. The distances should be scaled to range \eqn{0...1}, and
-#' they are divided by the observed maximum if this exceeds 1. The
-#' square roots of distances should be Euclidean, but this is not
-#' verified. They are Euclidean if there are no negative eigenvalues
-#' in the principal coordinates analysis, and \pkg{ade4} package has
-#' function \code{\link[ade4]{is.euclid}} for a canned test. If all
-#' distances are 1, species are independent and \code{qrao} will
-#' return Simpson diversity.
+#' they are divided by the observed maximum if this exceeds
+#' 1. Alternatively, the distances are divided by argument \code{dmax}
+#' instead of data maximum. Distances that are shorter than
+#' \code{dmax} are truncated to the maximum value. The square roots of
+#' distances should be Euclidean, but this is not verified. They are
+#' Euclidean if there are no negative eigenvalues in the principal
+#' coordinates analysis, and \pkg{ade4} package has function
+#' \code{\link[ade4]{is.euclid}} for a canned test. If all distances
+#' are 1, species are independent and \code{qrao} will return Simpson
+#' diversity.
 #'
 #' Function \code{distrao} finds distances based on quadratic entropy
 #' for sampling units. Rao (1982) suggested distance \eqn{d_{ij} =
@@ -34,19 +37,21 @@
 #' distance, and it is half of the squared Euclidean distance. The
 #' Euclidean distance can also be requested. In addition, Rao (1982)
 #' suggested a standardized distance that is based on logarithms of
-#' elements \eqn{H}. 
-#' 
-#' @param x Community data. The diversity is estimated for the rows of
-#' the matrix.
-#' @param d Dissimilarities among species (columns). If some some
-#' dissimilarities are \eqn{>1}, these are divided with the maximum
-#' dissimilarity. If all \eqn{d = 1} or \code{d} is missing,
-#' \code{qrao} will return Simpson's index, and \code{qraodist} a
-#' basic dissimilarity index.
-#' @param na.rm Should missing values be removed?
+#' elements \eqn{H}.
 #'
+#' @param x Community data. The diversity is estimated for the rows of
+#'     the matrix.
+#' @param d Dissimilarities among species (columns). If some some
+#'     dissimilarities are \eqn{>1}, these are divided with the
+#'     maximum dissimilarity. If all \eqn{d = 1} or \code{d} is
+#'     missing, \code{qrao} will return Simpson's index, and
+#'     \code{qraodist} a basic dissimilarity index.
+#' @param na.rm Should missing values be removed?
+#' @param dmax Scale dissimilarities by \code{dmax} (if
+#'     \code{dmax > max(d)}) or truncate dissimilarities at \code{dmax}
+#'     (if \code{dmax < max(d)}).
 #' @return \code{qrao} returns a vector of Rao's quadratic entropy
-#' values and \code{distrao} distances of class \code{"dist"}.
+#'     values and \code{distrao} distances of class \code{"dist"}.
 #'
 #' @references Rao, C.R. (1982) Diversity and dissimilarity
 #' coefficients: a unified approach. \emph{Theoretical Population
@@ -56,19 +61,21 @@
 #' \R. Most notably functions \code{\link[ade4]{divc}} and
 #' \code{\link[ade4]{disc}} in \pkg{ade4}. However, these may square
 #' input dissimilarities and divide results by 2 depending on options.
-#' 
+#'
 #' @examples
 #' if (require(vegan)) {
 #' data(dune, dune.phylodis)
 #' qrao(dune, dune.phylodis)
 #' tabasco(dune, hclust(distrao(dune, dune.phylodis)), hclust(dune.phylodis))
+#' ## regard lineages completely distinct beyond K/T (K/Pg) limit
+#' qrao(dune, dune.phylodis, dmax = 65.2)
 #' }
-#' 
+#'
 #' @importFrom vegan decostand
 #'
 #' @export
 `qrao` <-
-    function(x, d, na.rm = FALSE)
+    function(x, d, na.rm = FALSE, dmax)
 {
     ## handle community matrix
     x <- as.matrix(x)
@@ -80,7 +87,13 @@
         d <- 1
     } else {
         d <- as.dist(d)
-        if (max(d, na.rm = na.rm) > 1)
+        ## scale d by dmax > max(d) or truncate d at dmax < max(d)
+        if (!missing(dmax)) {
+            d <- d/dmax
+            if (max(d, na.rm = na.rm) > 1)
+                d[d > 1] <- 1
+        }
+        else if (max(d, na.rm = na.rm) > 1)
             d <- d/max(d, na.rm = na.rm)
     }
     ## diversities
