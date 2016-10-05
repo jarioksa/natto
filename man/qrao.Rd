@@ -7,7 +7,7 @@
 \usage{
 qrao(x, d, na.rm = FALSE, dmax)
 
-distrao(x, d, method = c("jensen", "euclidean", "standardized"))
+distrao(x, d, method = c("jensen", "euclidean", "standardized"), dmax)
 }
 \arguments{
 \item{x}{Community data. The diversity is estimated for the rows of
