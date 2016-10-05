@@ -92,8 +92,7 @@
             d <- d/dmax
             if (max(d, na.rm = na.rm) > 1)
                 d[d > 1] <- 1
-        }
-        else if (max(d, na.rm = na.rm) > 1)
+        } else if (max(d, na.rm = na.rm) > 1)
             d <- d/max(d, na.rm = na.rm)
     }
     ## diversities
@@ -109,7 +108,7 @@
 #' @rdname qrao
 #' @export
 `distrao` <-
-    function(x, d, method = c("jensen", "euclidean", "standardized"))
+    function(x, d, method = c("jensen", "euclidean", "standardized"), dmax)
 {
     method <- match.arg(method)
     ## Handle as in qrao
@@ -119,7 +118,12 @@
         d <- 1 - diag(nrow = ncol(x))
     } else {
         d <- as.dist(d)
-        if (max(d) > 1)
+        ## scale or truncate by dmax (NB, no NA allowed)
+        if (!missing(dmax)) {
+            d <- d/dmax
+            if (max(d) > 1)
+                d[d > 1] <- 1
+        } else if (max(d) > 1)
             d <- d/max(d)
         d <- as.matrix(d)
     }
