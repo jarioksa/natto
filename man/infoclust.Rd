@@ -71,4 +71,3 @@ analyses}). \emph{Comp. J.} 9, 60--64.
 Legendre, P. & Legendre, L. (2012). \emph{Numerical Ecology.} 3rd
 English Ed., Elsevier.
 }
-

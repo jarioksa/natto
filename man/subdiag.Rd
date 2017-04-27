@@ -12,4 +12,3 @@ subdiag(x)
 \description{
 Extract Subdiagonal from Dissimilarities or from a Square Matrix
 }
-

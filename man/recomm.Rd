@@ -26,4 +26,3 @@ than the original one.
 \author{
 Jari Oksanen
 }
-

@@ -16,4 +16,3 @@ as.prcomp(x)
 Function casts a result object of unconstrained
 \code{\link[vegan]{rda}} to a \code{\link{prcomp}} result object.
 }
-

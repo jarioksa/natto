@@ -27,4 +27,3 @@ Pennings, S.C., Gross, K.L., Grace, J.B., Gough, L., Fargione,
 J.E. & Clark, C.M. (2008). Rank clocks and plant community
 dynamics. \emph{Ecology} 89, 3534--3541.
 }
-

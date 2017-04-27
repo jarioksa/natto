@@ -12,4 +12,4 @@ Suggests: knitr, dendextend
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

@@ -26,12 +26,11 @@ probabilities. The process maintains average species richness and
 diversity, but Poisson distribution probably underestimates the
 real sampling variance.
 }
-\author{
-Jari Oksanen
-}
 \references{
 Good, I.J. (1953) The population frequencies of species
     and the estimation of population parameters. Biometrika 40,
     237--264.
 }
-
+\author{
+Jari Oksanen
+}

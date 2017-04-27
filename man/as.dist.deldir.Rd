@@ -21,4 +21,3 @@ Function casts a Delaunay triangulation from
 \code{\link{dist}} object, with numeric values for distances
 between neighbours and \code{NA} for other distances.
 }
-
