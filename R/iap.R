@@ -63,7 +63,7 @@
     idx <- seq(ncol(comm))[take]
     out <- matrix(NA, nrow=ntake, ncol=7)
     rownames(out) <- colnames(comm)[take]
-    colnames(out) <- c("Freq", "Q", "SES", "E(Q)", "5%", "95%", "Pr(Q)")
+    colnames(out) <- c("Freq", "Q", "SES", "E(Q)", "2.5%", "97.5%", "Pr(Q)")
     sim <- numeric(permutations)
     for (i in 1:ntake) {
         k <- idx[i]
@@ -77,7 +77,7 @@
         dev <- sd(sim)
         if (dev == 0) dev <- 1
         out[i,3] <- (q - out[i,4])/dev
-        out[i,5:6] <- quantile(c(sim, q), c(0.05, 0.95))
+        out[i,5:6] <- quantile(c(sim, q), c(0.025, 0.975))
         p <- if (q < median(sim)) sum(q >= sim) else sum(q <= sim)
         out[i,7] <- min(1, (2*p+1)/(permutations+1))
     }
