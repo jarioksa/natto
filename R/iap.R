@@ -50,7 +50,7 @@
 #' @param permutations Number of permutations to assess the randomized
 #' number of companion species.
 #'
-#' @importFrom stats median quantile
+#' @importFrom stats median sd quantile
 #' @rdname iap
 #' @export
 `iapq` <-
@@ -109,6 +109,7 @@
 }
 
 #' @importFrom stats printCoefmat
+#' @export
 `print.iapq` <-
     function (x, ...)
 {
