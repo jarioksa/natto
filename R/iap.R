@@ -63,7 +63,7 @@
     idx <- seq(ncol(comm))[take]
     out <- matrix(NA, nrow=ntake, ncol=7)
     rownames(out) <- colnames(comm)[take]
-    colnames(out) <- c("Freq", "Q", "SES", "E(Q)", "5%", "95%", "Pr(Q = E(Q))")
+    colnames(out) <- c("Freq", "Q", "SES", "E(Q)", "5%", "95%", "Pr(Q)")
     sim <- numeric(permutations)
     for (i in 1:ntake) {
         k <- idx[i]
@@ -112,7 +112,7 @@
 `print.iapq` <-
     function (x, ...)
 {
-    printCoefmat(x, ...)
+    printCoefmat(x, tst.ind = 2:6, ...)
     invisible(x)
 }
 
