@@ -40,17 +40,17 @@
 #' two. The observed value of \eqn{Q} is included in the random sample
 #' of species richness values both in assessing the \eqn{p}-value and
 #' in estimating the quantiles.
-#' 
+#'
 #' @references LeBlanc, S.C. & De Sloover, J. (1970) Relation between
 #' industrialization and the distribution and growth of epiphytic
 #' lichens and mosses in Montreal. \emph{Can. J. Bot.} 48, 1485--1496.
-#' 
+#'
 #' @param comm The community data frame.
 #' @param freq.min Minimum number of occurrences for analysed species.
 #' @param permutations Number of permutations to assess the randomized
 #' number of companion species.
 #'
-#' @importFrom stats median quantile
+#' @importFrom stats median sd quantile
 #' @rdname iap
 #' @export
 `iapq` <-
@@ -61,22 +61,25 @@
     take <- freq >= freq.min
     ntake <- sum(take)
     idx <- seq(ncol(comm))[take]
-    out <- matrix(NA, nrow=ntake, ncol=6)
-    rownames(out) <- colnames(comm)[take] 
-    colnames(out) <- c("Freq", "Q", "E(Q)", "5%", "95%", "Pr(Q = E(Q))")
+    out <- matrix(NA, nrow=ntake, ncol=7)
+    rownames(out) <- colnames(comm)[take]
+    colnames(out) <- c("Freq", "Q", "SES", "E(Q)", "2.5%", "97.5%", "Pr(Q)")
     sim <- numeric(permutations)
     for (i in 1:ntake) {
         k <- idx[i]
         othersp <- spno - (comm[,k] > 0)
         q <- mean(othersp[comm[,k]>0])
-        out[i,2] <- q 
+        out[i,2] <- q
         out[i,1] <- freq[k]
         for (j in 1:permutations)
             sim[j] <- mean(sample(othersp, freq[k], prob=spno))
-        out[i,3] <- mean(sim)
-        out[i,4:5] <- quantile(c(sim, q), c(0.05, 0.95))
+        out[i,4] <- mean(sim)
+        dev <- sd(sim)
+        if (dev == 0) dev <- 1
+        out[i,3] <- (q - out[i,4])/dev
+        out[i,5:6] <- quantile(c(sim, q), c(0.025, 0.975))
         p <- if (q < median(sim)) sum(q >= sim) else sum(q <= sim)
-        out[i,6] <- min(1, (2*p+1)/(permutations+1))
+        out[i,7] <- min(1, (2*p+1)/(permutations+1))
     }
     class(out) <- "iapq"
     out
@@ -98,18 +101,19 @@
 #' @rdname iap
 #' @export
 `plot.iapq` <-
-    function (x, ...) 
+    function (x, ...)
 {
     plot.default(x, ...)
     i <- order(x[,1])
-    matlines(x[i,1], x[i,3:5], lty=c(1,2,2), ...)
+    matlines(x[i,1], x[i,4:6], lty=c(1,2,2), ...)
 }
 
 #' @importFrom stats printCoefmat
+#' @export
 `print.iapq` <-
-    function (x, ...) 
+    function (x, ...)
 {
-    printCoefmat(x, ...)
+    printCoefmat(x, tst.ind = 2:6, ...)
     invisible(x)
 }
 
@@ -117,9 +121,9 @@
 #' @rdname iap
 #' @export
 `summary.iapq` <-
-    function (object, ...) 
+    function (object, ...)
 {
-    x <- object[object[,6] <= 0.1,]
+    x <- object[object[,7] <= 0.1,]
     i <- order(x[,2])
     x <- x[i,]
     class(x) <- "iapq"
