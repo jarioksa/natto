@@ -89,7 +89,7 @@
             }
         }
     if (axes)
-        axis(2, at = pretty(range(height)), ...)
+        axis(2, at = pretty(range(c(0, height))), ...)
     if (frame.plot)
         box(...)
     if (ann) {
