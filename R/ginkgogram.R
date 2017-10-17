@@ -24,14 +24,18 @@
 #' leaves are drawn as fans with base proportional to weights (or
 #' sizes) of leaves.
 #'
-#' @param An object of the type produced by \code{\link{hclust}}.
-#' @param A character vector of labels for te leaves of the tree.
+#' @param x An object of the type produced by \code{\link{hclust}}.
+#' @param labels A character vector of labels for te leaves of the tree.
 #' @param check Logical indicating if the \code{x} should be checked
 #'     for validity.
 #' @param axes,frame.plot,ann Logical flags as in \code{\link{plot.default}}.
-#' @param main,sub,xlab,ylab Character strings to replace default annotation
+#' @param main,sub,xlab,ylab Character strings to replace default annotation.
+#' @param w Weights of leaves.
+#' @param col Colour of the fill of leaves.
 #' @param \dots Further graphical arguments
 
+#' @importFrom grDevices dev.flush dev.hold
+#' @importFrom graphics axis box plot.new polygon title
 #' @export
 `ginkgogram` <-
     function (x, labels = NULL, check = TRUE, axes = TRUE,
