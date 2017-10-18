@@ -31,3 +31,20 @@ Function is similar to standard \code{\link{hclust}}, but the
 leaves are drawn as fans with base proportional to weights (or
 sizes) of leaves.
 }
+\details{
+Function \code{ginkgogram} has two new arguments to
+    \code{\link{hclust}}: \code{w} for weights that give the base
+    width of leaves, and \code{col} that gives the colour of the
+    fill of leaves. The weights \code{w} must be numeric and
+    non-negative, and zero weight guarantees that the leaf is drawn
+    as a simple line similarly as in \code{\link{hclust}}.
+}
+\examples{
+## need vegan data sets
+if (require(vegan)) {
+data(dune, dune.phylodis, dune.taxon)
+cl <- hclust(dune.phylodis)
+ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder))
+}
+}
+
