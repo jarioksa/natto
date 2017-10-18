@@ -84,8 +84,9 @@
             if(merge[i,j] < 0) {
                 k <- which(x$order == -merge[i,j])
                 a <- fanw[x$order][k] / 2
-                polygon(c(ordr[k]-a, ordr[k]+a, ordr[k]), c(0,0,height[i]),
-                        col = col[-merge[i,j]])
+                if (a > 0)
+                    polygon(c(ordr[k]-a, ordr[k]+a, ordr[k]), c(0,0,height[i]),
+                            col = col[-merge[i,j]])
             }
         }
     if (axes)
