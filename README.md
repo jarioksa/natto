@@ -12,6 +12,8 @@ Currently **natto** contains
  * Rao's quadratic entropy and corresponding dissimilarities.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
+ * Plotting cluster dendrograms (`hclust` results) so that terminal
+   leaves are fans with base proportional to weight (size): `ginkgogram`.
  * IAP functions to find the indicator values for species and statistics
    for sites in Index of Atmospheric Purity. The main focus is in indicator
    values for species which are the number of companion species. These can
