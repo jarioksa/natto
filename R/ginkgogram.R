@@ -43,6 +43,9 @@
               sub = NULL, xlab = NULL, ylab = "Height", w, col, ...)
 {
     hang <- -1
+    ## check weights
+    if (!missing(w) && !isTRUE(all(w >= 0)))
+        stop("weights 'w' must be numeric and non-negative")
     merge <- x$merge
     if (check && !isTRUE(msg <- stats:::.validity.hclust(x, merge)))
         stop(msg)
