@@ -1,7 +1,7 @@
-#' Convex Hull Enclosing the Given Proportion of Points
+#' Convex Hull Enclosing a Given Proportion of Points
 #'
-#' Function finds a small convex hull enclosin a given proportion of
-#' points. The function works by removing point from the hull that
+#' Function finds a small convex hull enclosing a given proportion of
+#' points. The function works by removing the point from the hull that
 #' gives the largest reduction in the area of remaining hull until a
 #' desired number of points are removed (de Smith, Goodrich & Longley
 #' 2007). The function only works in 2D.
@@ -45,7 +45,7 @@
     pts[chull(pts),]
 }
 
-#" Find area of a polygon
+## Area of a polygon
 
 `polyarea` <- function(x) {
     x <- rbind(x, x[1,])
