@@ -47,4 +47,3 @@ cl <- hclust(dune.phylodis)
 ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder))
 }
 }
-
