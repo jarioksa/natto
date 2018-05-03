@@ -1,3 +1,4 @@
+#'
 #' Convex Hull Enclosing a Given Proportion of Points
 #'
 #' Function finds a small convex hull enclosing a given proportion of
@@ -6,6 +7,8 @@
 #' desired number of points are removed (de Smith, Goodrich & Longley
 #' 2007). The function only works in 2D.
 #'
+#' @encoding UTF-8
+#'
 #' @param pts Coordinates of points, a two-column matrix
 #' @param keep Proportion of points kept
 #'
@@ -13,6 +16,12 @@
 #'     progress). However, the current function is such that it can be
 #'     easily plugged into \code{\link[vegan]{ordihull}}
 #'     (\CRANpkg{vegan} package).
+#'
+#' The algorithm is naïve, and although it was found in literature (de
+#' Smith et al. 2007), it does not guarantee smallest possible hull:
+#' each single step is as large as possible given previous steps, but
+#' there is no guarantee that the sum of all steps is largest
+#' possible.
 #'
 #' @author Jari Oksanen
 #'
