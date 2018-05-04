@@ -19,9 +19,9 @@
 #'
 #' The algorithm is naïve, and although it was found in literature (de
 #' Smith et al. 2007), it does not guarantee smallest possible hull:
-#' each single step is as large as possible given previous steps, but
-#' there is no guarantee that the sum of all steps is largest
-#' possible.
+#' each single step gives largest possible reduction of hull given
+#' previous steps, but there is no guarantee that the sum of single
+#' large reductions gives smallest possible convex hull.
 #'
 #' @author Jari Oksanen
 #'
