@@ -1,12 +1,12 @@
 Package: natto
 Title: An Extreme 'vegan' Package of Experimental Code
-Version: 0.1
+Version: 0.2
 Authors@R: person(given = "Jari", family = "Oksanen",
                   role = c("cre","aut"),
                   email = "jhoksane@gmail.com")
 Description: Random code that is too experimental or
     too weird to be included in the vegan package.
-License: GPL-2
+License: MIT + file LICENCE
 Imports: vegan
 Suggests: knitr, dendextend
 VignetteBuilder: knitr
