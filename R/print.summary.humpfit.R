@@ -1,5 +1,6 @@
-"print.summary.humpfit" <-
-    function (x, ...) 
+#' @importFrom stats printCoefmat
+`print.summary.humpfit` <-
+    function (x, ...)
 {
     cat("\nHump-backed Null model of richness vs. productivity\n\n")
     cat("Family:", x$family, "\n")
@@ -15,7 +16,7 @@
     correl[!lower.tri(correl)] <- ""
     print(correl[-1, -3], quote = FALSE)
     cat("\nDiagnostics from nlm:\n")
-    cat("Number of iterations: ", x$iter, ", code: ", x$code, 
+    cat("Number of iterations: ", x$iter, ", code: ", x$code,
         "\n", sep = "")
     invisible(x)
 }

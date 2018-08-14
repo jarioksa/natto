@@ -1,5 +1,6 @@
-"humpfit" <-
-    function (mass, spno, family = poisson, start) 
+#' @importFrom stats family nlm poisson
+`humpfit` <-
+    function (mass, spno, family = poisson, start)
 {
     hump <- function(p, mass, spno, ...) {
         x <- ifelse(mass < p[1], mass/p[1], p[1] * p[1]/mass/mass)
@@ -25,9 +26,9 @@
     residuals <- spno - fv
     aic <- fit$minimum * 2 + 6
     rdf <- length(x) - 3
-    out <- list(nlm = fit, family = fam, y = spno, x = mass, 
-                coefficients = p, fitted.values = fv, aic = aic, rank = 3, 
-                df.residual = rdf, deviance = dev, residuals = residuals, 
+    out <- list(nlm = fit, family = fam, y = spno, x = mass,
+                coefficients = p, fitted.values = fv, aic = aic, rank = 3,
+                df.residual = rdf, deviance = dev, residuals = residuals,
                 prior.weights = rep(1, length(x)))
     class(out) <- c("humpfit", "glm")
     out

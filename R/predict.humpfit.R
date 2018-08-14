@@ -1,4 +1,5 @@
-"predict.humpfit" <-
+#' @importFrom stats fitted coef
+`predict.humpfit` <-
     function(object, newdata = NULL, ...)
 {
     if (is.null(newdata))

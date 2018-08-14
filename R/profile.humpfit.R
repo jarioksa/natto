@@ -1,3 +1,4 @@
+#' @importFrom stats coefficients qchisq qf nlm
 `profile.humpfit` <-
     function(fitted, parm=1:3, alpha=0.01, maxsteps = 20, del = zmax/5, ...)
 {

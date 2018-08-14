@@ -1,4 +1,5 @@
-"print.humpfit" <-
+#' @importFrom stats family coef deviance df.residual
+`print.humpfit` <-
     function(x, ...)
 {
     cat("\nHump-backed Null model of richness vs. productivity\n\n")

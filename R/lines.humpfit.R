@@ -1,4 +1,6 @@
-"lines.humpfit" <-
+#' @importFrom stats fitted predict
+#' @importFrom graphics lines
+`lines.humpfit` <-
     function(x, segments=101,  ...)
 {
     mass <- x$x
