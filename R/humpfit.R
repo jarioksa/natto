@@ -1,5 +1,10 @@
 #' No-interaction Model for Hump-backed Species Richness vs. Biomass
 #'
+#' Function \code{humpfit} fits a no-interaction model for species
+#' richness vs. biomass data (Oksanen 1996). This is a null model that
+#' produces a hump-backed response as an artifact of plant size and
+#' density.
+#'
 #' @param mass Biomass.
 #' @param spno Species richness.
 #' @param family Family of error distribution. Any
@@ -48,8 +53,9 @@
 #' The original model intended to show that there is no need to
 #' speculate about \dQuote{competition} and \dQuote{stress} (Al-Mufti
 #' et al. 1977), but humped response can be produced as an artifact of
-#' using fixed plot size for varying plant sizes and densities.  }
-#' \value{ The function returns an object of class \code{"humpfit"}
+#' using fixed plot size for varying plant sizes and densities.
+#'
+#' @return The function returns an object of class \code{"humpfit"}
 #' inheriting from class \code{"glm"}. The result object has specific
 #' \code{summary}, \code{predict}, \code{plot}, \code{points} and
 #' \code{lines} methods. In addition, it can be accessed by the
@@ -68,12 +74,12 @@
 #' Band, S.R. (1977) A quantitative analysis of shoot phenology and
 #' dominance in herbaceous vegetation. \emph{Journal of Ecology}
 #' 65,759--791.
-#'  
+#'
 #' Fisher, R.A., Corbet, A.S. & Williams, C.B. (1943) The relation
 #' between the number of species and the number of individuals in a
 #' random sample of of an animal population. \emph{Journal of Animal
 #' Ecology} 12, 42--58.
-#'  
+#'
 #' Oksanen, J. (1996) Is the humped relationship between species
 #' richness and biomass an artefact due to plot size? \emph{Journal of
 #' Ecology} 84, 293--295.
@@ -102,6 +108,7 @@
 #'    \code{\link{family}} models might become easier, too.
 #'    }
 #'
+#'
 #' @seealso \code{\link{fisherfit}}, \code{\link[MASS]{profile.glm}},
 #'     \code{\link[MASS]{confint.glm}}.
 #'
@@ -119,9 +126,9 @@
 #' plot(profile(sol, parm=1:2))
 #' confint(sol, parm=c(1,2))
 
-#' 
+#'
 #' @importFrom stats family nlm poisson
-#' @rdname humpfit 
+#' @rdname humpfit
 
 #' @export
 `humpfit` <-
