@@ -1,4 +1,8 @@
+#' @inheritParams summary.humpfit
+#' @param newdata Values of \code{mass} used in \code{predict}. The
+#'     original data values are used if missing.
 #' @importFrom stats fitted coef
+#' @rdname humpfit
 #' @export
 `predict.humpfit` <-
     function(object, newdata = NULL, ...)

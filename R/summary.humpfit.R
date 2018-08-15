@@ -1,4 +1,6 @@
+#' @param object Fitted result object.
 #' @importFrom stats coef AIC family deviance df.residual
+#' @rdname humpfit
 #' @export
 `summary.humpfit` <-
     function (object, ...)

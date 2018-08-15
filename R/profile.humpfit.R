@@ -1,4 +1,9 @@
+#' @param fitted Fitted result object.
+#' @param parm Profiled parameters.
+#' @param alpha,maxsteps,del Parameters for profiling range and
+#'     density (see Details).
 #' @importFrom stats coefficients qchisq qf nlm
+#' @rdname humpfit
 #' @export
 `profile.humpfit` <-
     function(fitted, parm=1:3, alpha=0.01, maxsteps = 20, del = zmax/5, ...)

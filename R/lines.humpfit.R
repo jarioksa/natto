@@ -1,5 +1,8 @@
+#' @inheritParams points.humpfit
+#' @param segments Number of segments used for lines.
 #' @importFrom stats fitted predict
 #' @importFrom graphics lines
+#' @rdname humpfit
 #' @export
 `lines.humpfit` <-
     function(x, segments=101,  ...)
