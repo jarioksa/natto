@@ -1,4 +1,5 @@
 #' @importFrom stats coef AIC family deviance df.residual
+#' @export
 `summary.humpfit` <-
     function (object, ...)
 {

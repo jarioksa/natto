@@ -1,4 +1,5 @@
 #' @importFrom stats family nlm poisson
+#' @export
 `humpfit` <-
     function (mass, spno, family = poisson, start)
 {

@@ -1,4 +1,5 @@
 #' @importFrom stats family coef deviance df.residual
+#' @export
 `print.humpfit` <-
     function(x, ...)
 {

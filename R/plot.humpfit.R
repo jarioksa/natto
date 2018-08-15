@@ -1,4 +1,5 @@
 #' @importFrom graphics plot points lines
+#' @export
 `plot.humpfit` <-
     function(x, xlab="Biomass", ylab="Species Richness", lwd=2, l.col="blue",
              p.col = 1, type="b", ...)

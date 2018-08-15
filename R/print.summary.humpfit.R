@@ -1,4 +1,5 @@
 #' @importFrom stats printCoefmat
+#' @export
 `print.summary.humpfit` <-
     function (x, ...)
 {

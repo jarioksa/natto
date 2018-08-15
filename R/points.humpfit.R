@@ -1,4 +1,5 @@
 #' @importFrom graphics points
+#' @export
 `points.humpfit` <-
     function(x, ...)
 {

@@ -1,5 +1,6 @@
 #' @importFrom stats fitted predict
 #' @importFrom graphics lines
+#' @export
 `lines.humpfit` <-
     function(x, segments=101,  ...)
 {

@@ -1,4 +1,5 @@
 #' @importFrom stats fitted coef
+#' @export
 `predict.humpfit` <-
     function(object, newdata = NULL, ...)
 {
