@@ -8,7 +8,7 @@ Description: Random code that is too experimental or
     too weird to be included in the vegan package.
 License: MIT + file LICENCE
 Imports: vegan
-Suggests: knitr, dendextend
+Suggests: knitr, dendextend, MASS
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
