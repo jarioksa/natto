@@ -12,4 +12,5 @@ Suggests: knitr, dendextend, MASS
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
+Encoding: UTF-8
 RoxygenNote: 6.1.0
