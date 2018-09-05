@@ -57,9 +57,18 @@
 #' ## Lance & Williams suggest a limit below which clustering is
 #' ## insignificant and should not be interpreted
 #' abline(h=qchisq(0.95, ncol(pond)), col=2)
+#' ## Spurn Point Scrub data
+#' data(spurn)
+#' cl <- infoclust(spurn)
+#' plot(cl, hang = -1)
+#' if (require(vegan)) {
+#' tabasco(spurn, cl)
+#' ## apply information clustering on species
+#' tabasco(spurn, cl, infoclust(t(spurn)))
+#' }
 #'
 #' @importFrom vegan designdist
-#' 
+#'
 
 #' @export
 `infoclust` <-
