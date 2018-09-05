@@ -34,7 +34,7 @@
     \item{\code{PlanlancC}}{\emph{Plantago lanceolata}}
     \item{\code{Verocham}}{\emph{Veronica chamaedrys}}
     \item{\code{Epilangu}}{\emph{Epilobium angustifolium} (as \emph{Chamaenerion})}
-    \item{\code{CeraglomB}}{\emph{Cerastium glomeratum} (as \emph{C. vulgatum})}
+    \item{\code{CerafontB}}{\emph{Cerastium fontanum} (as \emph{C. vulgatum})}
     \item{\code{Sambnigr}}{\emph{Sambucus nigra}}
     \item{\code{CirsvulgB}}{\emph{Cirsium vulgare}}
     \item{\code{Heraspho}}{\emph{Heracleum sphondylium}}
