@@ -52,7 +52,14 @@
         ## Raup-Crick with equal sampling probs
         "raup" = list(method = "1-phyper(J-1,A,P-A,B)", terms="binary"),
         ## 1 if no shared species, 0 if there is a shared species
-        "shared" = list(method = "J==0", terms = "binary")
+        "shared" = list(method = "J==0", terms = "binary"),
+        ## Hubalek 1982, Biol Rev 57, 669-689 adds (as distances):
+        "braunblanquet" = list(method = "1-J/pmax(A,B)", terms="binary"),
+        "simpson" = list(method = "1-J/pmin(A,B)", terms="binary"),
+        "sorgenfrei" = list(method = "1-J*J/A/B", terms="binary"),
+        "fager.mcgowan" = list(method = "0.5-J/sqrt(A*B)+pmax(A,B)/2",
+                               terms="binary"),
+        "mountford.init" = list(method = "2*J/(2*A*B-(A+B)*J)", terms="binary")
         )
 
     ind <- match.arg(method, names(index))
