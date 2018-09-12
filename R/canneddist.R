@@ -30,10 +30,10 @@
         "bray" =   list(method = "(A+B-2*J)/(A+B)", terms = "minimum"),
         "whittaker" =  list(method = "(A+B-2*J)/(A+B)", terms = "binary"),
         "steinhaus" = list(method = "(A+B-2*J)/(A+B)", terms = "minimum"),
-        "similarityratio" = list(method = "(A+B-2*J)/(A+B)", terms = "quadratic"),
         ## Another popular one
         "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary"),
         "ruzicka" = list(method = "(A+B-2*J)/(A+B-J)", terms = "minimum"),
+        "similarityratio" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
         ## Legendre & Legendre: metric distances
         "euclidean" = list(method = "sqrt(A+B-2*J)", terms = "quadratic"),
         "chord" = list(method = "sqrt(2*(1-J/sqrt(A*B)))", terms = "quadratic"),
