@@ -48,7 +48,12 @@
         "alt.kulczynski" = list(method = "(A+B-3*J)/(A+B-2*J)", terms = "binary"),
         ## Kulczynskis
         "kulczynski" = list(method =  "1-J/2/A-J/2/B", terms = "minimum"),
-        "bin.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary"))
+        "bin.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary"),
+        ## Raup-Crick with equal sampling probs
+        "raup" = list(method = "1-phyper(J-1,A,P-A,B)", terms="binary"),
+        ## 1 if no shared species, 0 if there is a shared species
+        "shared" = list(method = "J==0", terms = "binary")
+        )
 
     ind <- match.arg(method, names(index))
     z <- index[[ind]]
