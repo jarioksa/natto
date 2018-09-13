@@ -56,7 +56,7 @@
         "braunblanquet" = list(method = "1-J/pmax(A,B)", terms="binary"),
         "simpson" = list(method = "1-J/pmin(A,B)", terms="binary"),
         "sorgenfrei" = list(method = "1-J*J/A/B", terms="binary"),
-        "mountford.init" = list(method = "2*J/(2*A*B-(A+B)*J)", terms="binary")
+        "mountford.init" = list(method = "pmax(1-2*J/(2*A*B-(A+B)*J),0)", terms="binary")
         )
 
     ind <- match.arg(method, names(index))
