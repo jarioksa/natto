@@ -45,10 +45,9 @@
         "triplejaccard" = list(method = "(A+B-2*J)/(A+B+J)", terms = "binary"),
         "sokalsneath" = list(method = "2*(A+B-2*J)/(2*A+2*B-3*J)", terms="binary"),
         "russellrao" = list(method = "1-J/P", terms = "binary"),
-        "alt.kulczynski" = list(method = "(A+B-3*J)/(A+B-2*J)", terms = "binary"),
         ## Kulczynskis
         "kulczynski" = list(method =  "1-J/2/A-J/2/B", terms = "minimum"),
-        "bin.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary"),
+        "b.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary"),
         ## Raup-Crick with equal sampling probs
         "raup" = list(method = "1-phyper(J-1,A,P-A,B)", terms="binary"),
         ## 1 if no shared species, 0 if there is a shared species
