@@ -10,6 +10,7 @@ the package is not a code kindergarten with guaranteed tenure track to
 Currently **natto** contains
 
  * Rao's quadratic entropy and corresponding dissimilarities.
+ * Polar Ordination A.K.A. Bray-Curtis Ordination.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
  * beta and gamma diversity clustering.
