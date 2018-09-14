@@ -15,7 +15,7 @@
         ## Find the first endpoint (variance method)
         p1 <- which.max(apply(m, 2, var))
         ## Find the second endpoint (regression method)
-        p2 <- which.min(coef(lm(m ~ m[p1,]))[2,])
+        p2 <- which.min(cov(m[p1,],m))
         ## Project all points between these endpoints
         axes[,dim] <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
         ## Find the residual dissimilarities, with a guard against
