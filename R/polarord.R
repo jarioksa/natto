@@ -77,12 +77,11 @@
 #' @examples
 #'
 #' data(spurn)
-#' ## We still need vegan, but work for self-standing case
-#' if(require(vegan)) {
-#' dis <- vegdist(spurn)
+#' dis <- dist(spurn, method = "binary") ## Jaccard index
 #' ord <- polarord(dis)
-#' ordiplot(ord, type = "t")
-#' }
+#' ## add species scores
+#' sppscores(ord) <- spurn
+#' plot(ord)
 #'
 #' @importFrom stats var cov dist
 #'
