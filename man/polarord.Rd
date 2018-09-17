@@ -12,8 +12,16 @@ polarord(d, k = 2)
 \item{k}{Number of dimensions.}
 }
 \value{
-Currently the function returns only a matrix of ordination scores,
-but this will change.
+The function returns an object of class \code{"polarord"} with the
+following elements:
+\itemize{
+  \item \code{points}: The ordination scores.
+  \item \code{inertia}: Total inertia of the input dissimilarities.
+  \item \code{eig}: Eigenvalues of axes. These do not usually add up to
+     total inertia and may not be in strictly descending order.
+  \item \code{endpoints}: The indices (not the names) of the endpoints for
+     each axis.
+}
 }
 \description{
 Polar or Bray-Curtis ordination is a historic ordination method

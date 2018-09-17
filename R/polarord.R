@@ -50,8 +50,16 @@
 #'
 #' @return
 #'
-#' Currently the function returns only a matrix of ordination scores,
-#' but this will change.
+#' The function returns an object of class \code{"polarord"} with the
+#' following elements:
+#' \itemize{
+#'   \item \code{points}: The ordination scores.
+#'   \item \code{inertia}: Total inertia of the input dissimilarities.
+#'   \item \code{eig}: Eigenvalues of axes. These do not usually add up to
+#'      total inertia and may not be in strictly descending order.
+#'   \item \code{endpoints}: The indices (not the names) of the endpoints for
+#'      each axis.
+#' }
 #'
 #' @references
 #'
@@ -83,9 +91,17 @@
     function(d, k=2)
 {
     ## Create a zero matrix of ordination scores
-    axes <- matrix(0, attr(d, "Size"), k)
+    N <- attr(d, "Size")
+    axes <- matrix(0, N, k)
     colnames(axes) <- paste0("PO", seq_len(k))
     rownames(axes) <- attr(d, "Labels")
+    ## Get the total inertia: we divide with N to be consistent with
+    ## wcmdscale, cmdscale, dbrda and and capscale
+    inertia <- sum(d^2)/N
+    ## return eigenvalues and endpoints for each axis
+    ev <- numeric(k)
+    endpoints <- matrix(0, 2, k,
+                        dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
     ## Iterate through dimensions 1..k
     for(dim in seq_len(k)) {
         m <- as.matrix(d)
@@ -96,10 +112,17 @@
         ## the same results, but faster)
         p2 <- which.min(cov(m[p1,],m))
         ## Project all points between these endpoints
-        axes[,dim] <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
+        sco <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
         ## Find the residual dissimilarities, with a guard against
         ## negative residuals in semimetric indices & oblique axes
-        d <- sqrt(pmax(d^2 - dist(axes[,dim])^2,0))
+        d <- sqrt(pmax(d^2 - dist(sco)^2,0))
+        ## save the eigenvalue
+        ev[dim] <- sum(dist(sco)^2)/N
+        axes[,dim] <- sco
+        endpoints[,dim] <- c(p1,p2)
     }
-    axes
+    out <- list(points = axes, inertia = inertia, eig = ev,
+                endpoints = endpoints)
+    class(out) <- "polarord"
+    out
 }
