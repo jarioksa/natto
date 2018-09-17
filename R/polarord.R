@@ -126,3 +126,52 @@
     class(out) <- "polarord"
     out
 }
+
+#' @importFrom vegan ordiplot
+#' @param x \code{polarord} result.
+#' @param choices Axes shown.
+#' @param type Type of graph which may be \code{"t"} for text, \code{"p"}
+#'   for points or \code{"n"} for none (an empty plot).
+#' @param display Items displayed: \code{"sites"} are always available,
+#' but \code{"species"} only if they were added with sppscores.
+#' @param \dots Other arguments to the function (passed to
+#'   \code{\link[vegan]{ordiplot}}).
+#' @rdname polarord
+#' @export
+`plot.polarord` <-
+    function(x, choices = c(1, 2), type = "t", display, ...)
+{
+    if (missing(display))
+        if (is.null(x$species))
+            display <- "sites"
+        else
+            display <- c("sites", "species")
+    ordiplot(x, display = display, choices = choices, type = type, ...)
+}
+
+#' @importFrom vegan "sppscores<-" wascores
+#' @param object \code{polarord} result.
+#' @param value Community data to find the species scores.
+#' @details Function \code{sppscores} can be used to add species scores
+#'   to the ordination result.
+#' @rdname polarord
+#' @export
+`sppscores<-.polarord` <-
+        function(object, value)
+{
+    wa <- wascores(object$points, value, expand = TRUE)
+    attr(wa, "data") <- deparse(substitute(value))
+    object$species <- wa
+    object
+}
+
+#' @importFrom vegan eigenvals
+#' @rdname polarord
+#' @export
+`eigenvals.polarord` <-
+    function(x, ...)
+{
+    out <- x$eig
+    class(out) <- "eigenvals"
+    out
+}

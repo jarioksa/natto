@@ -2,14 +2,40 @@
 % Please edit documentation in R/polarord.R
 \name{polarord}
 \alias{polarord}
+\alias{plot.polarord}
+\alias{sppscores<-.polarord}
+\alias{eigenvals.polarord}
 \title{Polar (Bray-Curtis) Ordination}
 \usage{
 polarord(d, k = 2)
+
+\method{plot}{polarord}(x, choices = c(1, 2), type = "t", display, ...)
+
+\method{sppscores}{polarord}(object) <- value
+
+\method{eigenvals}{polarord}(x, ...)
 }
 \arguments{
 \item{d}{Dissimilarities or distances: a \code{\link{dist}} object.}
 
 \item{k}{Number of dimensions.}
+
+\item{x}{\code{polarord} result.}
+
+\item{choices}{Axes shown.}
+
+\item{type}{Type of graph which may be \code{"t"} for text, \code{"p"}
+for points or \code{"n"} for none (an empty plot).}
+
+\item{display}{Items displayed: \code{"sites"} are always available,
+but \code{"species"} only if they were added with sppscores.}
+
+\item{\dots}{Other arguments to the function (passed to
+\code{\link[vegan]{ordiplot}}).}
+
+\item{object}{\code{polarord} result.}
+
+\item{value}{Community data to find the species scores.}
 }
 \value{
 The function returns an object of class \code{"polarord"} with the
@@ -63,6 +89,9 @@ It is possible to use predefined endpoints instead of automatic
 selection. This can be useful for confirmatory analysis (McCune &
 Grace 2002). However, this is not (yet) implemented in this
 function (but contributions are welcome).
+
+Function \code{sppscores} can be used to add species scores
+  to the ordination result.
 }
 \examples{
 
