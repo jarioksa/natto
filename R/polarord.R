@@ -148,7 +148,7 @@
     ordiplot(x, display = display, choices = choices, type = type, ...)
 }
 
-#' @importFrom vegan "sppscores<-" wascores
+#' @importFrom vegan sppscores "sppscores<-" wascores
 #' @param object \code{polarord} result.
 #' @param value Community data to find the species scores.
 #' @details Function \code{sppscores} can be used to add species scores
