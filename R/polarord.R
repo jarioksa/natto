@@ -171,6 +171,8 @@
     function(x, ...)
 {
     out <- x$eig
+    names(out) <- colnames(x$points)
+    attr(out, "sumev") <- x$inertia
     class(out) <- "eigenvals"
     out
 }
