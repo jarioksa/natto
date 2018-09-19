@@ -130,6 +130,7 @@
 
 ### polarord methods
 
+#' @export
 `print.polarord` <-
     function(x, ...)
 {
