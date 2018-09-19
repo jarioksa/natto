@@ -13,9 +13,9 @@ polarord(d, k = 2, endpoints)
 
 \method{plot}{polarord}(x, choices = c(1, 2), type = "t", display, ...)
 
-sppscores.polarord(object) <- value
+\method{sppscores}{polarord}(object) <- value
 
-eigenvals.polarord(x, ...)
+\method{eigenvals}{polarord}(x, ...)
 }
 \arguments{
 \item{d}{Dissimilarities or distances: a \code{\link{dist}} object.}
