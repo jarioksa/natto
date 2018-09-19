@@ -101,6 +101,7 @@
     inertia <- sum(d^2)/N
     ## return eigenvalues and endpoints for each axis
     ev <- numeric(k)
+    names(ev) <- colnames(axes)
     endpoints <- matrix(0, 2, k,
                         dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
     ## Iterate through dimensions 1..k
@@ -196,7 +197,6 @@
     function(x, ...)
 {
     out <- x$eig
-    names(out) <- colnames(x$points)
     attr(out, "sumev") <- x$inertia
     class(out) <- "eigenvals"
     out
