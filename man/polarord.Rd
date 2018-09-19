@@ -4,21 +4,28 @@
 \alias{polarord}
 \alias{plot.polarord}
 \alias{sppscores<-.polarord}
+\alias{sppscores<-}
 \alias{eigenvals.polarord}
+\alias{eigenvals}
 \title{Polar (Bray-Curtis) Ordination}
 \usage{
-polarord(d, k = 2)
+polarord(d, k = 2, endpoints)
 
 \method{plot}{polarord}(x, choices = c(1, 2), type = "t", display, ...)
 
-\method{sppscores}{polarord}(object) <- value
+sppscores.polarord(object) <- value
 
-\method{eigenvals}{polarord}(x, ...)
+eigenvals.polarord(x, ...)
 }
 \arguments{
 \item{d}{Dissimilarities or distances: a \code{\link{dist}} object.}
 
 \item{k}{Number of dimensions.}
+
+\item{endpoints}{Indices (not names) of endpoints for axis
+one. This can be either a single integer for the first
+endpoint, and the second endpoint is found automatically, or a
+vector of two endpoints.}
 
 \item{x}{\code{polarord} result.}
 
@@ -47,6 +54,7 @@ following elements:
      total inertia and may not be in strictly descending order.
   \item \code{endpoints}: The indices (not the names) of the endpoints for
      each axis.
+  \item \code{call}: Function call.
 }
 }
 \description{
@@ -71,10 +79,17 @@ point to all other points. This selects a point at the margin of
 the main cloud of points, opposite to first endpoint. All points
 are projected on the axis between the endpoints using Euclidean
 geometry, and this gives the scores on a polar ordination
-axis. Then the effect of the  axis are removed by calculating
+axis. Then the effect of the axis are removed by calculating
 residual distances using Euclidean geometry. Ecological indices are
 usually semimetric, and negative residual distances can emerge, but
 these are taken as zero in the current function.
+
+The eigenvalues are estimated from the dispersion of points, and
+they are not necessarily in descending order. Usually only some
+first axes are reliable, and too high numbers of dimensions should
+be avoided. The inertia and eigenvalues give the average
+dispersion, and they are consistent with \code{\link[vegan]{dbrda}}
+and \code{\link[vegan]{capscale}}.
 
 Polar ordination is a historical method that is little used today,
 but several authors claim that it is a powerful method (see McCune
@@ -85,10 +100,10 @@ numerical utilities, the polar ordination is not faster than metric
 multidimensional scaling (\code{\link{cmdscale}},
 \code{\link[vegan]{wcmdscale}}).
 
-It is possible to use predefined endpoints instead of automatic
-selection. This can be useful for confirmatory analysis (McCune &
-Grace 2002). However, this is not (yet) implemented in this
-function (but contributions are welcome).
+It is possible to use predefined endpoints for axis 1 instead of
+automatic selection. This can be useful for confirmatory analysis
+(McCune & Grace 2002). If only one endpoint is given, the second
+one is chosen automatically.
 
 Function \code{sppscores} can be used to add species scores
   to the ordination result.
@@ -96,12 +111,13 @@ Function \code{sppscores} can be used to add species scores
 \examples{
 
 data(spurn)
-## We still need vegan, but work for self-standing case
-if(require(vegan)) {
-dis <- vegdist(spurn)
+dis <- dist(spurn, method = "binary") ## Jaccard index
 ord <- polarord(dis)
-ordiplot(ord, type = "t")
-}
+ord
+summary(eigenvals(ord))
+## add species scores
+sppscores(ord) <- spurn
+plot(ord)
 
 }
 \references{
