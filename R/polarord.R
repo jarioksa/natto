@@ -14,6 +14,10 @@
 
 #' @param d Dissimilarities or distances: a \code{\link{dist}} object.
 #' @param k Number of dimensions.
+#' @param endpoints Indices (not names) of endpoints for axis
+#'     one. This can be either a single integer for the first
+#'     endpoint, and the second endpoint is found automatically, or a
+#'     vector of two endpoints.
 #'
 #' @details
 #'
@@ -29,10 +33,17 @@
 #' the main cloud of points, opposite to first endpoint. All points
 #' are projected on the axis between the endpoints using Euclidean
 #' geometry, and this gives the scores on a polar ordination
-#' axis. Then the effect of the  axis are removed by calculating
+#' axis. Then the effect of the axis are removed by calculating
 #' residual distances using Euclidean geometry. Ecological indices are
 #' usually semimetric, and negative residual distances can emerge, but
 #' these are taken as zero in the current function.
+#'
+#' The eigenvalues are estimated from the dispersion of points, and
+#' they are not necessarily in descending order. Usually only some
+#' first axes are reliable, and too high numbers of dimensions should
+#' be avoided. The inertia and eigenvalues give the average
+#' dispersion, and they are consistent with \code{\link[vegan]{dbrda}}
+#' and \code{\link[vegan]{capscale}}.
 #'
 #' Polar ordination is a historical method that is little used today,
 #' but several authors claim that it is a powerful method (see McCune
@@ -43,15 +54,24 @@
 #' multidimensional scaling (\code{\link{cmdscale}},
 #' \code{\link[vegan]{wcmdscale}}).
 #'
-#' It is possible to use predefined endpoints instead of automatic
-#' selection. This can be useful for confirmatory analysis (McCune &
-#' Grace 2002). However, this is not (yet) implemented in this
-#' function (but contributions are welcome).
+#' It is possible to use predefined endpoints for axis 1 instead of
+#' automatic selection. This can be useful for confirmatory analysis
+#' (McCune & Grace 2002). If only one endpoint is given, the second
+#' one is chosen automatically.
 #'
 #' @return
 #'
-#' Currently the function returns only a matrix of ordination scores,
-#' but this will change.
+#' The function returns an object of class \code{"polarord"} with the
+#' following elements:
+#' \itemize{
+#'   \item \code{points}: The ordination scores.
+#'   \item \code{inertia}: Total inertia of the input dissimilarities.
+#'   \item \code{eig}: Eigenvalues of axes. These do not usually add up to
+#'      total inertia and may not be in strictly descending order.
+#'   \item \code{endpoints}: The indices (not the names) of the endpoints for
+#'      each axis.
+#'   \item \code{call}: Function call.
+#' }
 #'
 #' @references
 #'
@@ -69,37 +89,139 @@
 #' @examples
 #'
 #' data(spurn)
-#' ## We still need vegan, but work for self-standing case
-#' if(require(vegan)) {
-#' dis <- vegdist(spurn)
+#' dis <- dist(spurn, method = "binary") ## Jaccard index
 #' ord <- polarord(dis)
-#' ordiplot(ord, type = "t")
-#' }
+#' ord
+#' summary(eigenvals(ord))
+#' ## add species scores
+#' sppscores(ord) <- spurn
+#' plot(ord)
 #'
 #' @importFrom stats var cov dist
 #'
 #' @export
 `polarord` <-
-    function(d, k=2)
+    function(d, k=2, endpoints)
 {
     ## Create a zero matrix of ordination scores
-    axes <- matrix(0, attr(d, "Size"), k)
+    N <- attr(d, "Size")
+    axes <- matrix(0, N, k)
     colnames(axes) <- paste0("PO", seq_len(k))
     rownames(axes) <- attr(d, "Labels")
+    ## Get the total inertia: we divide with N to be consistent with
+    ## wcmdscale, cmdscale, dbrda and and capscale
+    inertia <- sum(d^2)/N
+    ## return eigenvalues and endpoints for each axis
+    ev <- numeric(k)
+    names(ev) <- colnames(axes)
+    p1p2 <- matrix(0, 2, k,
+                   dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
+    ## user-given endpoint(s) for axis 1
+    if (!missing(endpoints)) {
+        p1p2[1,1] <- endpoints[1]
+        if (length(endpoints) > 1)
+            p1p2[2,1] <- endpoints[2]
+    }
     ## Iterate through dimensions 1..k
     for(dim in seq_len(k)) {
         m <- as.matrix(d)
         ## Find the first endpoint (variance method)
-        p1 <- which.max(apply(m, 2, var))
+        if (p1p2[1,dim] == 0)
+            p1 <- which.max(apply(m, 2, var))
+        else
+            p1 <- p1p2[1,dim]
         ## Find the second endpoint (regression method: regression
         ## coefficient was originally suggested, but covariance gives
         ## the same results, but faster)
-        p2 <- which.min(cov(m[p1,],m))
+        if (p1p2[2,dim] == 0)
+            p2 <- which.min(cov(m[p1,],m))
+        else
+            p2 <- p1p2[2,dim]
         ## Project all points between these endpoints
-        axes[,dim] <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
+        sco <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
         ## Find the residual dissimilarities, with a guard against
         ## negative residuals in semimetric indices & oblique axes
-        d <- sqrt(pmax(d^2 - dist(axes[,dim])^2,0))
+        d <- sqrt(pmax(d^2 - dist(sco)^2,0))
+        ## save the eigenvalue
+        ev[dim] <- sum(dist(sco)^2)/N
+        axes[,dim] <- sco
+        p1p2[,dim] <- c(p1,p2)
     }
-    axes
+    out <- list(points = axes, inertia = inertia, eig = ev,
+                endpoints = p1p2, call = match.call())
+    class(out) <- "polarord"
+    out
+}
+
+### polarord methods
+
+#' @export
+`print.polarord` <-
+    function(x, ...)
+{
+    cat("Polar Ordination\n")
+    cat("Call:", deparse(x$call), "\n\n")
+    cat("Axis endpoints:\n")
+    print(x$endpoints)
+    cat("\nEigenvalues:\n")
+    print(x$eig)
+    cat("Total inertia:", x$inertia, "\n\n")
+    if (!is.null(x$species))
+        cat(gettextf("Species scores are expanded weighted averages from '%s'\n\n",
+            attr(x$species, "data")))
+}
+
+#' @importFrom vegan ordiplot
+#' @param x \code{polarord} result.
+#' @param choices Axes shown.
+#' @param type Type of graph which may be \code{"t"} for text, \code{"p"}
+#'   for points or \code{"n"} for none (an empty plot).
+#' @param display Items displayed: \code{"sites"} are always available,
+#' but \code{"species"} only if they were added with sppscores.
+#' @param \dots Other arguments to the function (passed to
+#'   \code{\link[vegan]{ordiplot}}).
+#' @rdname polarord
+#'
+#' @export
+`plot.polarord` <-
+    function(x, choices = c(1, 2), type = "t", display, ...)
+{
+    if (missing(display))
+        if (is.null(x$species))
+            display <- "sites"
+        else
+            display <- c("sites", "species")
+    ordiplot(x, display = display, choices = choices, type = type, ...)
+}
+
+#' @importFrom vegan "sppscores<-" wascores
+#' @export "sppscores<-"
+#' @aliases sppscores<-
+#' @param object \code{polarord} result.
+#' @param value Community data to find the species scores.
+#' @details Function \code{sppscores} can be used to add species scores
+#'   to the ordination result.
+#' @rdname polarord
+#' @export
+`sppscores<-.polarord` <-
+        function(object, value)
+{
+    wa <- wascores(object$points, value, expand = TRUE)
+    attr(wa, "data") <- deparse(substitute(value))
+    object$species <- wa
+    object
+}
+
+#' @importFrom vegan eigenvals
+#' @export eigenvals
+#' @aliases eigenvals
+#' @rdname polarord
+#' @export
+`eigenvals.polarord` <-
+    function(x, ...)
+{
+    out <- x$eig
+    attr(out, "sumev") <- x$inertia
+    class(out) <- "eigenvals"
+    out
 }
