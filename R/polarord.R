@@ -79,6 +79,7 @@
 #' data(spurn)
 #' dis <- dist(spurn, method = "binary") ## Jaccard index
 #' ord <- polarord(dis)
+#' summary(eigenvals(ord))
 #' ## add species scores
 #' sppscores(ord) <- spurn
 #' plot(ord)
@@ -136,6 +137,7 @@
 #' @param \dots Other arguments to the function (passed to
 #'   \code{\link[vegan]{ordiplot}}).
 #' @rdname polarord
+#'
 #' @export
 `plot.polarord` <-
     function(x, choices = c(1, 2), type = "t", display, ...)
@@ -148,7 +150,9 @@
     ordiplot(x, display = display, choices = choices, type = type, ...)
 }
 
-#' @importFrom vegan sppscores "sppscores<-" wascores
+#' @importFrom vegan "sppscores<-" wascores
+#' @export "sppscores<-"
+#' @aliases sppscores<-
 #' @param object \code{polarord} result.
 #' @param value Community data to find the species scores.
 #' @details Function \code{sppscores} can be used to add species scores
@@ -165,6 +169,8 @@
 }
 
 #' @importFrom vegan eigenvals
+#' @export eigenvals
+#' @aliases eigenvals
 #' @rdname polarord
 #' @export
 `eigenvals.polarord` <-
