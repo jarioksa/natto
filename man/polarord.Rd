@@ -22,10 +22,11 @@ polarord(d, k = 2, endpoints)
 
 \item{k}{Number of dimensions.}
 
-\item{endpoints}{Indices (not names) of endpoints for axis
-one. This can be either a single integer for the first
-endpoint, and the second endpoint is found automatically, or a
-vector of two endpoints.}
+\item{endpoints}{Indices (not names) of endpoints for axes.  This
+can be a single integer for the first endpoint, and the second
+endpoint and later axes are found automatically. If this is a
+vector, its non-zero values are taken as indices of endpoints
+of sequential axes.}
 
 \item{x}{\code{polarord} result.}
 
