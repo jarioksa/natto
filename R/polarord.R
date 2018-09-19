@@ -14,6 +14,10 @@
 
 #' @param d Dissimilarities or distances: a \code{\link{dist}} object.
 #' @param k Number of dimensions.
+#' @param endpoints Indices (not names) of endpoints for axis
+#'     one. This can be either a single integer for the first
+#'     endpoint, and the second endpoint is found automatically, or a
+#'     vector of two endpoints.
 #'
 #' @details
 #'
@@ -29,10 +33,17 @@
 #' the main cloud of points, opposite to first endpoint. All points
 #' are projected on the axis between the endpoints using Euclidean
 #' geometry, and this gives the scores on a polar ordination
-#' axis. Then the effect of the  axis are removed by calculating
+#' axis. Then the effect of the axis are removed by calculating
 #' residual distances using Euclidean geometry. Ecological indices are
 #' usually semimetric, and negative residual distances can emerge, but
 #' these are taken as zero in the current function.
+#'
+#' The eigenvalues are estimated from the dispersion of points, and
+#' they are not necessarily in descending order. Usually only some
+#' first axes are reliable, and too high numbers of dimensions should
+#' be avoided. The inertia and eigenvalues give the average
+#' dispersion, and they are consistent with \code{\link[vegan]{dbrda}}
+#' and \code{\link[vegan]{capscale}}.
 #'
 #' Polar ordination is a historical method that is little used today,
 #' but several authors claim that it is a powerful method (see McCune
@@ -43,10 +54,10 @@
 #' multidimensional scaling (\code{\link{cmdscale}},
 #' \code{\link[vegan]{wcmdscale}}).
 #'
-#' It is possible to use predefined endpoints instead of automatic
-#' selection. This can be useful for confirmatory analysis (McCune &
-#' Grace 2002). However, this is not (yet) implemented in this
-#' function (but contributions are welcome).
+#' It is possible to use predefined endpoints for axis 1 instead of
+#' automatic selection. This can be useful for confirmatory analysis
+#' (McCune & Grace 2002). If only one endpoint is given, the second
+#' one is chosen automatically.
 #'
 #' @return
 #'
@@ -59,6 +70,7 @@
 #'      total inertia and may not be in strictly descending order.
 #'   \item \code{endpoints}: The indices (not the names) of the endpoints for
 #'      each axis.
+#'   \item \code{call}: Function call.
 #' }
 #'
 #' @references
@@ -89,7 +101,7 @@
 #'
 #' @export
 `polarord` <-
-    function(d, k=2)
+    function(d, k=2, endpoints)
 {
     ## Create a zero matrix of ordination scores
     N <- attr(d, "Size")
@@ -102,17 +114,29 @@
     ## return eigenvalues and endpoints for each axis
     ev <- numeric(k)
     names(ev) <- colnames(axes)
-    endpoints <- matrix(0, 2, k,
-                        dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
+    p1p2 <- matrix(0, 2, k,
+                   dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
+    ## user-given endpoint(s) for axis 1
+    if (!missing(endpoints)) {
+        p1p2[1,1] <- endpoints[1]
+        if (length(endpoints) > 1)
+            p1p2[2,1] <- endpoints[2]
+    }
     ## Iterate through dimensions 1..k
     for(dim in seq_len(k)) {
         m <- as.matrix(d)
         ## Find the first endpoint (variance method)
-        p1 <- which.max(apply(m, 2, var))
+        if (p1p2[1,dim] == 0)
+            p1 <- which.max(apply(m, 2, var))
+        else
+            p1 <- p1p2[1,dim]
         ## Find the second endpoint (regression method: regression
         ## coefficient was originally suggested, but covariance gives
         ## the same results, but faster)
-        p2 <- which.min(cov(m[p1,],m))
+        if (p1p2[2,dim] == 0)
+            p2 <- which.min(cov(m[p1,],m))
+        else
+            p2 <- p1p2[2,dim]
         ## Project all points between these endpoints
         sco <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
         ## Find the residual dissimilarities, with a guard against
@@ -121,10 +145,10 @@
         ## save the eigenvalue
         ev[dim] <- sum(dist(sco)^2)/N
         axes[,dim] <- sco
-        endpoints[,dim] <- c(p1,p2)
+        p1p2[,dim] <- c(p1,p2)
     }
     out <- list(points = axes, inertia = inertia, eig = ev,
-                endpoints = endpoints, call = match.call())
+                endpoints = p1p2, call = match.call())
     class(out) <- "polarord"
     out
 }
