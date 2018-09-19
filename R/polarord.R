@@ -14,10 +14,11 @@
 
 #' @param d Dissimilarities or distances: a \code{\link{dist}} object.
 #' @param k Number of dimensions.
-#' @param endpoints Indices (not names) of endpoints for axis
-#'     one. This can be either a single integer for the first
-#'     endpoint, and the second endpoint is found automatically, or a
-#'     vector of two endpoints.
+#' @param endpoints Indices (not names) of endpoints for axes.  This
+#'     can be a single integer for the first endpoint, and the second
+#'     endpoint and later axes are found automatically. If this is a
+#'     vector, its non-zero values are taken as indices of endpoints
+#'     of sequential axes.
 #'
 #' @details
 #'
@@ -116,12 +117,9 @@
     names(ev) <- colnames(axes)
     p1p2 <- matrix(0, 2, k,
                    dimnames = list(c("p1","p2"), paste0("PO", seq_len(k))))
-    ## user-given endpoint(s) for axis 1
-    if (!missing(endpoints)) {
-        p1p2[1,1] <- endpoints[1]
-        if (length(endpoints) > 1)
-            p1p2[2,1] <- endpoints[2]
-    }
+    ## user-given endpoint(s)
+    if (!missing(endpoints))
+        p1p2[seq_along(endpoints)] <- endpoints
     ## Iterate through dimensions 1..k
     for(dim in seq_len(k)) {
         m <- as.matrix(d)
