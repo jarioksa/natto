@@ -79,6 +79,7 @@
 #' data(spurn)
 #' dis <- dist(spurn, method = "binary") ## Jaccard index
 #' ord <- polarord(dis)
+#' ord
 #' summary(eigenvals(ord))
 #' ## add species scores
 #' sppscores(ord) <- spurn
@@ -122,9 +123,26 @@
         endpoints[,dim] <- c(p1,p2)
     }
     out <- list(points = axes, inertia = inertia, eig = ev,
-                endpoints = endpoints)
+                endpoints = endpoints, call = match.call())
     class(out) <- "polarord"
     out
+}
+
+### polarord methods
+
+`print.polarord` <-
+    function(x, ...)
+{
+    cat("Polar Ordination\n")
+    cat("Call:", deparse(x$call), "\n\n")
+    cat("Axis endpoints:\n")
+    print(x$endpoints)
+    cat("\nEigenvalues:\n")
+    print(x$eig)
+    cat("Total inertia:", x$inertia, "\n\n")
+    if (!is.null(x$species))
+        cat(gettextf("Species scores are expanded weighted averages from '%s'\n\n",
+            attr(x$species, "data")))
 }
 
 #' @importFrom vegan ordiplot
