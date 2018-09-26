@@ -123,8 +123,8 @@
 #' if (require(vegan)) { ## Procrustes analysis
 #' set.seed(1009)
 #' x <- matrix(runif(50), 25, 2) # 2-dim matrix
-#' plot(procrustes(x, polarord(dist(x))) # Euclidean: exact
-#' plot(procrustes(x, polarord(dist(x, "man")), metric="man") # diverges
+#' plot(procrustes(x, polarord(dist(x)))) # Euclidean: exact
+#' plot(procrustes(x, polarord(dist(x, "man"), metric="man"))) # diverges
 #' }
 #'
 #' @importFrom stats var cov dist
