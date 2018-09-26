@@ -19,6 +19,9 @@
 #'     endpoint and later axes are found automatically. If this is a
 #'     vector, its non-zero values are taken as indices of endpoints
 #'     of sequential axes.
+#' @param metric Use either \code{"euclidean"} or \code{"manhattan"}
+#'     (city-block) metric in projecting points onto axes and
+#'     calculating residual distances.
 #'
 #' @details
 #'
@@ -60,6 +63,25 @@
 #' (McCune & Grace 2002). If only one endpoint is given, the second
 #' one is chosen automatically.
 #'
+#' McCune & Grace (2002) suggest that Polar Ordination can be
+#' alternatively performed with Manhattan or City-Block methods for
+#' projecting points onto axes and calculating residual ordination,
+#' although they say that this is "yet largerly untested". This can be
+#' implemented by setting \code{metric = "manhattan"}. However,
+#' two-dimensional configuration cannot be recovered from its
+#' Manhattan distances with this method, but it can be exactly
+#' recovered from its Euclidean distances and Euclidean metric (see
+#' Examples). Ordination is similar to the original two-dimensional
+#' configuration only if the endpoints were chosen so that the
+#' ordination axes are parallel to the dimensions in the original
+#' configuration. Further, ordinations with Manhattan metric are not
+#' invariant when rotated: Manhattan distances are calculated with
+#' respect to the axes, and they change if axes are rotated. This also
+#' means that fitted vectors cannot be used for environmental
+#' variables, and the interpretation of the ordination graph needs
+#' special and rare intuition. I warn against use of
+#' \code{metric = "manhattan"}.
+#'
 #' @return
 #'
 #' The function returns an object of class \code{"polarord"} with the
@@ -97,13 +119,21 @@
 #' ## add species scores
 #' sppscores(ord) <- spurn
 #' plot(ord)
+#' ## Two-dimensional configuration recovered with Euclidean metric
+#' if (require(vegan)) { ## Procrustes analysis
+#' set.seed(1009)
+#' x <- matrix(runif(50), 25, 2) # 2-dim matrix
+#' plot(procrustes(x, polarord(dist(x))) # Euclidean: exact
+#' plot(procrustes(x, polarord(dist(x, "man")), metric="man") # diverges
+#' }
 #'
 #' @importFrom stats var cov dist
 #'
 #' @export
 `polarord` <-
-    function(d, k=2, endpoints)
+    function(d, k=2, endpoints, metric = c("euclidean", "manhattan"))
 {
+    metric <- match.arg(metric)
     ## Create a zero matrix of ordination scores
     N <- attr(d, "Size")
     axes <- matrix(0, N, k)
@@ -136,10 +166,16 @@
         else
             p2 <- p1p2[2,dim]
         ## Project all points between these endpoints
-        sco <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
+        if (metric == "euclidean")
+            sco <- (m[p1,p2]^2  + m[p1,]^2 - m[p2,]^2)/2/m[p1,p2]
+        else
+            sco <- (m[p1,p2] + m[p1,] - m[p2,])/2
         ## Find the residual dissimilarities, with a guard against
         ## negative residuals in semimetric indices & oblique axes
-        d <- sqrt(pmax(d^2 - dist(sco)^2,0))
+        if (metric == "euclidean")
+            d <- sqrt(pmax(d^2 - dist(sco)^2,0))
+        else
+            d <- pmax(d - dist(sco, "manhattan"), 0)
         ## save the eigenvalue
         ev[dim] <- sum(dist(sco)^2)/N
         axes[,dim] <- sco
