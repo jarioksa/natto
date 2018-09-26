@@ -9,7 +9,7 @@
 \alias{eigenvals}
 \title{Polar (Bray-Curtis) Ordination}
 \usage{
-polarord(d, k = 2, endpoints)
+polarord(d, k = 2, endpoints, metric = c("euclidean", "manhattan"))
 
 \method{plot}{polarord}(x, choices = c(1, 2), type = "t", display, ...)
 
@@ -27,6 +27,10 @@ can be a single integer for the first endpoint, and the second
 endpoint and later axes are found automatically. If this is a
 vector, its non-zero values are taken as indices of endpoints
 of sequential axes.}
+
+\item{metric}{Use either \code{"euclidean"} or \code{"manhattan"}
+(city-block) metric in projecting points onto axes and
+calculating residual distances.}
 
 \item{x}{\code{polarord} result.}
 
@@ -106,6 +110,25 @@ automatic selection. This can be useful for confirmatory analysis
 (McCune & Grace 2002). If only one endpoint is given, the second
 one is chosen automatically.
 
+McCune & Grace (2002) suggest that Polar Ordination can be
+alternatively performed with Manhattan or City-Block methods for
+projecting points onto axes and calculating residual ordination,
+although they say that this is "yet largerly untested". This can be
+implemented by setting \code{metric = "manhattan"}. However,
+two-dimensional configuration cannot be recovered from its
+Manhattan distances with this method, but it can be exactly
+recovered from its Euclidean distances and Euclidean metric (see
+Examples). Ordination is similar to the original two-dimensional
+configuration only if the endpoints were chosen so that the
+ordination axes are parallel to the dimensions in the original
+configuration. Further, ordinations with Manhattan metric are not
+invariant when rotated: Manhattan distances are calculated with
+respect to the axes, and they change if axes are rotated. This also
+means that fitted vectors cannot be used for environmental
+variables, and the interpretation of the ordination graph needs
+special and rare intuition. I warn against use of
+\code{metric = "manhattan"}.
+
 Function \code{sppscores} can be used to add species scores
   to the ordination result.
 }
@@ -119,6 +142,13 @@ summary(eigenvals(ord))
 ## add species scores
 sppscores(ord) <- spurn
 plot(ord)
+## Two-dimensional configuration recovered with Euclidean metric
+if (require(vegan)) { ## Procrustes analysis
+set.seed(1009)
+x <- matrix(runif(50), 25, 2) # 2-dim matrix
+plot(procrustes(x, polarord(dist(x)))) # Euclidean: exact
+plot(procrustes(x, polarord(dist(x, "man"), metric="man"))) # diverges
+}
 
 }
 \references{
