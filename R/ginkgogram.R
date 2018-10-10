@@ -25,13 +25,21 @@
 #' sizes) of leaves.
 #'
 #' @param x An object of the type produced by \code{\link{hclust}}.
-#' @param labels A character vector of labels for te leaves of the tree.
+#' @param labels A character vector of labels for te leaves of the
+#'     tree.
 #' @param check Logical indicating if the \code{x} should be checked
 #'     for validity.
-#' @param axes,frame.plot,ann Logical flags as in \code{\link{plot.default}}.
-#' @param main,sub,xlab,ylab Character strings to replace default annotation.
+#' @param axes,frame.plot,ann Logical flags as in
+#'     \code{\link{plot.default}}.
+#' @param main,sub,xlab,ylab Character strings to replace default
+#'     annotation.
 #' @param w Weights of leaves.
 #' @param col Colour of the fill of leaves.
+#' @param leaf Maximum height of leaf triangle. Leaf height is
+#'     smaller of this value and the height of the branch, and the
+#'     default value (\code{Inf}) always draws leaves to the
+#'     root. Special value \code{TRUE} will take the smallest branch
+#'     height as the maximum height of each leaf.
 #' @param \dots Further graphical arguments
 #'
 #' @details Function \code{ginkgogram} has two new arguments to
@@ -47,6 +55,9 @@
 #' data(dune, dune.phylodis, dune.taxon)
 #' cl <- hclust(dune.phylodis)
 #' ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder))
+#' ## limit heights of the polygons to the Cretaceous
+#' ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder),
+#'     leaf = 65)
 #' }
 
 #' @importFrom grDevices dev.flush dev.hold
@@ -55,7 +66,8 @@
 `ginkgogram` <-
     function (x, labels = NULL, check = TRUE, axes = TRUE,
               frame.plot = FALSE, ann = TRUE, main = "Cluster Ginkgogram",
-              sub = NULL, xlab = NULL, ylab = "Height", w, col, ...)
+              sub = NULL, xlab = NULL, ylab = "Height", w, col,
+              leaf = Inf, ...)
 {
     hang <- -1
     ## check weights
@@ -97,13 +109,20 @@
     graphics:::plotHclust(n1, merge, height, ordr[order(x$order)],
                           hang, labels, ...)
     ## draw polygons
+
+    ## first we need polygon heights: either (1) to the root, or (2)
+    ## up to a max certain value, or (3) as a special case, the lowest
+    ## root (first height)
+    if (isTRUE(leaf))
+        leaf <- height[1] # the first is the lowest
+    leaf <- pmin(height, leaf)
     for (i in seq_len(n1))
         for (j in 1:2) {
             if(merge[i,j] < 0) {
                 k <- which(x$order == -merge[i,j])
                 a <- fanw[x$order][k] / 2
                 if (a > 0)
-                    polygon(c(ordr[k]-a, ordr[k]+a, ordr[k]), c(0,0,height[i]),
+                    polygon(c(ordr[k]-a, ordr[k]+a, ordr[k]), c(0,0,leaf[i]),
                             col = col[-merge[i,j]])
             }
         }
