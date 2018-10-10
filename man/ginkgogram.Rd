@@ -6,23 +6,33 @@
 \usage{
 ginkgogram(x, labels = NULL, check = TRUE, axes = TRUE,
   frame.plot = FALSE, ann = TRUE, main = "Cluster Ginkgogram",
-  sub = NULL, xlab = NULL, ylab = "Height", w, col, ...)
+  sub = NULL, xlab = NULL, ylab = "Height", w, col, leaf = Inf,
+  ...)
 }
 \arguments{
 \item{x}{An object of the type produced by \code{\link{hclust}}.}
 
-\item{labels}{A character vector of labels for te leaves of the tree.}
+\item{labels}{A character vector of labels for te leaves of the
+tree.}
 
 \item{check}{Logical indicating if the \code{x} should be checked
 for validity.}
 
-\item{axes, frame.plot, ann}{Logical flags as in \code{\link{plot.default}}.}
+\item{axes, frame.plot, ann}{Logical flags as in
+\code{\link{plot.default}}.}
 
-\item{main, sub, xlab, ylab}{Character strings to replace default annotation.}
+\item{main, sub, xlab, ylab}{Character strings to replace default
+annotation.}
 
 \item{w}{Weights of leaves.}
 
 \item{col}{Colour of the fill of leaves.}
+
+\item{leaf}{Maximum height of leaf triangle. Leaf height is
+smaller of this value and the height of the branch, and the
+default value (\code{Inf}) always draws leaves to the
+root. Special value \code{TRUE} will take the smallest branch
+height as the maximum height of each leaf.}
 
 \item{\dots}{Further graphical arguments}
 }
@@ -45,5 +55,8 @@ if (require(vegan)) {
 data(dune, dune.phylodis, dune.taxon)
 cl <- hclust(dune.phylodis)
 ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder))
+## limit heights of the polygons to the Cretaceous
+ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder),
+    leaf = 65)
 }
 }
