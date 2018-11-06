@@ -81,13 +81,15 @@ long distances to all points and hence low variance of
 distances. The second endpoint has the lowest (most negative)
 regression coefficient between distances from the first and second
 point to all other points. This selects a point at the margin of
-the main cloud of points, opposite to first endpoint. All points
-are projected on the axis between the endpoints using Euclidean
-geometry, and this gives the scores on a polar ordination
-axis. Then the effect of the axis are removed by calculating
-residual distances using Euclidean geometry. Ecological indices are
-usually semimetric, and negative residual distances can emerge, but
-these are taken as zero in the current function.
+the main cloud of points, opposite to the first endpoint. All
+points are projected on the axis between the endpoints, and this
+gives the scores on a polar ordination axis. Then the effect of the
+axis are removed by calculating residual distances.  The projection
+of points and calculation of residuals is based either on Euclidean
+or Manhattan geometry, depending on the argument \code{metric}.
+Ecological indices are usually semimetric, and negative residual
+distances can emerge, but these are taken as zero in the current
+function.
 
 The eigenvalues are estimated from the dispersion of points, and
 they are not necessarily in descending order. Usually only some
@@ -105,10 +107,10 @@ numerical utilities, the polar ordination is not faster than metric
 multidimensional scaling (\code{\link{cmdscale}},
 \code{\link[vegan]{wcmdscale}}).
 
-It is possible to use predefined endpoints for axis 1 instead of
-automatic selection. This can be useful for confirmatory analysis
-(McCune & Grace 2002). If only one endpoint is given, the second
-one is chosen automatically.
+It is possible to use predefined endpoints instead of automatic
+selection. This can be useful for confirmatory analysis (McCune &
+Grace 2002). If only one endpoint is given, the others are selected
+automatically. 
 
 McCune & Grace (2002) suggest that Polar Ordination can be
 alternatively performed with Manhattan or City-Block methods for
