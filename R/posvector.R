@@ -1,7 +1,7 @@
 #' Position Vector Ordination
 #'
 #' Position Vector Ordination (PVO) is a simple educational method of
-#' that resembles Principal Component Analysis (PCA). The method pick
+#' that resembles Principal Component Analysis (PCA). The method picks
 #' the species or variable that explains largest proportion of
 #' variance and uses the centred values of this variable as the
 #' axis. Then it orthogonalizes all species or variables to that
@@ -14,6 +14,16 @@
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
 #'
+#' @return The function returns an object of class \code{"posvector"}
+#'  with following elements:
+#'  \itemize{
+#'     \item \code{points}: The ordination scores. These are named by
+#'       the species (variable) the axes is based on, the numerical
+#'       scores are the centred (residual) values of observed data.
+#'    \item \code{totvar}: The total variance in the input data.
+#'    \item \code{eig}: Eigenvalues of axes.
+#'  }
+#'
 #' @importFrom stats cov
 #'
 #' @export
@@ -22,28 +32,32 @@
 {
     x <- scale(x, scale = scale)
     u <- matrix(NA, nrow(x), ncol(x))
-    colnames(u) <- paste0("Sp", seq_len(ncol(u)))
+    eig <- numeric(ncol(x))
+    colnames(u) <- paste0("Spec", seq_len(ncol(u)))
     xx <- cov(x)
     totvar <- sum(diag(xx))
     for(i in 1:ncol(u)) {
-        ## off-diagonal elements of xx are r[i,j]*s[i]*s[j], diagonal
-        ## s^2[i], and we divide to give off-diagonal r[i,j]*s[j],
-        ## diagonal s[i]
+        ## off-diagonal elements of xx[i,j] are r[i,j]*s[i]*s[j],
+        ## diagonal s^2[i], and we divide to give off-diagonal
+        ## r[i,j]*s[j], diagonal s[i]
         xx <- xx/sqrt(diag(xx))
-        ## explained variance r[i,j]^2 * s^[j]
+        ## explained variance r[i,j]^2 * s^2[j]
         crit <- rowSums(xx^2)
         if (max(crit, na.rm = TRUE) < sqrt(.Machine$double.eps))
             break
         take <- which.max(crit)
-        print(names(take))
+        eig[i] <- crit[take]
         u[,i] <- x[,take]
         colnames(u)[i] <- names(take)
         ## orthogonalize: x will be residuals
         x <- apply(x, 2, function(z) ortho(u[,i, drop=FALSE], z))
         xx <- cov(x)
     }
-    out <- list("points" = u[, !is.na(colSums(u))],
-                "totvar" = totvar)
+    names(eig) <- colnames(u)
+    nit <- !is.na(colSums(u))
+    out <- list("points" = u[, nit, drop=FALSE],
+                "totvar" = totvar,
+                "eig" = eig[nit])
     class(out) <- "posvector"
     out
 }
