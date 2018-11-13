@@ -23,10 +23,12 @@
     x <- scale(x, scale = scale)
     u <- matrix(NA, nrow(x), ncol(x))
     colnames(u) <- paste0("Sp", seq_len(ncol(u)))
+    xx <- cov(x)
+    totvar <- sum(diag(xx))
     for(i in 1:ncol(u)) {
-        ## off-diagonal elements are r[i,j]*s[i]*s[j], diagonal s^2[i]
-        xx <- cov(x)
-        ## now off-diagonal are r[i,j]*s[j], diagonal s[i]
+        ## off-diagonal elements of xx are r[i,j]*s[i]*s[j], diagonal
+        ## s^2[i], and we divide to give off-diagonal r[i,j]*s[j],
+        ## diagonal s[i]
         xx <- xx/sqrt(diag(xx))
         ## explained variance r[i,j]^2 * s^[j]
         crit <- rowSums(xx^2)
@@ -38,6 +40,10 @@
         colnames(u)[i] <- names(take)
         ## orthogonalize: x will be residuals
         x <- apply(x, 2, function(z) ortho(u[,i, drop=FALSE], z))
+        xx <- cov(x)
     }
-    u[, !is.na(colSums(u))]
+    out <- list("points" = u[, !is.na(colSums(u))],
+                "totvar" = totvar)
+    class(out) <- "posvector"
+    out
 }
