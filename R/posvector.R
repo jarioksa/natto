@@ -24,10 +24,43 @@
 #'    \item \code{eig}: Eigenvalues of axes.
 #'  }
 #'
-#' @importFrom stats cov
-#'
+#' @rdname posvectord
 #' @export
-`posvector` <-
+`posvectord` <-
+    function(x, scale = FALSE)
+{
+    ## centre by species, crossproduct for sites
+    x <- scale(x, scale = scale)
+    ## variance if unscaled
+    if (!scale)
+        x <- x/sqrt(nrow(x)-1)
+    u <- matrix(NA, nrow(x), ncol(x))
+    eig <- numeric(ncol(x))
+    names(eig) <- colnames(u) <- paste0("PVO", seq_len(ncol(x)))
+    xx <- tcrossprod(x)
+    totvar <- sum(diag(xx))
+    for (i in 1:ncol(u)) {
+        a <- xx/sqrt(pmax(diag(xx), .Machine$double.eps))
+        crit <- rowSums(a^2)
+        if (max(crit, na.rm = TRUE) < sqrt(.Machine$double.eps))
+            break
+        take <- which.max(crit)
+        u[,i] <- xx[take,]/sqrt(xx[take, take])
+        eig[i] <- crit[take]
+        xx <- xx - tcrossprod(u[,i])
+    }
+    nit <- !is.na(colSums(u))
+    out <- list("points" = u[, nit, drop=FALSE],
+                "totvar" = totvar,
+                "eig" = eig[nit])
+    class(out) <- "posvector"
+    out
+}
+#'
+#' @importFrom stats cov
+#' @rdname posvectord
+#' @export
+`spvectord` <-
     function (x, scale = FALSE)
 {
     x <- scale(x, scale = scale)
@@ -61,3 +94,4 @@
     class(out) <- "posvector"
     out
 }
+
