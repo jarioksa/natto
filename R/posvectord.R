@@ -11,6 +11,8 @@
 #' used. The axes are named by the species or variables, and the axis
 #' scores are the centred (residual) observed values.
 #'
+#' @encoding UTF-8
+#'
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
 #'
@@ -23,6 +25,18 @@
 #'    \item \code{totvar}: The total variance in the input data.
 #'    \item \code{eig}: Eigenvalues of axes.
 #'  }
+#'
+#' @references
+#'
+#' Orlóci, L. (1966) Geometric models in ecology. I. The theory and
+#' application of some ordination methods. \emph{J. Ecol.} 54: 193--215.
+#'
+#' Orlóci, L. (1973a) Ordination by resemblance matrices. In:
+#' R. H. Whittaker (ed.) \emph{Ordination and Classification of
+#' Communities. Handbook of Vegetation Science} 5: 249--286.
+#'
+#' Orlóci, L. (1973b) Ranking characters by dispersion
+#' criterion. \emph{Nature} 244: 371--373.
 #'
 #' @rdname posvectord
 #' @export
