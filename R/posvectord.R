@@ -52,6 +52,7 @@
 #'
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
+#' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}.
 #'
 #' @return The function returns an object of class \code{"posvector"}
 #'  with following elements:
@@ -82,6 +83,16 @@
 #' Orlóci, L. (1973b) Ranking characters by dispersion
 #' criterion. \emph{Nature} 244: 371--373.
 #'
+#' @examples
+#' data(spurn)
+#' spvectord(spurn)
+#' m <- posvectord(spurn)
+#' m
+#' plot(m)
+#' if (require(vegan, quietly = TRUE)) {
+#' plot(procrustes(rda(spurn), m, choices=1:2))
+#' }
+
 #' @rdname posvectord
 #' @export
 `posvectord` <-
@@ -155,6 +166,7 @@
     out
 }
 
+#' @export
 `print.posvectord` <-
     function(x, digits = max(3, getOption("digits") - 3), ...)
 {
@@ -170,7 +182,8 @@
 }
 
 #' @importFrom vegan scores ordiplot
-
+#' @rdname posvectord
+#' @export
 `plot.posvectord` <-
     function(x, ...)
 {
