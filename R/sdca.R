@@ -1,7 +1,22 @@
-`DCA` <-
+#' Smoothly Detrended Correspondence Analysis
+#'
+#' Function \code{sdca} is similar to \code{\link[vegan]{decorana}},
+#' but instead of detrending by segments it uses \code{\link{loess}}
+#' for smooth non-linear detrending.
+#'
+#' @param Y Input data.
+#' @param pairwise Detrend axis \eqn{k} separately for each previous
+#'     axis in order \eqn{1 \dots k-1 \dots 1}. This only influences
+#'     axes 3 and 4.
+#' @param \dots Other arguments (passed to \code{\link{loess}}).
+
+#' @importFrom stats loess residuals runif weighted.mean
+#' @importFrom vegan eigengrad wascores
+
+#' @export
+`sdca` <-
     function(Y, pairwise = FALSE, ...)
 {
-    require(vegan) || stop("requires wascores function in vegan")
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 200
     Y <- Y/sum(Y)
