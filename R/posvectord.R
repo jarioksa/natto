@@ -111,7 +111,7 @@
     out <- list("points" = u[, nit, drop=FALSE],
                 "totvar" = totvar,
                 "eig" = eig[nit])
-    class(out) <- "posvector"
+    class(out) <- "posvectord"
     out
 }
 #'
@@ -149,7 +149,7 @@
     out <- list("points" = u[, nit, drop=FALSE],
                 "totvar" = totvar,
                 "eig" = eig[nit])
-    class(out) <- "posvector"
+    class(out) <- c("spvectord", "posvectord")
     out
 }
 
