@@ -32,13 +32,13 @@
 #' species or variable that explains largest proportion of variance
 #' and uses the centred values of this variable as the axis. Then it
 #' orthogonalizes all species or variables to that selected axis and
-#' repeats the selection process. In PCA a linear combination of
-#' species or variables is found to minimize the residual variance,
-#' but in SVO only one species or variable is used. The axes are named
-#' by the species or variables, and the axis scores are the centred
+#' repeats the selection process. PCA finds a linear combination of
+#' species or variables that minimizes the residual variance, but in
+#' SVO only one species or variable is used. The axes are named by the
+#' species or variables, and the axis scores are the centred
 #' (residual) observed values. The resulting plot has orthogonalized
-#' set of species as axes. SVO can be similar to the PCA solution, in
-#' particular when some few species contribute most of the the total
+#' set of species as axes. SVO can be similar to PCA, in particular
+#' when some few species contribute most of the the total
 #' variance. The method only has educational use in explaining PCA in
 #' species space. Orlóci (1973b) suggesed SVO as a method of selecting
 #' a subset of species or variables that contributes most of the
@@ -52,11 +52,15 @@
 #'
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
-#' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}.
+#' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}).
 #'
-#' @return The function returns an object of class \code{"posvector"}
-#'  with following elements:
-#'  \itemize{
+#' @return \code{posvectord} returns an object of class
+#'     \code{"posvectord"}, and \code{spvectord} returns an object of
+#'     class \code{"spvectord"} that inherits from
+#'     \code{"posvectord"}. Both result objects have the following
+#'     elements:
+#'
+#' \itemize{
 #'    \item \code{points}: The ordination scores. In SVO, these are
 #'     named by the species (variable) the axes is based on, the
 #'     numerical scores are the centred (residual) values of
