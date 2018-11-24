@@ -153,3 +153,16 @@
     out
 }
 
+`print.posvectord` <-
+    function(x, digits = max(3, getOption("digits") - 3), ...)
+{
+    if (inherits(x, "spvectord"))
+        cat("\nSpecies ")
+    else
+        cat("\nPosition ")
+    cat("Vector Ordination\n\n")
+    cat("Total Inertia ", round(x$totvar, digits), "\n\n")
+    cat("Eigenvalues of Vectors:\n")
+    print(x$eig, digits=digits)
+    invisible(x)
+}
