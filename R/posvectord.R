@@ -95,6 +95,7 @@
     u <- matrix(NA, nrow(x), ncol(x))
     eig <- numeric(ncol(x))
     names(eig) <- colnames(u) <- paste0("PVO", seq_len(ncol(x)))
+    rownames(u) <- rownames(x)
     xx <- tcrossprod(x)
     totvar <- sum(diag(xx))
     for (i in 1:ncol(u)) {
@@ -125,6 +126,7 @@
     u <- matrix(NA, nrow(x), ncol(x))
     eig <- numeric(ncol(x))
     colnames(u) <- paste0("Spec", seq_len(ncol(u)))
+    rownames(u) <- rownames(x)
     xx <- cov(x)
     totvar <- sum(diag(xx))
     for(i in 1:ncol(u)) {
@@ -165,4 +167,12 @@
     cat("Eigenvalues of Vectors:\n")
     print(x$eig, digits=digits)
     invisible(x)
+}
+
+#' @importFrom vegan scores ordiplot
+
+`plot.posvectord` <-
+    function(x, ...)
+{
+    ordiplot(x, display = "sites", ...)
 }
