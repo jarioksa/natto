@@ -8,6 +8,8 @@
 #' @param pairwise Detrend axis \eqn{k} separately for each previous
 #'     axis in order \eqn{1 \dots k-1 \dots 1}. This only influences
 #'     axes 3 and 4.
+#' @param monitor Turn on graphical monitoring of detrending for each
+#'     axis.
 #' @param \dots Other arguments (passed to \code{\link{loess}}).
 
 #' @importFrom stats loess residuals runif weighted.mean
@@ -15,7 +17,7 @@
 
 #' @export
 `sdca` <-
-    function(Y, pairwise = FALSE, ...)
+    function(Y, pairwise = FALSE, monitor = FALSE, ...)
 {
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 200
@@ -40,9 +42,11 @@
                 }
                 else
                     u <- residuals(lo <- loess(u ~ U[,1:(k-1)], weights = r,
-                                           normalize = FALSE,  ...))
-                plot(u ~ U[,1], cex=0.3)
-                points(U[,1], fitted(lo), pch=16, col=2)
+                                               normalize = FALSE,  ...))
+                if (monitor) {
+                    plot(u ~ U[,1], cex=0.3)
+                    points(U[,1], fitted(lo), pch=16, col=2)
+                }
             }
             vprime <- wascores(u, Y)
             eig <- abs(sum(c*v*vprime))
