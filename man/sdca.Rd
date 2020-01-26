@@ -4,7 +4,7 @@
 \alias{sdca}
 \title{Smoothly Detrended Correspondence Analysis}
 \usage{
-sdca(Y, pairwise = FALSE, ...)
+sdca(Y, pairwise = FALSE, monitor = FALSE, ...)
 }
 \arguments{
 \item{Y}{Input data.}
@@ -12,6 +12,9 @@ sdca(Y, pairwise = FALSE, ...)
 \item{pairwise}{Detrend axis \eqn{k} separately for each previous
 axis in order \eqn{1 \dots k-1 \dots 1}. This only influences
 axes 3 and 4.}
+
+\item{monitor}{Turn on graphical monitoring of detrending for each
+axis.}
 
 \item{\dots}{Other arguments (passed to \code{\link{loess}}).}
 }
