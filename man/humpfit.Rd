@@ -16,15 +16,22 @@ humpfit(mass, spno, family = poisson, start)
 
 \method{lines}{humpfit}(x, segments = 101, ...)
 
-\method{plot}{humpfit}(x, xlab = "Biomass", ylab = "Species Richness",
-  lwd = 2, l.col = "blue", p.col = 1, type = "b", ...)
+\method{plot}{humpfit}(
+  x,
+  xlab = "Biomass",
+  ylab = "Species Richness",
+  lwd = 2,
+  l.col = "blue",
+  p.col = 1,
+  type = "b",
+  ...
+)
 
 \method{points}{humpfit}(x, ...)
 
 \method{predict}{humpfit}(object, newdata = NULL, ...)
 
-\method{profile}{humpfit}(fitted, parm = 1:3, alpha = 0.01,
-  maxsteps = 20, del = zmax/5, ...)
+\method{profile}{humpfit}(fitted, parm = 1:3, alpha = 0.01, maxsteps = 20, del = zmax/5, ...)
 
 \method{summary}{humpfit}(object, ...)
 }

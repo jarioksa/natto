@@ -4,10 +4,22 @@
 \alias{ginkgogram}
 \title{Plot Dendrogram with Leaves as Fans}
 \usage{
-ginkgogram(x, labels = NULL, check = TRUE, axes = TRUE,
-  frame.plot = FALSE, ann = TRUE, main = "Cluster Ginkgogram",
-  sub = NULL, xlab = NULL, ylab = "Height", w, col, leaf = Inf,
-  ...)
+ginkgogram(
+  x,
+  labels = NULL,
+  check = TRUE,
+  axes = TRUE,
+  frame.plot = FALSE,
+  ann = TRUE,
+  main = "Cluster Ginkgogram",
+  sub = NULL,
+  xlab = NULL,
+  ylab = "Height",
+  w,
+  col,
+  leaf = Inf,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of the type produced by \code{\link{hclust}}.}

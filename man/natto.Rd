@@ -3,7 +3,6 @@
 \docType{package}
 \name{natto}
 \alias{natto}
-\alias{natto-package}
 \title{natto.}
 \description{
 natto.

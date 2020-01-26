@@ -4,8 +4,14 @@
 \alias{diverclust}
 \title{beta and gamma Diversity Clustering}
 \usage{
-diverclust(x, renyi = 1, equalize = TRUE, beta = TRUE,
-  hill = FALSE, trace = TRUE)
+diverclust(
+  x,
+  renyi = 1,
+  equalize = TRUE,
+  beta = TRUE,
+  hill = FALSE,
+  trace = TRUE
+)
 }
 \arguments{
 \item{x}{Community data.}
