@@ -11,6 +11,10 @@ Currently **natto** contains
 
  * Rao's quadratic entropy and corresponding dissimilarities.
  * Polar Ordination A.K.A. Bray-Curtis Ordination.
+ * Orlóci's Position Vector Ordination and a related method using
+   species as ordination axes.
+ * Detrended correspondence analysis using loess smoother instead of
+   smoothing by segments.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
  * beta and gamma diversity clustering.
