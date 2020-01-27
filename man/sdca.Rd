@@ -4,10 +4,12 @@
 \alias{sdca}
 \title{Smoothly Detrended Correspondence Analysis}
 \usage{
-sdca(Y, pairwise = FALSE, monitor = FALSE, ...)
+sdca(Y, iweigh = FALSE, pairwise = FALSE, monitor = FALSE, ...)
 }
 \arguments{
 \item{Y}{Input data.}
+
+\item{iweigh}{Downweight rare species.}
 
 \item{pairwise}{Detrend axis \eqn{k} separately for each previous
 axis in order \eqn{1 \dots k-1 \dots 1}. This only influences

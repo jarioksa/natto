@@ -5,6 +5,7 @@
 #' for smooth non-linear detrending.
 #'
 #' @param Y Input data.
+#' @param iweigh Downweight rare species.
 #' @param pairwise Detrend axis \eqn{k} separately for each previous
 #'     axis in order \eqn{1 \dots k-1 \dots 1}. This only influences
 #'     axes 3 and 4.
@@ -13,14 +14,16 @@
 #' @param \dots Other arguments (passed to \code{\link{loess}}).
 
 #' @importFrom stats loess residuals runif weighted.mean
-#' @importFrom vegan eigengrad wascores
+#' @importFrom vegan downweight eigengrad wascores
 
 #' @export
 `sdca` <-
-    function(Y, pairwise = FALSE, monitor = FALSE, ...)
+    function(Y, iweigh = FALSE, pairwise = FALSE, monitor = FALSE, ...)
 {
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 200
+    if (iweigh)
+        Y <- downweight(Y, fraction=5)
     Y <- Y/sum(Y)
     r <- rowSums(Y)
     c <- colSums(Y)
@@ -72,7 +75,7 @@
     origin <- apply(U, 2, weighted.mean, r)
     eig0 <- eigengrad(V, t(Y))
     out <- list(evals.decorana = EIG, evals = eig0, rproj = U, cproj = V,
-                origin = origin, call = match.call())
+                origin = origin, iweigh = iweigh, call = match.call())
     class(out) <- c("sdca", "decorana")
     out
 }
@@ -85,7 +88,10 @@
 {
     cat("\nCall:\n")
     cat(deparse(x$call), "\n\n")
-    cat("Detrended correspondence analysis with loess smoothers\n\n")
+    cat("Detrended correspondence analysis with loess smoothers.\n")
+    if (x$iweigh)
+        cat("Downweigthing of rare species from fraction 1/5.\n")
+    cat("\n")
     print(rbind(Eigenvalues = x$evals, `Decorana values` = x$evals.decorana),
           digits = digits)
     cat("\n")
