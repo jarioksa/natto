@@ -20,8 +20,56 @@ axis.}
 
 \item{\dots}{Other arguments (passed to \code{\link{loess}}).}
 }
+\value{
+Function returns a subset of \code{\link[vegan]{decorana}}
+    result object and can use many \code{decorana} methods (such as
+    \code{plot}).
+}
 \description{
 Function \code{sdca} is similar to \code{\link[vegan]{decorana}},
 but instead of detrending by segments it uses \code{\link{loess}}
 for smooth non-linear detrending.
+}
+\details{
+Detrended correspondence analysis (DCA) as implemented in
+\code{\link[vegan]{decorana}} tries to remove all systematic biases
+between ordination axes by detrending later axes against previous
+ones (Hill & Gauch 1980). DCA uses an ingenious method of
+detrending by axis segments to allow removing non-linear
+dependencies. Detrending means taking residuals against smoothed
+segment means as the new ordination scores for the current axis. It
+has been suggested that abrupt changes at segment borders can
+cause some problems in DCA. The current function replaces segmented
+detrending with detrending against smooth \code{\link{loess}}
+functions. However, in many cases this changes the results little
+from the original detrending by segments.
+
+The detrending for axes 3 and 4 is perfomed either using all
+previous axes simultaneously in \code{\link{loess}} (default) or if
+\code{pairwise=TRUE} performing sequential separate detrending
+against each previous axis separately so that both the first and
+last detrending are performed against axis 1 similarly as in the
+original \code{decorana}. For axis 3 the sequence is against axes
+1, 2, 1 and for axis 4 against axes 1, 2, 3, 2, 1.
+
+The \code{\link[vegan]{decorana}} software made several other
+innovations than detrending. Rescaling of axes is often more
+influential in application than the actual detrending, like you can
+see by using \code{\link[vegan]{decorana}} without rescaling.
+}
+\examples{
+
+data(spurn)
+mod <- sdca(spurn)
+plot(mod, display="species")
+if (require(vegan)) {
+## compare against original decorana without rescaling
+mod0 <- decorana(spurn, iresc = 0)
+plot(procrustes(mod0, mod, choices=1:2))
+}
+}
+\references{
+Hill, M.O. and Gauch, H.G. (1980). Detrended correspondence
+  analysis: an improved ordination technique. \emph{Vegetatio}
+  \strong{42}, 47--58.
 }
