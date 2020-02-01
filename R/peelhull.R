@@ -49,7 +49,7 @@
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
     ndrop <- as.integer(nrow(pts) * (1-keep))
     if (ndrop == 0)
-        return(chull(pts))
+        return(pts[chull(pts),])
     ## remove one point on the hull, either to maximally reduce the
     ## area of the new hull, or a point that is most distant to all
     ## points on and within the hull.
