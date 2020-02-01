@@ -5,23 +5,32 @@
 \alias{peelhull}
 \title{Convex Hull Enclosing a Given Proportion of Points}
 \usage{
-peelhull(pts, keep = 0.9)
+peelhull(pts, keep = 0.9, criterion = c("area", "distance"))
 }
 \arguments{
 \item{pts}{Coordinates of points, a two-column matrix}
 
 \item{keep}{Proportion of points kept}
+
+\item{criterion}{Criterion to remove a point on the
+hull. \code{"area"} removes the point that reduces the area of
+the new hull as much as possible, and \code{"distance"} removes
+the point that has the largest total distance to all points on
+and within the hull.}
 }
 \value{
 A two-column matrix of coordinates of peeled hull defining
-    a closed convex hull (last and first lines are the same).
+    a closed convex hull that can be plotted with
+    \code{\link[graphics]{polygon}}.
 }
 \description{
 Function finds a small convex hull enclosing a given proportion of
-points. The function works by removing the point from the hull that
-gives the largest reduction in the area of remaining hull until a
-desired number of points are removed (de Smith, Goodrich & Longley
-2007). The function only works in 2D.
+points. The function works by removing points from the hull one by
+one. The points are selected either so that the area of the
+remaining hull is reduced as much as possible at every step (de
+Smith, Goodrich & Longley 2007), or removing the point that has the
+maximal total distance to all remaining points. The function only
+works in 2D.
 }
 \details{
 This is preliminary work (but without guarantee of
@@ -29,11 +38,10 @@ This is preliminary work (but without guarantee of
     easily plugged into \code{\link[vegan]{ordihull}}
     (\CRANpkg{vegan} package).
 
-The algorithm is naïve, and although it was found in literature (de
-Smith et al. 2007), it does not guarantee smallest possible hull:
-each single step gives largest possible reduction of hull given
-previous steps, but there is no guarantee that the sum of single
-large reductions gives smallest possible convex hull.
+The algorithms are naïve, and stepwise removal of single points
+does not guarantee smallest possible final hull. Although the area
+reduction algorithm was found in literature (de Smith et al. 2007),
+the distance criterion often gives smaller final convex hulls.
 }
 \references{
 de Smith, M.J., Goodchild, M.F. & Longley,

@@ -2,26 +2,32 @@
 #' Convex Hull Enclosing a Given Proportion of Points
 #'
 #' Function finds a small convex hull enclosing a given proportion of
-#' points. The function works by removing the point from the hull that
-#' gives the largest reduction in the area of remaining hull until a
-#' desired number of points are removed (de Smith, Goodrich & Longley
-#' 2007). The function only works in 2D.
+#' points. The function works by removing points from the hull one by
+#' one. The points are selected either so that the area of the
+#' remaining hull is reduced as much as possible at every step (de
+#' Smith, Goodrich & Longley 2007), or removing the point that has the
+#' maximal total distance to all remaining points. The function only
+#' works in 2D.
 #'
 #' @encoding UTF-8
 #'
 #' @param pts Coordinates of points, a two-column matrix
 #' @param keep Proportion of points kept
+#' @param criterion Criterion to remove a point on the
+#'     hull. \code{"area"} removes the point that reduces the area of
+#'     the new hull as much as possible, and \code{"distance"} removes
+#'     the point that has the largest total distance to all points on
+#'     and within the hull.
 #'
 #' @details This is preliminary work (but without guarantee of
 #'     progress). However, the current function is such that it can be
 #'     easily plugged into \code{\link[vegan]{ordihull}}
 #'     (\CRANpkg{vegan} package).
 #'
-#' The algorithm is naïve, and although it was found in literature (de
-#' Smith et al. 2007), it does not guarantee smallest possible hull:
-#' each single step gives largest possible reduction of hull given
-#' previous steps, but there is no guarantee that the sum of single
-#' large reductions gives smallest possible convex hull.
+#' The algorithms are naïve, and stepwise removal of single points
+#' does not guarantee smallest possible final hull. Although the area
+#' reduction algorithm was found in literature (de Smith et al. 2007),
+#' the distance criterion often gives smaller final convex hulls.
 #'
 #' @author Jari Oksanen
 #'
@@ -30,26 +36,32 @@
 #'     to principles, techniques and software tools}. Matador.
 #'
 #' @return A two-column matrix of coordinates of peeled hull defining
-#'     a closed convex hull (last and first lines are the same).
+#'     a closed convex hull that can be plotted with
+#'     \code{\link[graphics]{polygon}}.
 #'
 #' @importFrom grDevices chull
 #'
 #' @export
 `peelhull` <-
-    function(pts, keep = 0.9)
+    function(pts, keep = 0.9, criterion = c("area", "distance"))
 {
+    criterion <- match.arg(criterion)
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
     ndrop <- as.integer(nrow(pts) * (1-keep))
     if (ndrop == 0)
         return(chull(pts))
-    ## remove one point and select a new hull with smallest area
+    ## remove one point on the hull, either to maximally reduce the
+    ## area of the new hull, or a point that is most distant to all
+    ## points on and within the hull.
     for (k in seq_len(ndrop)) {
         hull <- chull(pts)
-        area <- numeric(length(hull))
+        crit <- numeric(length(hull))
         for (i in seq_along(hull)) {
-            area[i] <- polyarea(pts[chull(pts[-hull[i],]),])
+            crit[i] <- switch(criterion,
+               "area" = polyarea(pts[chull(pts[-hull[i],]),]),
+               "distance" = -sum(sweep(pts, 2, pts[hull[i],])^2))
         }
-        pts <- pts[-hull[which.min(area)],]
+        pts <- pts[-hull[which.min(crit)],]
     }
     pts[chull(pts),]
 }
