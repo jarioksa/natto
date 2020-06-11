@@ -8,7 +8,6 @@
     fvuniq <- sort(unique(fv))
     y <- object$y
     fam <- object$family
-    wt <- weights(mod)
     n <- length(fvuniq)
     dev <- numeric(n)
     mu0 <- mean(y)
