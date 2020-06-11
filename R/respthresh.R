@@ -11,10 +11,14 @@
     n <- length(fvuniq)
     dev <- numeric(n)
     mu0 <- mean(y)
-    for(i in 1:n) {
+    for(i in seq_len(n)) {
         out <- fv >= fvuniq[i]
         mu <- tapply(y, out, mean)
         dev[i] <- sum(fam$dev.resids(mu, mu0, table(out)))
     }
-    list(cutoff = fvuniq, deviance = dev)
+    hit <- which.max(dev)
+    out <- list(threshold = fvuniq[hit], bestdev = dev[hit],
+                cutoff = fvuniq, deviance = dev)
+    class(out) <- "respthresh"
+    out
 }
