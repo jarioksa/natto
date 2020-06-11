@@ -27,7 +27,7 @@
 #'   \item \code{cutoff, deviance}: sorted possible thresholds (i.e.,
 #'     estimated fitted values) and associated explained deviances.
 #' }
-#' 
+#'
 #' @references
 #'
 #' Allouche, O., Tsoar, A. & Kadmon, R. (2006) Assessing the
@@ -58,3 +58,23 @@
     class(out) <- "respthresh"
     out
 }
+
+### method functions
+
+#' @export
+`print.respthresh` <-
+    function(x, ...)
+{
+    cat("Best threshold ", x$threshold,
+        " (explained deviance ", x$bestdev, ")\n")
+}
+
+#' @export
+`plot.respthresh` <-
+    function(x, ...)
+{
+    plot(x$cutoff, x$deviance, xlab = "Response Cutoff",
+         ylab = "Explained Deviance", type = "l", ...)
+    abline(v = x$threshold, col = 2, ...)
+}
+
