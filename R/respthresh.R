@@ -22,10 +22,13 @@
 #' The function returns an object of class \code{"respthresh"} with
 #' following elements:
 #' \itemize{
-#'   \item \code{threshold}: optimal splitting threshold of fitted values.
-#'   \item \code{bestdeviance}: the explained deviance at \code{threshold}.
-#'   \item \code{cutoff, deviance}: sorted possible thresholds (i.e.,
+#'   \item \code{coefficients}: optimal splitting threshold of fitted values.
+#'   \item \code{expl.deviance}: explained deviance
+#'   \item \code{deviance}: residual deviance at \code{threshold}.
+#'   \item \code{cutoff, devprofile}: sorted possible thresholds (i.e.,
 #'     estimated fitted values) and associated explained deviances.
+#'   \item \code{values}: fitted values below and above threshold.
+#'   \item \code{fitted}: fitted values for each observation.
 #' }
 #'
 #' @references
@@ -56,8 +59,9 @@
     fit <- fv >= fvuniq[hit]
     vals <- tapply(y, fit, mean)
     fit <- vals[fit+1]
-    out <- list(threshold = fvuniq[hit], bestdev = dev[hit],
-                cutoff = fvuniq, deviance = dev, values = vals,
+    out <- list(coefficients = fvuniq[hit], expl.deviance = dev[hit],
+                deviance = mod$null.deviance-dev[hit],
+                cutoff = fvuniq, devprofile = dev, values = vals,
                 fitted = fit)
     class(out) <- "respthresh"
     out
@@ -69,17 +73,17 @@
 `print.respthresh` <-
     function(x, ...)
 {
-    cat("Best threshold", x$threshold, "\n")
+    cat("Best threshold", x$coefficients, "\n")
     cat("average fitted values", x$values, "\n")
-    cat("explained deviance", x$bestdev, "\n")
+    cat("explained deviance", x$expl.deviance, "\n")
 }
 
 #' @export
 `plot.respthresh` <-
     function(x, ...)
 {
-    plot(x$cutoff, x$deviance, xlab = "Response Cutoff",
+    plot(x$cutoff, x$devprofile, xlab = "Response Cutoff",
          ylab = "Explained Deviance", type = "l", ...)
-    abline(v = x$threshold, col = 2, ...)
+    abline(v = x$coefficients, col = 2, ...)
 }
 
