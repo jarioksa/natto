@@ -53,8 +53,12 @@
         dev[i] <- sum(fam$dev.resids(mu, mu0, table(out)))
     }
     hit <- which.max(dev)
+    fit <- fv >= fvuniq[hit]
+    vals <- tapply(y, fit, mean)
+    fit <- vals[fit+1]
     out <- list(threshold = fvuniq[hit], bestdev = dev[hit],
-                cutoff = fvuniq, deviance = dev)
+                cutoff = fvuniq, deviance = dev, values = vals,
+                fitted = fit)
     class(out) <- "respthresh"
     out
 }
@@ -65,8 +69,9 @@
 `print.respthresh` <-
     function(x, ...)
 {
-    cat("Best threshold ", x$threshold,
-        " (explained deviance ", x$bestdev, ")\n")
+    cat("Best threshold", x$threshold, "\n")
+    cat("average fitted values", x$values, "\n")
+    cat("explained deviance", x$bestdev, "\n")
 }
 
 #' @export
