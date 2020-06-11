@@ -1,6 +1,42 @@
 ### originally suggested to Dave Roberts as `dichtomod` in email on
 ### 30/4/2020.
 
+#' Binary Threshold for Continuous Fitted Response
+#'
+#' Species distribution models (SDM) often use methods that give
+#' continuous fitted responses for the probability of species
+#' occurrence. Some users want to find a threshold that splits these
+#' continuous responses to binary outcomes of presence and absence
+#' (Allouche, Tsoar & Cadmon 2006). This function finds a threshold
+#' that maximizes the explained deviance and gives as true
+#' approximation of the original continuous response as possible.
+#'
+#' @param object Fitted \code{\link{glm}} or \code{\link[mgcv]{gam}}
+#'     object. The function was developed for binary observations
+#'     responses fitted with \code{\link[stats]{binomial}} error
+#'     distribution, but it may process other types of models with
+#'     unspecified and untested results: proceed at your own risk.
+#'
+#' @return
+#'
+#' The function returns an object of class \code{"respthresh"} with
+#' following elements:
+#' \itemize{
+#'   \item \code{threshold}: optimal splitting threshold of fitted values.
+#'   \item \code{bestdeviance}: the explained deviance at \code{threshold}.
+#'   \item \code{cutoff, deviance}: sorted possible thresholds (i.e.,
+#'     estimated fitted values) and associated explained deviances.
+#' }
+#' 
+#' @references
+#'
+#' Allouche, O., Tsoar, A. & Kadmon, R. (2006) Assessing the
+#' accurraccy of species distribution models: prevelance, kappa and
+#' the true skill statistic (TSS). \emph{Journal of Applied Ecology}
+#' 43, 1223--1232.
+#'
+#' @importFrom stats fitted
+#' @export
 `respthresh` <-
     function(object)
 {
