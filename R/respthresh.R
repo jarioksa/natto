@@ -93,9 +93,9 @@
     vals <- tapply(y, fit, mean)
     fit <- vals[fit+1]
     out <- list(coefficients = fvuniq[hit], expl.deviance = dev[hit],
-                deviance = mod$null.deviance-dev[hit],
-                null.deviance = mod$null.deviance,
-                orig.deviance = deviance(mod), formula = formula(mod),
+                deviance = object$null.deviance-dev[hit],
+                null.deviance = object$null.deviance,
+                orig.deviance = deviance(object), formula = formula(object),
                 cutoff = fvuniq, devprofile = dev, values = vals,
                 fitted = fit)
     class(out) <- "respthresh"
