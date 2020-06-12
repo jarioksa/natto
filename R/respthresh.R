@@ -112,6 +112,7 @@
     cat("\nthreshold", x$coefficients, "\n")
     cat("average fitted values", x$values, "\n")
     cat("explained deviance", x$expl.deviance, "\n")
+    invisible(x)
 }
 
 #' @export
@@ -154,5 +155,6 @@
     printCoefmat(x$devtable, na.print="")
     cat("\nGood threshold values (the best with Delta Dev 0)\n")
     print(x$oktable)
+    invisible(x)
 }
 
