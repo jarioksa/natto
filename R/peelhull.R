@@ -71,8 +71,7 @@
 `polyarea` <- function(x) {
     x <- rbind(x, x[1,])
     n <- nrow(x)
-    x
-    if (n < 4)
+    if (n < 4) # two points or less: area 0
         return(0)
     else
         abs(sum(x[-n,1]*x[-1,2] - x[-1,1]*x[-n,2]))/2
