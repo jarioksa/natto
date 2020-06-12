@@ -82,9 +82,9 @@
     dev <- numeric(n)
     mu0 <- mean(y)
     for(i in seq_len(n)) {
-        out <- fv >= fvuniq[i]
-        mu <- tapply(y, out, mean)
-        dev[i] <- sum(fam$dev.resids(mu, mu0, table(out)))
+        above <- fv >= fvuniq[i]
+        mu <- tapply(y, above, mean)
+        dev[i] <- sum(fam$dev.resids(mu, mu0, table(above)))
     }
     hit <- which.max(dev)
     fit <- fv >= fvuniq[hit]
