@@ -13,4 +13,4 @@ VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
