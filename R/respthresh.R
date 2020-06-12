@@ -74,6 +74,8 @@
 `respthresh` <-
     function(object)
 {
+    if (object$family != "binomial" || length(unique(object$y)) > 2)
+        warning("developed for binomial binary models: proceed at your own risk")
     fv <- fitted(object)
     fvuniq <- sort(unique(fv))
     y <- object$y
@@ -131,7 +133,7 @@
 {
     tmp <- c(object$null.deviance, deviance(object), object$orig.deviance)
     devtable <- cbind(tmp, c(NA, -diff(tmp)))
-    dimnames(devtable) <- list(c("Null", "Binary", "Model"),
+    dimnames(devtable) <- list(c("Null", "Threshold", "Model"),
                                c("Deviance", "Delta Dev"))
     explained <- object$expl.deviance
     ok <- object$expl.deviance - object$devprofile <= qchisq(0.95, 1)
