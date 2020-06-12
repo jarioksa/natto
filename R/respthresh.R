@@ -61,6 +61,8 @@
     fit <- vals[fit+1]
     out <- list(coefficients = fvuniq[hit], expl.deviance = dev[hit],
                 deviance = mod$null.deviance-dev[hit],
+                null.deviance = mod$null.deviance,
+                orig.deviance = deviance(mod), formula = formula(mod),
                 cutoff = fvuniq, devprofile = dev, values = vals,
                 fitted = fit)
     class(out) <- "respthresh"
@@ -73,7 +75,9 @@
 `print.respthresh` <-
     function(x, ...)
 {
-    cat("Best threshold", x$coefficients, "\n")
+    cat("Binary threshold for model\n")
+    print(formula(x))
+    cat("\nthreshold", x$coefficients, "\n")
     cat("average fitted values", x$values, "\n")
     cat("explained deviance", x$expl.deviance, "\n")
 }
@@ -85,5 +89,36 @@
     plot(x$cutoff, x$devprofile, xlab = "Response Cutoff",
          ylab = "Explained Deviance", type = "l", ...)
     abline(v = x$coefficients, col = 2, ...)
+}
+
+#' @export
+`summary.respthresh` <-
+    function(object, ...)
+{
+    tmp <- c(object$null.deviance, deviance(object), object$orig.deviance)
+    devtable <- cbind(tmp, c(NA, -diff(tmp)))
+    dimnames(devtable) <- list(c("Null", "Binary", "Model"),
+                               c("Deviance", "Delta Dev"))
+    explained <- object$expl.deviance
+    ok <- object$expl.deviance - object$devprofile <= qchisq(0.95, 1)
+    oktable <- data.frame("Threshold" = object$cutoff[ok],
+                          "Delta Dev" = object$expl.deviance - object$devprofile[ok],
+                          check.names = FALSE)
+    out <- list(devtable = devtable, oktable = oktable,
+                formula = formula(object))
+    class(out) <- "summary.respthresh"
+    out
+}
+
+#' @export
+`print.summary.respthresh` <-
+    function(x, ...)
+{
+    cat("Binary threshold for model\n")
+    print(formula(x))
+    cat("\nTable of Deviance\n")
+    printCoefmat(x$devtable, na.print="")
+    cat("\nGood threshold values (the best with Delta Dev 0)\n")
+    print(x$oktable)
 }
 
