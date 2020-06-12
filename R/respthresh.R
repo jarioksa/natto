@@ -11,6 +11,34 @@
 #' that maximizes the explained deviance and gives as true
 #' approximation of the original continuous response as possible.
 #'
+#' @details
+#'
+#' The function evaluates the deviance of the original continuous
+#' model by setting a threshold at each fitted value and evaluating
+#' the deviance explained with this threshold. The threshold is
+#' inclusive: values at or above the threshold are regarded as being
+#' hits. The deviance profile is usually jagged, and the method is
+#' sensitive to single data points, and can give disjunct regions of
+#' nearly equally good threshold points. Function \code{plot} will
+#' display the deviance profile, and \code{summary} lists all
+#' threshold that are nearly as good as the best point using
+#' Chi-square distribution with 1 degree of freedom at \eqn{p=0.95} as
+#' the criterion.
+#'
+#' The binary model has two values or average responses below and at
+#' or above the threshold, but these values are not usually 0 and
+#' 1. However, they are the values that maximize the explained
+#' deviance of a two-value model.
+#'
+#' The \code{summary} also gives a Deviance table showing the original
+#' Null deviance, the original model deviance, and between these the
+#' residual deviance with the binary threshold, and the differences of
+#' these deviances in the second model. The result object can also be
+#' accessed with \code{\link{coef}} that returns the threshold,
+#' \code{\link{deviance}} that returns the residual deviance, and
+#' \code{\link{fitted}} that returns the fitted two values for each
+#' original observation.
+#'
 #' @param object Fitted \code{\link{glm}} or \code{\link[mgcv]{gam}}
 #'     object. The function was developed for binary observations
 #'     responses fitted with \code{\link[stats]{binomial}} error
@@ -27,6 +55,9 @@
 #'   \item \code{deviance}: residual deviance at \code{threshold}.
 #'   \item \code{cutoff, devprofile}: sorted possible thresholds (i.e.,
 #'     estimated fitted values) and associated explained deviances.
+#'   \item \code{formula, null.deviance, orig.deviance}:
+#'      \code{\link{formula}}, null deviance and deviance of the input
+#'      model.
 #'   \item \code{values}: fitted values below and above threshold.
 #'   \item \code{fitted}: fitted values for each observation.
 #' }
@@ -71,6 +102,7 @@
 
 ### method functions
 
+#' @importFrom stats formula
 #' @export
 `print.respthresh` <-
     function(x, ...)
@@ -91,6 +123,7 @@
     abline(v = x$coefficients, col = 2, ...)
 }
 
+#' @importFrom stats deviance qchisq formula
 #' @export
 `summary.respthresh` <-
     function(object, ...)
@@ -110,6 +143,7 @@
     out
 }
 
+#' @importFrom stats printCoefmat
 #' @export
 `print.summary.respthresh` <-
     function(x, ...)
