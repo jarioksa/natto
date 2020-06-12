@@ -140,6 +140,7 @@
     oktable <- data.frame("Threshold" = object$cutoff[ok],
                           "Delta Dev" = object$expl.deviance - object$devprofile[ok],
                           check.names = FALSE)
+    rownames(oktable) <- which(ok)
     out <- list(devtable = devtable, oktable = oktable,
                 formula = formula(object))
     class(out) <- "summary.respthresh"
