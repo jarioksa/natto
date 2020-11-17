@@ -20,7 +20,9 @@
         r <- diag(NROW(m$CA$v))
         dimnames(r) <- list(rownames(m$CA$v), rownames(m$CA$v))
     } else {
-        r <- cov2cor(tcrossprod(m$CA$v[, seq_len(rank)]))
+        eig <- sqrt(m$CA$eig[seq_len(rank)])
+        x <- m$CA$v[, seq_len(rank)] %*% diag(eig, nrow=rank)
+        r <- cov2cor(tcrossprod(x))
     }
     attr(r, "rank") <- rank
     r
