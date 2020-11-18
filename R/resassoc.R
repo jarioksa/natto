@@ -2,7 +2,7 @@
 #' @importFrom vegan bstick
 #'
 #' @export
-`resassoc.rda` <-
+`resassoc.cca` <-
     function(x, rank, ...)
 {
     if (!inherits(x, "cca"))
