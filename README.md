@@ -15,6 +15,7 @@ Currently **natto** contains
    species as ordination axes.
  * Detrended correspondence analysis using loess smoother instead of
    smoothing by segments.
+ * Estimate residual species association in CCA and RDA.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
  * beta and gamma diversity clustering.
