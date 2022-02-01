@@ -12,8 +12,7 @@ clsupport <-
         if (usesets) {
             m <- clsets(h)
             for (i in seq_along(supp))
-                s[i] <- any(sapply(seq_along(supp), function(j)
-                    setequal(m0[[i]], m[[j]])))
+                s[i] <- any(sapply(m, function(x) all(identical(m0[[i]], x))))
         } else {
             m <- clmembers(h)
             s <- sapply(seq_len(ncol(m)), function(i)
@@ -57,7 +56,7 @@ clsets <-
                              -m[j,k]
                          else
                              memb[[m[j,k]]]
-        memb[[j]] <- do.call(union, sets)
+        memb[[j]] <- sort(c(sets[[1]], sets[[2]]))
     }
     memb
 }
