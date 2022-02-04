@@ -15,7 +15,7 @@
 #' @importFrom vegan designdist ordilabel
 #' @export
 `clsupport` <-
-    function (x, n=1000, method="average", plot = TRUE, ...)
+    function (x, n=1000, method="average", softmatch = FALSE, plot = TRUE, ...)
 {
     h0 <- hclust(bayesjaccard(x, expected = TRUE), method)
     m0 <- clsets(h0)
@@ -24,11 +24,29 @@
         d <- bayesjaccard(x)
         h <- hclust(d, method)
         m <- clsets(h)
+        if (softmatch) {
+            ## Find the Jaccard similarities of each m0 & m sets and
+            ## take the highest as the value of "soft match". aabc
+            ## (a+b + a+c) is the sum of species numbers of two sets,
+            ## and abc the size of union of sets (number of units in
+            ## pooled sets, a+b+c).
+            aabc <- outer(sapply(m0, length), sapply(m, length), "+")
+            abc <- matrix(0, length(m), length(m))
+            for(i in seq_along(m))
+                abc[,i] <- sapply(m0, function(x) length(unique(c(m[[i]], x))))
+            abc <- aabc/abc - 1 # Jaccard similarity = a/abc
+            s <- apply(abc, 1, max)
+        } else {
         for (i in seq_along(supp))
             s[i] <- any(sapply(m, function(x) all(identical(m0[[i]], x))))
+        }
         supp <- supp + s
     }
     if (plot) {
+        ## with softmax supp is a float
+        if (softmatch) {
+            supp <- round(1000 * supp/n)
+        }
         plot(h0, ...)
         ordilabel(h0, "internal", labels=supp)
     }
