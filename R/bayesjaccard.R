@@ -71,3 +71,32 @@
     memb
 }
 
+#############
+### NMDS  ###
+#############
+
+#' @importFrom stats fitted
+#' @importFrom vegan metaMDS monoMDS procrustes
+#' @export
+`rnmds` <-
+    function(x, n = 100, trymax = 500, maxit = 1000, smin = 1e-4,
+             sfgrmin = 1e-7, sratmax = 0.999999, parallel = 2, trace=FALSE,
+             ...)
+{
+    ## Expected ordination
+    d0 <- bayesjaccard(x, expected=T)
+    m0 <- metaMDS(d0, trymax = trymax, maxit = maxit, smin = smin,
+                  sfgrmin = sfgrmin, sratmax = sratmax, parallel = parallel,
+                  trace = trace, ...)
+    ## random Jaccard ordinations
+    rscore <- array(dim = c(dim(m0$points), n))
+    for (i in seq_len(n)) {
+        d <- bayesjaccard(x)
+        m <- monoMDS(d, m0$points, maxit = maxit, smin = smin,
+                     sfgrmin = sfgrmin, sratmax = sratmax, ...)
+        rscore[,,i] <- fitted(procrustes(m0$points, m$points), truemean=FALSE)
+    }
+    m0$rscores <- rscore
+    class(m0) <- c("rnmds", class(m0))
+    m0
+}
