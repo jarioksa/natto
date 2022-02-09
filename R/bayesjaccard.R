@@ -97,6 +97,36 @@
         rscore[,,i] <- fitted(procrustes(m0$points, m$points), truemean=FALSE)
     }
     m0$rscores <- rscore
-    class(m0) <- c("rnmds", class(m0))
+    class(m0) <- c("bjnmds", class(m0))
     m0
+}
+
+#' @importFrom graphics polygon
+#' @importFrom grDevices col2rgb rgb
+#' @export
+`bjpolygon` <-
+    function(x, observed = TRUE, keep = 0.9, criterion = "distance",
+             col="gray", alpha = 127, ...)
+{
+    if (!inherits(x, "bjnmds"))
+        stop("needs bayesjaccard ordination object")
+    xarr <- x$rscores
+    x0 <- x$points
+    dims <- dim(xarr)
+    nobs <- dims[1]
+    nsam <- dims[3]
+    ## handle colours
+    if (alpha < 1)
+        alpha <- round(255 * alpha)
+    if (is.factor(col))
+        col <- as.numeric(col)
+    cols <- rgb(t(col2rgb(col)), alpha = alpha, maxColorValue = 255)
+    cols <- rep(cols, length = nobs)
+    ## draw polygons
+    for (i in seq_len(nobs)) {
+        poly <- peelhull(t(xarr[i,,]), keep = keep, criterion = criterion)
+        if (observed)
+            poly <- peelhull(rbind(poly, x0[i,]), keep = 1)
+        polygon(poly, col = cols[i], border = NA)
+    }
 }
