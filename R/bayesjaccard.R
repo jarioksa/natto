@@ -78,7 +78,7 @@
 #' @importFrom stats fitted
 #' @importFrom vegan metaMDS monoMDS procrustes
 #' @export
-`rnmds` <-
+`bjNMDS` <-
     function(x, n = 100, trymax = 500, maxit = 1000, smin = 1e-4,
              sfgrmin = 1e-7, sratmax = 0.999999, parallel = 2, trace=FALSE,
              ...)
