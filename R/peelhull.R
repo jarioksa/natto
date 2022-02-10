@@ -76,3 +76,24 @@
     else
         abs(sum(x[-n,1]*x[-1,2] - x[-1,1]*x[-n,2]))/2
 }
+
+### Similar to peelhull but for ellipses: remove point with largest
+### Mahalanobis distance, update and remove next point, and finally
+### return the enclosing ellipse
+
+#' @importFrom stats cov mahalanobis predict
+#' @importFrom cluster ellipsoidhull
+#' @export
+`peelellipse` <-
+    function(pts, keep = 0.9)
+{
+    stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
+    ndrop <- as.integer(nrow(pts) * (1 - keep))
+    if (ndrop == 0)
+        return(predict(ellipsoidhull(pts)))
+    for (k in seq_len(ndrop)) {
+        del <- which.max(mahalanobis(pts, colMeans(pts), cov(pts)))
+        pts <- pts[-del,, drop=FALSE]
+    }
+    predict(ellipsoidhull(pts))
+}
