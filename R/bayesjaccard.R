@@ -130,3 +130,34 @@
         polygon(poly, col = cols[i], border = NA)
     }
 }
+
+#' @importFrom graphics points segments
+#' @importFrom vegan ordilabel
+#' @export
+`bjstars` <-
+    function(x, keep = 0.9, col="gray", type = c("t", "p", "n"), ...)
+{
+    if (!inherits(x, "bjnmds"))
+        stop("needs bayesjaccard ordination object")
+    xarr <- x$rscores
+    x0 <- x$points
+    nobs <- nrow(x0)
+    nsam <- dim(xarr)[3]
+    nkept <- ceiling(nsam * keep)
+    if (nkept == nsam)
+        kept <- rep(TRUE, nsam)
+    col <- rep(col, length = nobs)
+    for (i in seq_len(nobs)) {
+        if (nkept < nsam) {
+            dist <- colSums((xarr[i,,] - x0[i,])^2)
+            kept <- rank(dist) <= nkept
+        }
+        segments(x0[i,1], x0[i,2], xarr[i,1,kept], xarr[i,2,kept], col = col[i],  ...)
+    }
+    switch(type,
+           "n" = invisible(),
+           "p" = points(x0, ...),
+           "t" = ordilabel(x0, ...)
+           )
+    invisible()
+}
