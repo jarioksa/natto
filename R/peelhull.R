@@ -63,12 +63,16 @@
         }
         pts <- pts[-hull[which.min(crit)],]
     }
-    pts[chull(pts),]
+    out <- pts[chull(pts),]
+    attr(out, "centre") <- polycentre(out)
+    attr(out, "area") <- polyarea(out)
+    out
 }
 
-## Area of a polygon
+## Area and centre of a polygon
 
-`polyarea` <- function(x) {
+`polyarea` <- function(x)
+{
     x <- rbind(x, x[1,])
     n <- nrow(x)
     if (n < 4) # two points or less: area 0
@@ -77,12 +81,24 @@
         abs(sum(x[-n,1]*x[-1,2] - x[-1,1]*x[-n,2]))/2
 }
 
+`polycentre` <- function(x)
+{
+    n <- nrow(x)
+    if (n < 4)
+        return(colMeans(x[-n,, drop = FALSE]))
+    xy <- x[-n,1]*x[-1,2] - x[-1,1]*x[-n,2]
+    A <- sum(xy)/2
+    xc <- sum((x[-n,1] + x[-1,1]) * xy)/A/6
+    yc <- sum((x[-n,2] + x[-1,2]) * xy)/A/6
+    structure(c(xc, yc), names = colnames(x))
+}
+
 ### Similar to peelhull but for ellipses: remove point with largest
 ### Mahalanobis distance, update and remove next point, and finally
 ### return the enclosing ellipse
 
 #' @importFrom stats cov mahalanobis predict
-#' @importFrom cluster ellipsoidhull
+#' @importFrom cluster ellipsoidhull volume
 #' @export
 `peelellipse` <-
     function(pts, keep = 0.9)
@@ -95,5 +111,9 @@
         del <- which.max(mahalanobis(pts, colMeans(pts), cov(pts)))
         pts <- pts[-del,, drop=FALSE]
     }
-    predict(ellipsoidhull(pts))
+    ell <- ellipsoidhull(pts)
+    out <- predict(ell)
+    attr(out, "centre") <- ell$loc
+    attr(out, "area") <- volume(ell)
+    out
 }
