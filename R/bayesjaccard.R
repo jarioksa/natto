@@ -105,11 +105,12 @@
 #' @importFrom grDevices col2rgb rgb
 #' @export
 `bjpolygon` <-
-    function(x, observed = TRUE, keep = 0.9, criterion = "distance",
-             col="gray", alpha = 127, ...)
+    function(x, keep = 0.9, kind = c("hull", "ellipse"), col="gray",
+             alpha = 127, observed = TRUE, ...)
 {
     if (!inherits(x, "bjnmds"))
         stop("needs bayesjaccard ordination object")
+    kind <- match.arg(kind)
     xarr <- x$rscores
     x0 <- x$points
     dims <- dim(xarr)
@@ -124,8 +125,13 @@
     cols <- rep(cols, length = nobs)
     ## draw polygons
     for (i in seq_len(nobs)) {
-        poly <- peelhull(t(xarr[i,,]), keep = keep, criterion = criterion)
-        if (observed)
+        poly <- switch(
+            kind,
+            "hull" = peelhull(t(xarr[i,,]), keep = keep,
+                              criterion = "distance"),
+            "ellipse" = peelellipse(t(xarr[i,,]), keep = keep)
+        )
+        if (kind == "hull" && observed)
             poly <- peelhull(rbind(poly, x0[i,]), keep = 1)
         polygon(poly, col = cols[i], border = NA)
     }
