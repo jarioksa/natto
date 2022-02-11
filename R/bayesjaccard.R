@@ -102,7 +102,7 @@
 }
 
 #' @importFrom graphics polygon
-#' @importFrom grDevices col2rgb rgb
+#' @importFrom grDevices adjustcolor col2rgb rgb
 #' @export
 `bjpolygon` <-
     function(x, keep = 0.9, kind = c("hull", "ellipse"), linetopoint = TRUE,
