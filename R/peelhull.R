@@ -83,6 +83,7 @@
 
 `polycentre` <- function(x)
 {
+    x <- rbind(x, x[1,])
     n <- nrow(x)
     if (n < 4)
         return(colMeans(x[-n,, drop = FALSE]))
