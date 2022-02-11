@@ -105,8 +105,8 @@
 #' @importFrom grDevices col2rgb rgb
 #' @export
 `bjpolygon` <-
-    function(x, keep = 0.9, kind = c("hull", "ellipse"), col="gray",
-             alpha = 127, observed = TRUE, ...)
+    function(x, keep = 0.9, kind = c("hull", "ellipse"), linetopoint = TRUE,
+             col="gray", alpha = 127, observed = TRUE, ...)
 {
     if (!inherits(x, "bjnmds"))
         stop("needs bayesjaccard ordination object")
@@ -134,6 +134,12 @@
         if (kind == "hull" && observed)
             poly <- peelhull(rbind(poly, x0[i,]), keep = 1)
         polygon(poly, col = cols[i], border = NA)
+        if (linetopoint) {
+            cnt <- attr(poly, "centre")
+            ## line is non-transparent
+            segments(x0[i,1], x0[i,2], cnt[1], cnt[2],
+                     col = adjustcolor(cols[i], 1))
+        }
     }
 }
 
