@@ -176,3 +176,38 @@
            )
     invisible()
 }
+
+
+#############
+### dbRDA ###
+#############
+
+### Somewhat trickier to implement than NMDS. (1) dbRDA is an
+### eigenvector method, and if we rotate, eigenvalues would change,
+### and we may need to skip rotation, but fix the axis reflection.
+### (2) The "expected" model has one negative eigenvalue, but rbeta
+### models can have several and variable numbers of negative
+### eigenvalues. (3) LC scores can be rotation invariant when the real
+### ranks are equal, but can become kinkier with different real ranks
+### (but we perhaps we should not rotate). (4) Probably we should not
+### allow any adjustment against negative eigenvalues as these are
+### data-set dependent and destroy the beauty of the distance (excpet
+### sqrt.dis?).
+
+#' @importFrom vegan dbrda eigenvals
+#' @export
+`bjdbrda` <-
+    function(formula, data, n=100, ...)
+{
+    environment(formula) <- environment()
+    m0 <- dbrda(formula = formula, data = data, distance="jaccard1",
+                dfun = bayesjaccard, ...)
+    ## sample, but first collect only eigenvalues
+    ev0 <- eigenvals(m0)
+    ev <- matrix(NA, nrow = n, ncol = length(ev0))
+    for (i in 1:n) {
+        m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
+        ev[i,] <- eigenvals(m)
+    }
+    list("eigen" = ev0, "reigen" = ev)
+}
