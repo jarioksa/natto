@@ -207,11 +207,23 @@
     naxes <- length(m0$CCA$eig)
     ## sample, but first collect only eigenvalues
     ev <- matrix(NA, nrow = n, ncol = naxes)
+    u0 <- m0$CCA$u
+    u <- array(dim = c(dim(u0), n))
+    wa <- array(dim = c(dim(u0), n))
+    bp <- array(dim = c(dim(m0$CCA$biplot), n))
+    cn <- array(dim = c(dim(m0$CCA$centroids), n))
     for (i in 1:n) {
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
         ev[i,] <- eigenvals(m, model = "constrained")
+        ## no Procrustes rotation, but check reflected axes
+        nreal <- seq_len(ncol(m$CCA$u))
+        rev <- sign(colSums(u0[, nreal] * m$CCA$u))
+        u[,nreal,i] <- m$CCA$u %*% diag(rev)
+        wa[,nreal,i] <- m$CCA$wa %*% diag(rev)
+        bp[,nreal,i] <- m$CCA$biplot %*% diag(rev)
+        cn[,nreal,i] <- m$CCA$centroids %*% diag(rev)
     }
-    BJ <- list("eig" = ev)
+    BJ <- list("eig" = ev, "u" = u, "wa" = wa, "biplot" = bp, "centroids" = cn)
     m0$BayesJaccard <- BJ
     class(m0) <- c("bjdbrda", class(m0))
     m0
