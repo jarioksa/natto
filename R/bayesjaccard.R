@@ -20,7 +20,7 @@
 `clsupport` <-
     function (x, n=1000, method="average", softmatch = FALSE, plot = TRUE, ...)
 {
-    h0 <- hclust(bayesjaccard(x, expected = TRUE), method)
+    h0 <- hclust(bayesjaccard(x, method="jaccard1"), method)
     m0 <- clsets(h0)
     supp <- s <- numeric(nrow(h0$merge)-1)
     for(i in seq_len(n)) {
@@ -87,7 +87,7 @@
              ...)
 {
     ## Expected ordination
-    d0 <- bayesjaccard(x, expected=T)
+    d0 <- bayesjaccard(x, method="jaccard1")
     m0 <- metaMDS(d0, trymax = trymax, maxit = maxit, smin = smin,
                   sfgrmin = sfgrmin, sratmax = sratmax, parallel = parallel,
                   trace = trace, ...)
