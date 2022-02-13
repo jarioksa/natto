@@ -2,13 +2,16 @@
 #' @importFrom vegan designdist
 #' @export
 `bayesjaccard` <-
-    function(x, expected = FALSE)
+    function(x, method = c("rbeta", "jaccard1"))
 {
-    if (expected)
-        designdist(x, "(b+c+1)/(a+b+c+2)", terms = "binary", abcd=TRUE)
-    else
-        designdist(x, "rbeta(length(a), b+c+1, a+1)", terms = "binary",
-                   abcd = TRUE)
+    method <- match.arg(method)
+    switch(method,
+           "jaccard1" =
+               designdist(x, "(b+c+1)/(a+b+c+2)", terms = "binary", abcd=TRUE),
+           "rbeta" =
+               designdist(x, "rbeta(length(a), b+c+1, a+1)", terms = "binary",
+                          abcd = TRUE)
+           )
 }
 
 #' @importFrom stats hclust rbeta
