@@ -202,12 +202,17 @@
     environment(formula) <- environment()
     m0 <- dbrda(formula = formula, data = data, distance="jaccard1",
                 dfun = bayesjaccard, ...)
+    if (is.null(m0$CCA))
+        stop("only implememented for constrained analysis")
+    naxes <- length(m0$CCA$eig)
     ## sample, but first collect only eigenvalues
-    ev0 <- eigenvals(m0, model = "constrained")
-    ev <- matrix(NA, nrow = n, ncol = length(ev0))
+    ev <- matrix(NA, nrow = n, ncol = naxes)
     for (i in 1:n) {
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
         ev[i,] <- eigenvals(m, model = "constrained")
     }
-    list("eigen" = ev0, "reigen" = ev)
+    BJ <- list("eig" = ev)
+    m0$BayesJaccard <- BJ
+    class(m0) <- c("bjdbrda", class(m0))
+    m0
 }
