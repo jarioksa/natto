@@ -203,11 +203,11 @@
     m0 <- dbrda(formula = formula, data = data, distance="jaccard1",
                 dfun = bayesjaccard, ...)
     ## sample, but first collect only eigenvalues
-    ev0 <- eigenvals(m0)
+    ev0 <- eigenvals(m0, model = "constrained")
     ev <- matrix(NA, nrow = n, ncol = length(ev0))
     for (i in 1:n) {
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
-        ev[i,] <- eigenvals(m)
+        ev[i,] <- eigenvals(m, model = "constrained")
     }
     list("eigen" = ev0, "reigen" = ev)
 }
