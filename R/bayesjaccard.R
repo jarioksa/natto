@@ -206,6 +206,7 @@
         stop("only implememented for constrained analysis")
     naxes <- length(m0$CCA$eig)
     ## sample, but first collect only eigenvalues
+    tot.chi <- numeric(n)
     ev <- matrix(NA, nrow = n, ncol = naxes)
     u0 <- m0$CCA$u
     u <- array(dim = c(dim(u0), n))
@@ -214,6 +215,7 @@
     cn <- array(dim = c(dim(m0$CCA$centroids), n))
     for (i in 1:n) {
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
+        tot.chi[i] <- m$tot.chi
         ev[i,] <- eigenvals(m, model = "constrained")
         ## no Procrustes rotation, but check reflected axes
         nreal <- seq_len(ncol(m$CCA$u))
@@ -223,7 +225,8 @@
         bp[,nreal,i] <- m$CCA$biplot %*% diag(rev)
         cn[,nreal,i] <- m$CCA$centroids %*% diag(rev)
     }
-    BJ <- list("eig" = ev, "u" = u, "wa" = wa, "biplot" = bp, "centroids" = cn)
+    BJ <- list("tot.chi" = tot.chi, "eig" = ev, "u" = u, "wa" = wa,
+               "biplot" = bp, "centroids" = cn)
     m0$BayesJaccard <- BJ
     class(m0) <- c("bjdbrda", class(m0))
     m0
