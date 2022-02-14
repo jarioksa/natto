@@ -231,3 +231,48 @@
     class(m0) <- c("bjdbrda", class(m0))
     m0
 }
+
+#' @importFrom vegan scores
+#' @importFrom stats nobs
+#' @export
+`scores.bjdbrda` <-
+    function(x, choices = 1:2, display = c("wa", "lc", "bp", "cn"),
+             scaling = "species", const,
+             expected = TRUE, ...)
+{
+    if (!missing(const))
+        .NotYetUsed(const)
+    if (expected)
+        return(NextMethod("scores", x, ...))
+    display <- match.arg(display)
+    nr <- nobs(x)
+    n <- length(x$BayesJaccard$tot.chi)
+    ## get scaling
+    scales <- c("none", "sites", "species", "symmetric")
+    if (!is.numeric(scaling)) {
+        scaling <- match.arg(scaling, scales)
+        scaling <- match(scaling, scales) - 1L
+    }
+    sco <- switch(display,
+                  "wa" = x$BayesJaccard$wa[, choices, ],
+                  "lc" = x$BayesJaccard$u[, choices, ],
+                  "bp" = x$BayesJaccard$biplot[, choices, ],
+                  "cn" = x$BayesJaccard$centroids[, choices, ]
+                  )
+    ## cycle through every sample for scaling
+    for (i in seq_len(n)) {
+        sumev <- x$BayesJaccard$tot.chi[i]
+        const <- if(display == "bp") 1 else sqrt(sqrt((nr-1) * sumev))
+        ev <- x$BayesJaccard$eig[i, choices]
+        slambda <- switch(abs(scaling),
+                          sqrt(ev/sumev),
+                          rep(1, length(choices)),
+                          sqrt(sqrt(ev/sumev))
+                          )
+        if (!is.null(slambda))
+            sco[,,i] <- const * sweep(sco[,,i], 2, slambda, "*")
+    }
+    attr(sco, "score") <- display
+    attr(sco, "scaling") <- scaling
+    sco
+}
