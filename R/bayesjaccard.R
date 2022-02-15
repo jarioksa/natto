@@ -108,23 +108,20 @@
 #' @importFrom grDevices adjustcolor col2rgb rgb
 #' @export
 `bjpolygon` <-
-    function(x, keep = 0.9, kind = c("hull", "ellipse"), linetopoint = TRUE,
-             col="gray", alpha = 127, observed = TRUE, ...)
+    function(xarr, x0, keep = 0.9, kind = c("hull", "ellipse"),
+             linetopoint = TRUE, col="gray", alpha = 75, observed = TRUE,
+             type = c("t", "p", "n"), ...)
 {
-    if (!inherits(x, "bjnmds"))
-        stop("needs bayesjaccard ordination object")
     kind <- match.arg(kind)
-    xarr <- x$rscores
-    x0 <- x$points
     dims <- dim(xarr)
     nobs <- dims[1]
     nsam <- dims[3]
     ## handle colours
-    if (alpha < 1)
-        alpha <- round(255 * alpha)
+    if (alpha > 1)
+        alpha <- alpha / 255
     if (is.factor(col))
         col <- as.numeric(col)
-    cols <- rgb(t(col2rgb(col)), alpha = alpha, maxColorValue = 255)
+    cols <- rgb(t(col2rgb(col)/255), alpha = alpha)
     cols <- rep(cols, length = nobs)
     ## draw polygons
     for (i in seq_len(nobs)) {
@@ -141,27 +138,31 @@
             cnt <- attr(poly, "centre")
             ## line is non-transparent
             segments(x0[i,1], x0[i,2], cnt[1], cnt[2],
-                     col = adjustcolor(cols[i], 1))
+                     col = adjustcolor(cols[i], alpha.f = 255))
         }
     }
+    switch(type,
+           "n" = NULL,
+           "p" = points(x0, col = adjustcolor(col, alpha.f = 255), ...),
+           "t" = ordilabel(x0, ...)
+           )
+    invisible()
 }
 
 #' @importFrom graphics points segments
 #' @importFrom vegan ordilabel
 #' @export
 `bjstars` <-
-    function(x, keep = 0.9, col="gray", type = c("t", "p", "n"), ...)
+    function(xarr, x0, keep = 0.9, col="gray", type = c("t", "p", "n"), ...)
 {
-    if (!inherits(x, "bjnmds"))
-        stop("needs bayesjaccard ordination object")
-    xarr <- x$rscores
-    x0 <- x$points
     nobs <- nrow(x0)
     nsam <- dim(xarr)[3]
     nkept <- ceiling(nsam * keep)
     if (nkept == nsam)
         kept <- rep(TRUE, nsam)
     col <- rep(col, length = nobs)
+    if (missing(x0))
+        x0 <- colMeans(xarr)
     for (i in seq_len(nobs)) {
         if (nkept < nsam) {
             dist <- colSums((xarr[i,,] - x0[i,])^2)
