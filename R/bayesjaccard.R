@@ -301,3 +301,100 @@
     attr(sco, "scaling") <- scaling
     sco
 }
+
+`rdadraw` <-
+    function(xarr, x0, kind, ...)
+{
+    kind <- match.arg(kind,
+                      c("n", "p", "t", "hull", "ellipse", "wedge", "star"))
+    switch(kind,
+           "n" = NULL,
+           "p" = points(x0, ...),
+           "t" = text(x0, ...),
+           "hull" = bjpolygon(xarr, x0, kind = "hull", observed = FALSE, ...),
+           "ellipse" = bjpolygon(xarr, x0, kind = "ellipse", ...),
+           "wedge" = bjpolygon(xarr, x0, kind = "hull", observed = TRUE,
+                               ...),
+           "star" = bjstars(xarr, x0, ...)
+           )
+}
+
+#' @importFrom utils modifyList
+#' @importFrom graphics arrows
+#' @importFrom vegan ordiArrowMul ordiArrowTextXY ordilabel scores
+#' @export
+`plot.bjdbrda` <-
+    function(x, choices = 1:2, wa = "p", lc = "n", cn = "hull", bp = "wedge",
+             wa.par = list(), lc.par = list(), cn.par = list(), bp.par = list(),
+             scaling = "species", type = "t", ...)
+{
+    draw <- list(wa, lc, cn, bp) != "n"
+    names(draw) <- c("wa","lc","cn","bp")
+    display <- names(draw)[draw]
+    g <- NextMethod("plot", x, type = "n", display = display,
+                    scaling = scaling)
+    ## Draw WA
+    if (draw["wa"]) {
+        xarr <- scores(x, choices = choices, display = "wa", scaling = scaling,
+                       expected = FALSE)
+        x0 <- scores(x, choices = choices, display = "wa", scaling = scaling,
+                     expected = TRUE)
+        def <- list(xarr = xarr, x0 = x0, kind = wa, col = "black")
+        if (!wa %in% c("p", "t"))
+            def <- modifyList(def,
+                              list(col = "gray", alpha = 0.3, keep = 0.9,
+                                   type = type))
+        if (!is.null(wa.par))
+            def <- modifyList(def, wa.par)
+        do.call("rdadraw", def)
+    }
+    if (draw["lc"]) {
+        xarr <- scores(x, choices = choices, display = "lc", scaling = scaling,
+                       expected = FALSE)
+        x0 <- scores(x, choices = choices, display = "lc", scaling = scaling,
+                     expected = TRUE)
+        def <- list(xarr = xarr, x0 = x0, kind = lc, col = "darkgreen")
+        if (!lc %in% c("p", "t"))
+            def <- modifyList(def,
+                              list(alpha = 0.3, keep = 0.9, type = type))
+        if (!is.null(lc.par))
+            def <- modifyList(def, lc.par)
+        do.call("rdadraw", def)
+    }
+    if (draw["cn"] && !is.null(g$centroids)) {
+        xarr <- scores(x, choices = choices, display = "cn", scaling = scaling,
+                       expected = FALSE)
+        x0 <- scores(x, choices = choices, display = "cn", scaling = scaling,
+                     expected = TRUE)
+        def <- list(xarr = xarr, x0 = x0, kind = cn , col = "skyblue")
+        if (!lc %in% c("p", "t"))
+            def <- modifyList(def,
+                              list(alpha = 0.3, keep = 0.9, type = type))
+        if (!is.null(cn.par))
+            def <- modifyList(def, cn.par)
+        do.call("rdadraw", def)
+    }
+    if (draw["bp"] && !is.null(g$biplot)) {
+        arr <- ordiArrowMul(g$biplot)
+        xarr <- arr * scores(x, choices = choices, display = "bp",
+                             scaling = scaling, expected = FALSE)
+        x0 <- arr * scores(x, choices = choices, display = "bp",
+                           scaling = scaling, expected = TRUE)
+        k <- rownames(x0) %in% rownames(g$biplot)
+        xarr <- xarr[k,,, drop=FALSE]
+        x0 <- x0[k,, drop=FALSE]
+        orig <- matrix(0, nrow = nrow(x0), ncol=2)
+        def <- list(xarr = xarr, x0 = x0, kind = bp, col = "blue")
+        if (!lc %in% c("p", "t")) {
+            def <- modifyList(def,
+                              list(x0 = orig, alpha = 0.3, keep = 0.9,
+                                   type = "n", lineto = FALSE))
+            if (!is.null(bp.par))
+                def <- modifyList(def, bp.par)
+            do.call("rdadraw", def)
+        }
+        arrows(0, 0, x0[,1], x0[,2], col = def$col, len = 0.1)
+        if (lc != "p")
+            ordilabel(ordiArrowTextXY(x0, rescale=FALSE))
+    }
+}
