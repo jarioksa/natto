@@ -104,6 +104,26 @@
     m0
 }
 
+`plot.bjnmds` <-
+    function(x, choices = 1:2, kind = c("hull", "ellipse", "wedge", "star"),
+             keep = 0.9, type = "t", ...)
+{
+    kind <- match.arg(kind)
+    x0 <- x$point[, choices, drop=FALSE]
+    xarr <- x$rscores[, choices, , drop = FALSE]
+    plot(x0, type = "n", asp = 1, xlab = paste0("NMDS", choices[1]),
+         ylab = paste0("NMDS", choices[2]))
+    switch(kind,
+           "hull" = bjpolygon(xarr, x0, kind = "hull", observed = FALSE,
+                              keep = keep, type = type, ...),
+           "ellipse" = bjpolygon(xarr, x0, kind = "ellipse",
+                                 keep = keep, type = type, ...),
+           "wedge" = bjpolygon(xarr, x0, kind = "hull", observed = TRUE,
+                               keep = keep, type = type, ...),
+           "star" = bjstars(xarr, x0, keep = keep, type = type, ...)
+           )
+}
+
 #' @importFrom graphics polygon
 #' @importFrom grDevices adjustcolor col2rgb rgb
 #' @export
