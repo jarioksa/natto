@@ -48,8 +48,6 @@
     criterion <- match.arg(criterion)
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
     ndrop <- as.integer(nrow(pts) * (1-keep))
-    if (ndrop == 0)
-        return(pts[chull(pts),])
     ## remove one point on the hull, either to maximally reduce the
     ## area of the new hull, or a point that is most distant to all
     ## points on and within the hull.
@@ -106,8 +104,6 @@
 {
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
     ndrop <- as.integer(nrow(pts) * (1 - keep))
-    if (ndrop == 0)
-        return(predict(ellipsoidhull(pts)))
     for (k in seq_len(ndrop)) {
         del <- which.max(mahalanobis(pts, colMeans(pts), cov(pts)))
         pts <- pts[-del,, drop=FALSE]
