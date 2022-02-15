@@ -248,7 +248,9 @@
         u[,nreal,i] <- m$CCA$u %*% reflex
         wa[,nreal,i] <- m$CCA$wa %*% reflex
         bp[,nreal,i] <- m$CCA$biplot %*% reflex
-        cn[,nreal,i] <- m$CCA$centroids %*% reflex
+        ## u, wa & bp exist always, but centroids can be missing
+        if (!is.null(m$CCA$centroids))
+            cn[,nreal,i] <- m$CCA$centroids %*% reflex
     }
     BJ <- list("tot.chi" = tot.chi, "eig" = ev, "r" = abs(r), "u" = u,
                "wa" = wa, "biplot" = bp, "centroids" = cn)
