@@ -104,6 +104,7 @@
     m0
 }
 
+#' @export
 `plot.bjnmds` <-
     function(x, choices = 1:2, kind = c("hull", "ellipse", "wedge", "star"),
              keep = 0.9, type = "t", ...)
