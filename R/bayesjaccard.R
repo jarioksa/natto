@@ -229,6 +229,7 @@
     ## sample, but first collect only eigenvalues
     tot.chi <- numeric(n)
     ev <- matrix(NA, nrow = n, ncol = naxes)
+    r <- matrix(NA, nrow = n, ncol = naxes)
     u0 <- m0$CCA$u
     u <- array(dim = c(dim(u0), n))
     wa <- array(dim = c(dim(u0), n))
@@ -238,16 +239,18 @@
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
         tot.chi[i] <- m$tot.chi
         ev[i,] <- eigenvals(m, model = "constrained")
-        ## no Procrustes rotation, but check reflected axes
+        ## Check reflected axes. 'r' is correlation because u,u0 have
+        ## colSums 0 and colSums of squares 1
         nreal <- seq_len(ncol(m$CCA$u))
-        rev <- sign(colSums(u0[, nreal] * m$CCA$u))
-        u[,nreal,i] <- m$CCA$u %*% diag(rev)
-        wa[,nreal,i] <- m$CCA$wa %*% diag(rev)
-        bp[,nreal,i] <- m$CCA$biplot %*% diag(rev)
-        cn[,nreal,i] <- m$CCA$centroids %*% diag(rev)
+        r[i, nreal] <- colSums(u0[, nreal] * m$CCA$u)
+        reflex <- diag(sign(r[i,nreal]))
+        u[,nreal,i] <- m$CCA$u %*% reflex
+        wa[,nreal,i] <- m$CCA$wa %*% reflex
+        bp[,nreal,i] <- m$CCA$biplot %*% reflex
+        cn[,nreal,i] <- m$CCA$centroids %*% reflex
     }
-    BJ <- list("tot.chi" = tot.chi, "eig" = ev, "u" = u, "wa" = wa,
-               "biplot" = bp, "centroids" = cn)
+    BJ <- list("tot.chi" = tot.chi, "eig" = ev, "r" = abs(r), "u" = u,
+               "wa" = wa, "biplot" = bp, "centroids" = cn)
     m0$BayesJaccard <- BJ
     class(m0) <- c("bjdbrda", class(m0))
     m0
