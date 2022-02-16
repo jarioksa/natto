@@ -217,14 +217,11 @@
 ### Somewhat trickier to implement than NMDS. (1) dbRDA is an
 ### eigenvector method, and if we rotate, eigenvalues would change,
 ### and we may need to skip rotation, but fix the axis reflection.
-### (2) The "expected" model has one negative eigenvalue, but rbeta
-### models can have several and variable numbers of negative
-### eigenvalues. (3) LC scores can be rotation invariant when the real
-### ranks are equal, but can become kinkier with different real ranks
-### (but we perhaps we should not rotate). (4) Probably we should not
-### allow any adjustment against negative eigenvalues as these are
-### data-set dependent and destroy the beauty of the distance (excpet
-### sqrt.dis?).
+### (2) The "expected" model can have (one) negative eigenvalue, but
+### rbeta models can have several and variable numbers of negative
+### eigenvalues. (3) Probably we should not allow any adjustment
+### against negative eigenvalues as these are data-set dependent and
+### destroy the beauty of the distance (excpet sqrt.dis?).
 
 #' @importFrom vegan dbrda eigenvals
 #' @export
@@ -350,15 +347,20 @@
     draw <- list(wa, lc, cn, bp) != "n"
     names(draw) <- c("wa","lc","cn","bp")
     display <- names(draw)[draw]
+    ## NextMethod plot will give warnings of all extra parameters
+    ## ("wa.par is not a graphical parameter" etc.) and therefore we
+    ## turn warnings off
+    op <- options(warn = -1)
     g <- NextMethod("plot", x, type = "n", display = display,
                     scaling = scaling)
+    options(op) # back to user-defined old warn option
     ## Draw WA
     if (draw["wa"]) {
         xarr <- scores(x, choices = choices, display = "wa", scaling = scaling,
                        expected = FALSE)
         x0 <- scores(x, choices = choices, display = "wa", scaling = scaling,
                      expected = TRUE)
-        def <- list(xarr = xarr, x0 = x0, kind = wa, col = "black")
+        def <- list(xarr = xarr, x0 = x0, kind = wa, col = "black", cex = 0.6)
         if (!wa %in% c("p", "t"))
             def <- modifyList(def,
                               list(col = "gray", alpha = 0.3, keep = 0.9,
@@ -367,12 +369,14 @@
             def <- modifyList(def, wa.par)
         do.call("rdadraw", def)
     }
+    ## Draw LC
     if (draw["lc"]) {
         xarr <- scores(x, choices = choices, display = "lc", scaling = scaling,
                        expected = FALSE)
         x0 <- scores(x, choices = choices, display = "lc", scaling = scaling,
                      expected = TRUE)
-        def <- list(xarr = xarr, x0 = x0, kind = lc, col = "darkgreen")
+        def <- list(xarr = xarr, x0 = x0, kind = lc, col = "darkgreen",
+                    cex = 0.6)
         if (!lc %in% c("p", "t"))
             def <- modifyList(def,
                               list(alpha = 0.3, keep = 0.9, type = type))
@@ -380,6 +384,7 @@
             def <- modifyList(def, lc.par)
         do.call("rdadraw", def)
     }
+    ## Draw centroids
     if (draw["cn"] && !is.null(g$centroids)) {
         xarr <- scores(x, choices = choices, display = "cn", scaling = scaling,
                        expected = FALSE)
@@ -393,6 +398,7 @@
             def <- modifyList(def, cn.par)
         do.call("rdadraw", def)
     }
+    ## Draw biplot arrows
     if (draw["bp"] && !is.null(g$biplot)) {
         arr <- ordiArrowMul(g$biplot)
         xarr <- arr * scores(x, choices = choices, display = "bp",
