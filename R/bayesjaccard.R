@@ -2,11 +2,11 @@
 #' @importFrom vegan designdist
 #' @export
 `bayesjaccard` <-
-    function(x, method = c("rbeta", "jaccard1"))
+    function(x, method = c("rbeta", "expected"))
 {
     method <- match.arg(method)
     switch(method,
-           "jaccard1" =
+           "expected" =
                designdist(x, "(b+c+1)/(a+b+c+2)", terms = "binary", abcd=TRUE),
            "rbeta" =
                designdist(x, "rbeta(length(a), b+c+1, a+1)", terms = "binary",
@@ -20,7 +20,7 @@
 `clsupport` <-
     function (x, n=1000, method="average", softmatch = FALSE, plot = TRUE, ...)
 {
-    h0 <- hclust(bayesjaccard(x, method="jaccard1"), method)
+    h0 <- hclust(bayesjaccard(x, method="expected"), method)
     m0 <- clsets(h0)
     supp <- s <- numeric(nrow(h0$merge)-1)
     for(i in seq_len(n)) {
@@ -87,7 +87,7 @@
              ...)
 {
     ## Expected ordination
-    d0 <- bayesjaccard(x, method="jaccard1")
+    d0 <- bayesjaccard(x, method="expected")
     m0 <- metaMDS(d0, trymax = trymax, maxit = maxit, smin = smin,
                   sfgrmin = sfgrmin, sratmax = sratmax, parallel = parallel,
                   trace = trace, ...)
@@ -234,7 +234,7 @@
     function(formula, data, n=100, ...)
 {
     environment(formula) <- environment()
-    m0 <- dbrda(formula = formula, data = data, distance="jaccard1",
+    m0 <- dbrda(formula = formula, data = data, distance="expected",
                 dfun = bayesjaccard, ...)
     if (is.null(m0$CCA))
         stop("only implememented for constrained analysis")
