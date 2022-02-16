@@ -1,5 +1,11 @@
+#' Community Dissimilarity as Expected or Sampled Beta Variate
+#'
+#' @param x Community data, will be treated as binary.
+#' @param method Dissimilarity as a random sample from Beta
+#'     distribution or as its expected value.
 #' @importFrom stats rbeta
 #' @importFrom vegan designdist
+#' @rdname bayesjaccard
 #' @export
 `bayesjaccard` <-
     function(x, method = c("rbeta", "expected"))
@@ -14,8 +20,20 @@
            )
 }
 
+#' Support of Branches of Hierarchical Clustering from Beta Jaccard
+#'
+#' @param x Community data, will be treated as binary.
+#' @param n Number of random samples from Beta distribution.
+#' @param method Clustering method, passed to \code{\link{hclust}}.
+#' @param softmatch Estimate cluster similarity as Jaccard similarity
+#'     or as a hard exact match between two clusters.
+#' @param plot Plot the \code{\link{hclust}} dendrogram from expected
+#'     Jaccard dissimilarity with each brand labelled with support.
+#' @param ... Other parameters; passed to \code{\link{plot.hclust}}.
+#'
 #' @importFrom stats hclust rbeta
 #' @importFrom vegan designdist ordilabel
+#' @rdname clsupport
 #' @export
 `clsupport` <-
     function (x, n=1000, method="average", softmatch = FALSE, plot = TRUE, ...)
@@ -56,6 +74,8 @@
     supp
 }
 
+#' @param hclus \code{\link{hclust}} result object.
+#' @rdname clsupport
 #' @export
 `clsets` <-
     function(hclus)
@@ -78,8 +98,21 @@
 ### NMDS  ###
 #############
 
+#' Multiple NMDS Ordinations from Beta Distributed Jaccard Dissimilarity
+
+#' @param x Community data; will be treated as binary.
+#' @param n Number of random samples of Beta Distribution.
+#' @param trymax Maximum number of random starts in
+#'     \code{\link[vegan]{metaMDS}}.
+#' @param maxit,smin,sfgrmin,sratmax Convergence parameters in
+#'     \code{\link[vegan]{monoMDS}}.
+#' @param parallel Number of parallel tries in \code{\link[vegan]{metaMDS}}.
+#' @param trace Trace iterations in \code{\link[vegan]{metaMDS}}.
+#' @param ... Other parameters passed to functions.
+
 #' @importFrom stats fitted
 #' @importFrom vegan metaMDS monoMDS procrustes
+#' @rdname bjNMDS
 #' @export
 `bjNMDS` <-
     function(x, n = 100, trymax = 500, maxit = 1000, smin = 1e-4,
@@ -116,6 +149,18 @@
     NextMethod("print", x, ...)
     cat("Information refers to the expected ordination: samples will differ\n\n")
 }
+
+#' @param x Community data to be analysed and treated as binary
+#'     (\code{bjNMDS}) or object to be plotted (\code{plot}).
+#' @param choices Axes to be plotted.
+#' @param kind Shape to be plotted to show the scatter of coordinates
+#'     of sampled distances; see \code{\link{bjpolygon}} for details.
+#' @param keep Proportion of points to be enclosed by shape; see
+#'     \code{\link{peelhull}} and \code{\link{peelellipse}}.
+#' @param type Type of the plot: \code{"t"}ext, \code{"p"}oints or
+#'     \code{"n"}one.
+#'
+#' @rdname bjNMDS
 #' @export
 `plot.bjnmds` <-
     function(x, choices = 1:2, kind = c("hull", "ellipse", "wedge", "star"),
@@ -137,8 +182,31 @@
            )
 }
 
+#' Shapes to Display Scatter of Points in Multiple Ordinations
+#'
+#' @param xarr 3-D array of coordinates of sampling units times two
+#'     axes by random samples.
+#' @param x0 2-D array of sampling units times two axes treated as
+#'     constant for all samples in \code{xarr}.
+#' @param keep Proportion of points enclosed in the shape; passed to
+#'     \code{\link{peelhull}} or \code{\link{peelellipse}}.
+#' @param kind Shape is either a convex hull (\code{\link{peelhull}})
+#'     or ellipse \code{\link{peelellipse}} enclosing \code{keep}
+#'     proportion of \code{xarr} points.
+#' @param linetopoint Draw line from the centre of the shape to the
+#'     coordinates in \code{x0}.
+#' @param col Colour of the shape; can be a vector of colours.
+#' @param alpha Transparency of shapes; 0 is completely transparent,
+#'     and 1 is non-transparent.
+#' @param observed After finding the convex hull, extend hull to
+#'     enclose fixed point \code{x0}.
+#' @param type Mark coordinate of \code{x0} using \code{"t"}ext,
+#'     \code{"p"}oint or \code{"n"}one.
+#' @param ... Other parameters passed to to marker of \code{type}.
+#'
 #' @importFrom graphics polygon
 #' @importFrom grDevices adjustcolor
+#' @rdname bjpolygon
 #' @export
 `bjpolygon` <-
     function(xarr, x0, keep = 0.9, kind = c("hull", "ellipse"),
@@ -182,6 +250,7 @@
 
 #' @importFrom graphics points segments
 #' @importFrom vegan ordilabel
+#' @rdname bjpolygon
 #' @export
 `bjstars` <-
     function(xarr, x0, keep = 0.9, col="gray", type = c("t", "p", "n"), ...)
@@ -223,7 +292,19 @@
 ### against negative eigenvalues as these are data-set dependent and
 ### destroy the beauty of the distance (excpet sqrt.dis?).
 
+#' Multiple dbRDA from Beta Distributed Jaccard Dissimilarity
+#'
+#' @param formula,data Model definition of type \code{Y ~ Var1 + Var2,
+#'     data = X}, where \code{Y} is dependent community data (handled
+#'     as binary data), \code{Var1} and \code{Var2} are independent
+#'     (explanatory) variables found in data frame \code{X}. See
+#'     \code{\link[vegan]{dbrda}} for further information.
+#' @param n Number of Jaccard dissimilarity matrices sampled from Beta
+#'     distribution.
+#' @param ... Other parameters passed to \code{\link[vegan]{dbrda}}.
+#'
 #' @importFrom vegan dbrda eigenvals
+#' @rdname bjdbrda
 #' @export
 `bjdbrda` <-
     function(formula, data, n=100, ...)
@@ -271,8 +352,20 @@
     m0
 }
 
+#' @param x \code{bjdbrda} result object.
+#' @param choices Selected ordination axes.
+#' @param display,scaling,const Kind of scores, the scaling of scores
+#'     (axes), and scaling constant with similar definitions as in
+#'     \code{\link[vegan]{scores.rda}}.
+#' @param expected Return scores of the expected ordination instead of
+#'     ordination based on random samples from Jaccard dissimilarity.
+#' @param ... Other parameters passed to functions; passed
+#'     \code{\link[vegan]{dbrda}} in \code{bjdbrda}, ignored in
+#'     \code{scores}.
+#'
 #' @importFrom vegan scores
 #' @importFrom stats nobs
+#' @rdname bjdbrda
 #' @export
 `scores.bjdbrda` <-
     function(x, choices = 1:2, display = c("wa", "lc", "bp", "cn"),
@@ -335,9 +428,20 @@
            )
 }
 
+#' @param wa,lc,cn,bp Display of corresponding scores. \code{"n"}
+#'     skips the score, \code{"p"} and \code{"t"} use points or text
+#'     for the expected score, and other shapes define
+#'     \code{\link{bjpolygon}} or \code{\link{bjstars}} shape used for
+#'     sampled random scores.
+#' @param wa.par,lc.par,cn.par,bp.par List of arguments to modify the
+#'     plotting parameters of the corresponding shape.
+#' @param type Add \code{"t"}ext or \code{"p"}oint for the expected
+#'     score to a shape of scatter of random shapes.
+#'
 #' @importFrom utils modifyList
 #' @importFrom graphics arrows
 #' @importFrom vegan ordiArrowMul ordiArrowTextXY ordilabel scores
+#' @rdname bjdbrda
 #' @export
 `plot.bjdbrda` <-
     function(x, choices = 1:2, wa = "p", lc = "n", cn = "hull", bp = "wedge",
@@ -426,7 +530,14 @@
 
 ## plot eigenvalues or axis correlations
 
+#' @param kind Draw boxplots of eigenvalues or pairwise axis correlations
+#'     for each random sample.
+#' @param points,pch Add points of given color and shape to the
+#'     eigenvalue boxplot.
+#' @param xlab,ylab Change labelling of axes in boxplot.
+#'
 #' @importFrom graphics boxplot points
+#' @rdname bjdbrda
 #' @export
 `boxplot.bjdbrda` <-
     function(x, kind = c("eigen", "correlation"), points = "red", pch = 16,

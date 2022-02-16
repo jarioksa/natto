@@ -3,9 +3,12 @@
 \encoding{UTF-8}
 \name{peelhull}
 \alias{peelhull}
+\alias{peelellipse}
 \title{Convex Hull Enclosing a Given Proportion of Points}
 \usage{
 peelhull(pts, keep = 0.9, criterion = c("area", "distance"))
+
+peelellipse(pts, keep = 0.9)
 }
 \arguments{
 \item{pts}{Coordinates of points, a two-column matrix}

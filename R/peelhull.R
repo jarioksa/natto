@@ -96,8 +96,12 @@
 ### Mahalanobis distance, update and remove next point, and finally
 ### return the enclosing ellipse
 
+#' @param pts Coordinates of points, a two-column matrix
+#' @param keep Proportion of points kept
+#' 
 #' @importFrom stats cov mahalanobis predict
 #' @importFrom cluster ellipsoidhull volume
+#' @rdname peelhull
 #' @export
 `peelellipse` <-
     function(pts, keep = 0.9)
