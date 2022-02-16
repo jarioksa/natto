@@ -138,11 +138,11 @@
 }
 
 #' @importFrom graphics polygon
-#' @importFrom grDevices adjustcolor col2rgb rgb
+#' @importFrom grDevices adjustcolor
 #' @export
 `bjpolygon` <-
     function(xarr, x0, keep = 0.9, kind = c("hull", "ellipse"),
-             linetopoint = TRUE, col="gray", alpha = 75, observed = TRUE,
+             linetopoint = TRUE, col="gray", alpha = 0.3, observed = TRUE,
              type = c("t", "p", "n"), ...)
 {
     kind <- match.arg(kind)
@@ -154,8 +154,7 @@
         alpha <- alpha / 255
     if (is.factor(col))
         col <- as.numeric(col)
-    cols <- rgb(t(col2rgb(col)/255), alpha = alpha)
-    cols <- rep(cols, length = nobs)
+    col <- rep(col, length = nobs)
     ## draw polygons
     for (i in seq_len(nobs)) {
         poly <- switch(
@@ -166,17 +165,16 @@
         )
         if (kind == "hull" && observed)
             poly <- peelhull(rbind(poly, x0[i,]), keep = 1)
-        polygon(poly, col = cols[i], border = NA)
+        polygon(poly, col = adjustcolor(col[i], alpha.f = alpha), border = NA)
         if (linetopoint) {
             cnt <- attr(poly, "centre")
             ## line is non-transparent
-            segments(x0[i,1], x0[i,2], cnt[1], cnt[2],
-                     col = adjustcolor(cols[i], alpha.f = 255))
+            segments(x0[i,1], x0[i,2], cnt[1], cnt[2], col = col[i])
         }
     }
     switch(type,
            "n" = NULL,
-           "p" = points(x0, col = adjustcolor(col, alpha.f = 255), ...),
+           "p" = points(x0, col = col, ...),
            "t" = ordilabel(x0, ...)
            )
     invisible()
