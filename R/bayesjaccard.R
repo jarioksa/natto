@@ -247,7 +247,10 @@
     u <- array(dim = c(dim(u0), n))
     wa <- array(dim = c(dim(u0), n))
     bp <- array(dim = c(dim(m0$CCA$biplot), n))
-    cn <- array(dim = c(dim(m0$CCA$centroids), n))
+    if (!is.null(m$CCA$centroids))
+        cn <- array(dim = c(dim(m0$CCA$centroids), n))
+    else
+        cn <- NULL
     for (i in 1:n) {
         m <- dbrda(formula, data, distance="rbeta", dfun = bayesjaccard, ...)
         tot.chi[i] <- m$tot.chi
@@ -261,7 +264,7 @@
         wa[,nreal,i] <- m$CCA$wa %*% reflex
         bp[,nreal,i] <- m$CCA$biplot %*% reflex
         ## u, wa & bp exist always, but centroids can be missing
-        if (!is.null(m$CCA$centroids))
+        if (!is.null(cn))
             cn[,nreal,i] <- m$CCA$centroids %*% reflex
     }
     BJ <- list("tot.chi" = tot.chi, "eig" = ev, "r" = abs(r), "u" = u,
