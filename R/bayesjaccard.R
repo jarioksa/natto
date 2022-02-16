@@ -400,3 +400,27 @@
             ordilabel(ordiArrowTextXY(x0, rescale=FALSE))
     }
 }
+
+## plot eigenvalues or axis correlations
+
+#' @importFrom graphics boxplot points
+#' @export
+`boxplot.bjdbrda` <-
+    function(x, kind = c("eigen", "correlation"), points = "red", pch = 16,
+             xlab = "Axis", ylab, ...)
+{
+    kind <- match.arg(kind)
+    if (kind == "eigen") {
+        if (missing(ylab))
+            ylab <- "Eigenvalue"
+        bp <- boxplot(x$BayesJaccard$eig, xlab = xlab, ylab = ylab, ...)
+        if (!is.na(points))
+            points(x$CCA$eig, col = points, pch = pch, ...)
+    } else if (kind == "correlation") {
+        if (missing(ylab))
+            ylab <- "Correlation"
+        bp <- boxplot(x$BayesJaccard$r, xlab = xlab, ylab = ylab, ...)
+    }
+    invisible(bp)
+}
+
