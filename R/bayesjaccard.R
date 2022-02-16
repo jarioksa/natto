@@ -318,6 +318,8 @@
     sco
 }
 
+#' @importFrom graphics points
+#' @importFrom vegan ordilabel
 `rdadraw` <-
     function(xarr, x0, kind, ...)
 {
@@ -326,7 +328,7 @@
     switch(kind,
            "n" = NULL,
            "p" = points(x0, ...),
-           "t" = text(x0, ...),
+           "t" = ordilabel(x0, ...),
            "hull" = bjpolygon(xarr, x0, kind = "hull", observed = FALSE, ...),
            "ellipse" = bjpolygon(xarr, x0, kind = "ellipse", ...),
            "wedge" = bjpolygon(xarr, x0, kind = "hull", observed = TRUE,
@@ -409,7 +411,7 @@
                 def <- modifyList(def, bp.par)
             do.call("rdadraw", def)
         }
-        arrows(0, 0, x0[,1], x0[,2], col = def$col, len = 0.1)
+        arrows(0, 0, x0[,1], x0[,2], col = def$col, length = 0.1)
         if (lc != "p")
             ordilabel(ordiArrowTextXY(x0, rescale=FALSE))
     }
