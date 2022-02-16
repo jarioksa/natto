@@ -245,7 +245,7 @@
     u <- array(dim = c(dim(u0), n))
     wa <- array(dim = c(dim(u0), n))
     bp <- array(dim = c(dim(m0$CCA$biplot), n))
-    if (!is.null(m$CCA$centroids))
+    if (!is.null(m0$CCA$centroids))
         cn <- array(dim = c(dim(m0$CCA$centroids), n))
     else
         cn <- NULL
