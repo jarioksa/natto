@@ -99,11 +99,23 @@
                      sfgrmin = sfgrmin, sratmax = sratmax, ...)
         rscore[,,i] <- fitted(procrustes(m0$points, m$points), truemean=FALSE)
     }
+    m0$nsamp <- n
     m0$rscores <- rscore
+    m0$call <- match.call()
+    m0$distance <- "binary bayesjaccard"
+    m0$data <- deparse(substitute(x))
     class(m0) <- c("bjnmds", class(m0))
     m0
 }
 
+#' @export
+`print.bjnmds` <-
+    function(x, ...)
+{
+    cat("NMDS based on BayesJaccard dissimilarity with", x$nsamp, "samples\n")
+    NextMethod("print", x, ...)
+    cat("Information refers to the expected ordination: samples will differ\n\n")
+}
 #' @export
 `plot.bjnmds` <-
     function(x, choices = 1:2, kind = c("hull", "ellipse", "wedge", "star"),
@@ -255,6 +267,8 @@
     BJ <- list("tot.chi" = tot.chi, "eig" = ev, "r" = abs(r), "u" = u,
                "wa" = wa, "biplot" = bp, "centroids" = cn)
     m0$BayesJaccard <- BJ
+    m0$call <- match.call()
+    m0$inertia <- "squared binary bayesjaccard distance"
     class(m0) <- c("bjdbrda", class(m0))
     m0
 }
@@ -423,4 +437,13 @@
     }
     invisible(bp)
 }
-
+## print
+##' @export
+`print.bjdbrda` <-
+    function(x, ...)
+{
+    cat("dbRDA based on BayesJaccard dissimilarity with",
+        length(x$BayesJaccard$tot.chi), "samples\n\n")
+    NextMethod("print", x, ...)
+    cat("Information refers to the expected ordination: samples will differ\n\n")
+}
