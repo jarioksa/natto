@@ -1,14 +1,14 @@
 #'
 #' Convex Hull Enclosing a Given Proportion of Points
 #'
-#' Function finds a small convex hull enclosing a given proportion of
-#' points. The function works by removing points from the hull one by
-#' one. The points are selected either so that the area of the
-#' remaining hull is reduced as much as possible at every step (de
-#' Smith, Goodrich & Longley 2007), or removing the point that has the
-#' maximal total distance to all remaining points. The function only
-#' works in 2D.
-#'
+#' Functions find a small convex hull or ellipse enclosing a given
+#' proportion of points. The functions work by removing points from
+#' the hull or ellipse one by one. The points are selected either so
+#' that the area of the remaining hull is reduced as much as possible
+#' at every step (de Smith, Goodrich & Longley 2007), or removing the
+#' point that has the maximal total distance to all remaining
+#' points.
+
 #' @encoding UTF-8
 #'
 #' @param pts Coordinates of points, a two-column matrix
@@ -19,15 +19,27 @@
 #'     \code{"mahalanobis"} remove the point that has the largest
 #'     total distance to all points on and within the hull.
 #'
-#' @details This is preliminary work (but without guarantee of
-#'     progress). However, the current function is such that it can be
-#'     easily plugged into \code{\link[vegan]{ordihull}}
-#'     (\CRANpkg{vegan} package).
+#' @details
+#'
+#' Reduction of area is the only criterion that really is based the
+#' area of the ellipse and only uses points on the hull. The other
+#' methods are based on the distances to all points within and on the
+#' hull. In \code{peelpoly}, the distance can be either isometric
+#' Euclidean distance or Mahalanobis distance where the distance is
+#' evaluated with respect to the covariance ellipse of points in the
+#' polygon. Function \code{peelellipse} is based on Mahalanobis
+#' distance. The functions only work in 2D.
 #'
 #' The algorithms are naïve, and stepwise removal of single points
-#' does not guarantee smallest possible final hull. Although the area
-#' reduction algorithm was found in literature (de Smith et al. 2007),
-#' the distance criterion often gives smaller final convex hulls.
+#' does not guarantee smallest possible final hull. Two outlier points
+#' close to each other can protect each other from removal, but
+#' removing both together would give a large reduction of the
+#' hull. The \code{"distance"} criterion produces circular hulls, but
+#' \code{"mahalanobis"} will better preserve the original elongation
+#' of the configuration, although it rarely gives smaller areas than
+#' \code{"area"} criterion. \code{peelellipse} and \code{peelhull}
+#' with criterion \code{"mahalanobis"} results have the same points on
+#' the perimeter of the shape.
 
 ### To evaluate the algorithms, use the following (input matrix x1):
 ### sapply(c("area","dist","maha"), function(a) {plot(x1, asp=1);for(p
@@ -41,9 +53,10 @@
 #'     P.A. (2007). \emph{Geospatial analysis: A comprehensive guide
 #'     to principles, techniques and software tools}. Matador.
 #'
-#' @return A two-column matrix of coordinates of peeled hull defining
-#'     a closed convex hull that can be plotted with
-#'     \code{\link[graphics]{polygon}}.
+#' @return A two-column matrix of coordinates of peeled hull or
+#'     ellipse defining that can be plotted with
+#'     \code{\link[graphics]{polygon}}, with attributes
+#'     \code{"centre"} and \code{"area"}.
 #'
 #' @importFrom grDevices chull
 #' @importFrom stats mahalanobis

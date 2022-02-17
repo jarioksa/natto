@@ -193,6 +193,8 @@
 #' @param kind Shape is either a convex hull (\code{\link{peelhull}})
 #'     or ellipse \code{\link{peelellipse}} enclosing \code{keep}
 #'     proportion of \code{xarr} points.
+#' @param criterion Criterion to remove extreme points from the hull
+#'     in \code{\link{peelhull}} and \code{\link{peelellipse}}.
 #' @param linetopoint Draw line from the centre of the shape to the
 #'     coordinates in \code{x0}.
 #' @param col Colour of the shape; can be a vector of colours.
@@ -210,8 +212,9 @@
 #' @export
 `bjpolygon` <-
     function(xarr, x0, keep = 0.9, kind = c("hull", "ellipse"),
-             linetopoint = TRUE, col="gray", alpha = 0.3, observed = TRUE,
-             type = c("t", "p", "n"), ...)
+             criterion = "area", linetopoint = TRUE, col="gray",
+             alpha = 0.3, observed = TRUE, type = c("t", "p", "n"),
+             ...)
 {
     kind <- match.arg(kind)
     dims <- dim(xarr)
@@ -228,7 +231,7 @@
         poly <- switch(
             kind,
             "hull" = peelhull(t(xarr[i,,]), keep = keep,
-                              criterion = "distance"),
+                              criterion = criterion),
             "ellipse" = peelellipse(t(xarr[i,,]), keep = keep)
         )
         if (kind == "hull" && observed)

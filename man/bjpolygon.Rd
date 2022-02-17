@@ -10,6 +10,7 @@ bjpolygon(
   x0,
   keep = 0.9,
   kind = c("hull", "ellipse"),
+  criterion = "area",
   linetopoint = TRUE,
   col = "gray",
   alpha = 0.3,
@@ -33,6 +34,9 @@ constant for all samples in \code{xarr}.}
 \item{kind}{Shape is either a convex hull (\code{\link{peelhull}})
 or ellipse \code{\link{peelellipse}} enclosing \code{keep}
 proportion of \code{xarr} points.}
+
+\item{criterion}{Criterion to remove extreme points from the hull
+in \code{\link{peelhull}} and \code{\link{peelellipse}}.}
 
 \item{linetopoint}{Draw line from the centre of the shape to the
 coordinates in \code{x0}.}
