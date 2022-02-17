@@ -15,9 +15,9 @@
 #' @param keep Proportion of points kept
 #' @param criterion Criterion to remove a point on the
 #'     hull. \code{"area"} removes the point that reduces the area of
-#'     the new hull as much as possible, and \code{"distance"} removes
-#'     the point that has the largest total distance to all points on
-#'     and within the hull.
+#'     the new hull as much as possible, while \code{"distance"} and
+#'     \code{"mahalanobis"} remove the point that has the largest
+#'     total distance to all points on and within the hull.
 #'
 #' @details This is preliminary work (but without guarantee of
 #'     progress). However, the current function is such that it can be
@@ -28,7 +28,13 @@
 #' does not guarantee smallest possible final hull. Although the area
 #' reduction algorithm was found in literature (de Smith et al. 2007),
 #' the distance criterion often gives smaller final convex hulls.
-#'
+
+### To evaluate the algorithms, use the following (input matrix x1):
+### sapply(c("area","dist","maha"), function(a) {plot(x1, asp=1);for(p
+### in c(100:90, 61, 50)/100) polygon(peelhull(x1, keep=p, crit=a),
+### col=adjustcolor("blue", alpha.f=0.05));attr(peelhull(x1, 0.61, a),
+### "area")})
+
 #' @author Jari Oksanen
 #'
 #' @references de Smith, M.J., Goodchild, M.F. & Longley,
@@ -40,10 +46,10 @@
 #'     \code{\link[graphics]{polygon}}.
 #'
 #' @importFrom grDevices chull
-#'
+#' @importFrom stats mahalanobis
 #' @export
 `peelhull` <-
-    function(pts, keep = 0.9, criterion = c("area", "distance"))
+    function(pts, keep = 0.9, criterion = c("area", "distance", "mahalanobis"))
 {
     criterion <- match.arg(criterion)
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
@@ -56,8 +62,11 @@
         crit <- numeric(length(hull))
         for (i in seq_along(hull)) {
             crit[i] <- switch(criterion,
-               "area" = polyarea(pts[chull(pts[-hull[i],]),]),
-               "distance" = -sum(sweep(pts, 2, pts[hull[i],])^2))
+               "area" = polyarea(pts[-hull[i],][chull(pts[-hull[i],]),]),
+               "distance" = -sum(sweep(pts, 2, pts[hull[i],])^2),
+               "mahalanobis" = -mahalanobis(pts[hull[i],], colMeans(pts),
+                                cov(pts))
+               )
         }
         pts <- pts[-hull[which.min(crit)],]
     }
@@ -98,7 +107,7 @@
 
 #' @param pts Coordinates of points, a two-column matrix
 #' @param keep Proportion of points kept
-#' 
+#'
 #' @importFrom stats cov mahalanobis predict
 #' @importFrom cluster ellipsoidhull volume
 #' @rdname peelhull
