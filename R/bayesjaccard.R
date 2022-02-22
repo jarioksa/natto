@@ -1,19 +1,71 @@
 #' Community Dissimilarity as Expected or Sampled Beta Variate
 #'
+#' Jaccard dissimilarity for presence/absence data can be seen as the
+#' mode of Beta distributed variate. The function calculates the
+#' dissimilarity as a random sample of Beta distribution, or
+#' alternatively as its expected value or mode.
+#'
+#' @details
+#'
+#' In often-used 2x2 contingency table notation, \eqn{a} is the number
+#' of species shared by two compared communities, and \eqn{b} and
+#' \eqn{c} are the numbers of species occurring only in one of the
+#' compared communities. Assuming uniform prior in (0, 1), the species
+#' will \dQuote{sample} the dissimilarity of two communities with
+#' posterior Beta(\eqn{b+c+1}, \eqn{a+1}). This will have mode
+#' \eqn{(b+c)/(a+b+c)} and expected value \eqn{(b+c+1)/(a+b+c+2)}. The
+#' mode is directly the Jaccard dissimilarity for binary
+#' (presence/absence) data, and the expected value adds 1 in numerator
+#' and 2 in denominator from the prior. The importance of prior will
+#' diminish when the number of species \eqn{a+b+c} grows, but it will
+#' protect from claiming complete identity or complete difference when
+#' we only have a few species.
+#'
+#' Function \code{bayesjaccard} estimates Jaccard dissimilarity as
+#' Beta-distributed random variate, and will return random sample from
+#' its posterior distribution. It can also return the expected value
+#' or the mode which are constant in function calls.
+#'
+#' The function is intended to be used to assess the effect of random
+#' sampling variation in community analysis. The \pkg{natto} package
+#' provided three examples of its application: \code{\link{clsupport}}
+#' finds the \dQuote{support} of branches in hierarchic clustering by
+#' function \code{\link{hclust}}, \code{\link{bjNMDS}} the variation
+#' of ordination scores in non-metric multidimensional scaling by
+#' functions \code{\link[vegan]{metaMDS}} and
+#' \code{\link[vegan]{monoMDS}}, and \code{\link{bjdbrda}} the
+#' variation of ordination scores of constrained component of
+#' distance-based RDA by function \code{\link[vegan]{dbrda}}. All
+#' these functions find the basic result from the expected value of
+#' the dissimilarity, and produce a set of random samples from the
+#' Beta distribution to assess the variation in the result.
+#'
+#' @examples
+#'
+#' data(spurn)
+#' ## the effect of prior
+#' plot(bayesjaccard(spurn, "mode"), bayesjaccard(spurn, "expected"))
+#' abline(0, 1, col=2)
+#' ## one random sample of dissimilarities
+#' plot(bayesjaccard(spurn, "expected"), bayesjaccard(spurn), asp=1)
+#' abline(0, 1, col=2)
+#'
 #' @param x Community data, will be treated as binary.
 #' @param method Dissimilarity as a random sample from Beta
-#'     distribution or as its expected value.
+#'     distribution or as its expected value or mode.
 #' @importFrom stats rbeta
 #' @importFrom vegan designdist
 #' @rdname bayesjaccard
 #' @export
 `bayesjaccard` <-
-    function(x, method = c("rbeta", "expected"))
+    function(x, method = c("rbeta", "expected", "mode"))
 {
     method <- match.arg(method)
     switch(method,
            "expected" =
                designdist(x, "(b+c+1)/(a+b+c+2)", terms = "binary", abcd=TRUE),
+           "mode" =
+               designdist(x, "(b+c)/(a+b+c)", terms = "binary", abcd = TRUE),
            "rbeta" =
                designdist(x, "rbeta(length(a), b+c+1, a+1)", terms = "binary",
                           abcd = TRUE)
