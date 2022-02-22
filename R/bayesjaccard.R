@@ -40,6 +40,11 @@
 #' the dissimilarity, and produce a set of random samples from the
 #' Beta distribution to assess the variation in the result.
 #'
+#' @seealso Function is a wrapper to \code{\link[vegan]{designdist}}.
+#'
+#' @return Dissimilarity object inheriting from classes \code{"dist"}
+#'     and \code{"designdist"}.
+#'
 #' @examples
 #'
 #' data(spurn)
@@ -73,6 +78,45 @@
 }
 
 #' Support of Branches of Hierarchical Clustering from Beta Jaccard
+#'
+#' Function performs hierarchic clustering (\code{\link{hclust}}) with
+#' the expected value of Jaccard dissimilarity as Beta random variate,
+#' and compares the stability of each cluster branch in random samples
+#' from Beta distribution.
+#'
+#' @details
+#'
+#' Function is basically a graphical tool that plots an
+#' \code{\link{hclust}} dendrogram and adds the count of similar
+#' clusters in randomized cluster dendrograms, but it can also be
+#' called only for the numeric result without plot.
+#'
+#' The count of similar clusters in trees is based on randomized form
+#' Jaccard Beta dissimilarities, and is called here
+#' \dQuote{support}. The support is calculated alternatively as the
+#' number of exactly similar branches in randomized trees or as a sum
+#' of maximum Jaccard similarities in observed and randomized trees
+#' (\dQuote{softmatch}). The exact matches are very sensitive to
+#' single wandering sampling units, and often give very low
+#' \dQuote{support} for large classes, whereas Jaccard-based
+#' \dQuote{support} may give too high values for the smallest
+#' classes. For exact matches the \dQuote{support} is given as count,
+#' and for soft maches (Jaccard-based) as a rounded integer per 1000.
+#'
+#' @seealso \code{\link{hclust}}, \code{\link{bayesjaccard}}.
+#'
+#' @return Usually called to draw a plot, but will return the
+#'     \dQuote{support}; the values are returned in the order of
+#'     merges in the agglomerative hierarchic clustering. Function
+#'     \code{clsets} returns a list with indices of items (sampling
+#'     units) of each branch in their merge order.
+#'
+#' @examples
+#'
+#' data(spurn)
+#' clsupport(spurn) # exact match
+#' clsupport(spurn, softmatch = TRUE)
+#'
 #'
 #' @param x Community data, will be treated as binary.
 #' @param n Number of random samples from Beta distribution.

@@ -12,6 +12,10 @@ bayesjaccard(x, method = c("rbeta", "expected", "mode"))
 \item{method}{Dissimilarity as a random sample from Beta
 distribution or as its expected value or mode.}
 }
+\value{
+Dissimilarity object inheriting from classes \code{"dist"}
+    and \code{"designdist"}.
+}
 \description{
 Jaccard dissimilarity for presence/absence data can be seen as the
 mode of Beta distributed variate. The function calculates the
@@ -62,4 +66,7 @@ abline(0, 1, col=2)
 plot(bayesjaccard(spurn, "expected"), bayesjaccard(spurn), asp=1)
 abline(0, 1, col=2)
 
+}
+\seealso{
+Function is a wrapper to \code{\link[vegan]{designdist}}.
 }
