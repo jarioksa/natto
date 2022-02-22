@@ -57,6 +57,24 @@ of the configuration, although it rarely gives smaller areas than
 with criterion \code{"mahalanobis"} results have the same points on
 the perimeter of the shape.
 }
+\examples{
+
+x <- matrix(c(rnorm(100), rnorm(100, sd=2)), nrow=100, ncol=2)
+op <- par(mar=c(4,4,2,1), mfrow=c(2,2))
+## show first ten dropped points and hull keeping 50\% of points
+for (crit in c("area", "distance", "mahalanobis")) {
+   plot(x, asp = 1, main = crit, xlab="", ylab="")
+   for (p in c(100:90, 50)/100)
+       polygon(peelhull(x, keep=p, crit=crit),
+               col = adjustcolor("blue", alpha.f=0.04))
+}
+plot(x, asp = 1, main = "ellipse", xlab="", ylab="")
+for (p in c(100:90, 50)/100)
+   polygon(peelellipse(x, keep=p), col=adjustcolor("blue", alpha.f=0.04))
+
+par(op) # original graphical parameters
+
+}
 \references{
 de Smith, M.J., Goodchild, M.F. & Longley,
     P.A. (2007). \emph{Geospatial analysis: A comprehensive guide
