@@ -195,6 +195,40 @@
 #############
 
 #' Multiple NMDS Ordinations from Beta Distributed Jaccard Dissimilarity
+#'
+#' Function performs \code{\link[vegan]{metaMDS}} on expected Beta
+#' Jaccard dissimilarity with multiple starts and then a number of
+#' \code{\link[vegan]{monoMDS}} runs on random Beta Jaccard
+#' dissimilarities starting from the expected configuration, and
+#' Procrustes rotates the random solutions to the expected one.
+#'
+#' @details
+#'
+#' Current function is designed for visual inspection of random
+#' variation of ordination, and no numerical analysis functions are
+#' (yet) available. The \code{plot} can show the scatter of points as
+#' convex hulls or ellipsoid hulls containing a given proportion of
+#' random points, or as stars that connect the expected point to
+#' randomized ones. With option \code{"wedge"} the convex hull is
+#' extended to include the observed point if necessary. See
+#' \code{\link{bjpolygon}} and \code{\link{bjstars}} for technical
+#' details.
+#'
+#' Missing functionality includes adding species scores, adding fitted
+#' environmental vectors and factors and numeric summaries of the
+#' randomization results.
+#'
+#' @return
+#'
+#' A \code{\link[vegan]{metaMDS}} result object amended with item
+#' \code{rscores} that is a three-dimensional array of coordinates
+#' from random \code{\link{bayesjaccard}} ordinations.
+#'
+#' @examples
+#'
+#' data(spurn)
+#' m <- bjNMDS(spurn)
+#' plot(m, keep = 0.607, col = "skyblue")
 
 #' @param x Community data; will be treated as binary.
 #' @param n Number of random samples of Beta Distribution.
@@ -280,6 +314,35 @@
 
 #' Shapes to Display Scatter of Points in Multiple Ordinations
 #'
+#' These are low-level functions that are used by \code{plot}
+#' functions to draw shapes enclosing a specified proportion of
+#' randomized points, or connecting certain proportion of them to the
+#' reference points. The functions are not usually called directly by
+#' users, but the plots can be modified with described arguments.
+#'
+#' @details
+#'
+#' Functions require output of three-dimensional array \code{xarr} of
+#' randomized scores, where the last dimension is for the random
+#' samples, and a two-dimensional matrix of references scores
+#' \code{x0}.
+#'
+#' Function \code{bjpolygon} uses \code{\link{peelhull}} or
+#' \code{\link{peelellipse}} to find a convex hull
+#' (\code{\link{chull}}) or an ellipsoid hull
+#' (\code{\link[cluster]{ellipsoidhull}}) containing \code{keep}
+#' proportion of points. The reference coordinates can also be added
+#' to the plot, either as point or a text label
+#' (\code{\link{ordiellipse}}) and optionally connected to the shape
+#' centre (not to the centre of points). With argument \code{observed}
+#' the convex hull can be extended to include the reference point when
+#' that is outside the hull; this is used to draw wedges for arrows
+#' using the origin as the reference point.
+#'
+#' Function \code{bjstars} connects the reference point to \code{keep}
+#' proportion of closest points. If the reference point is not
+#' specified, the centre of points prior to selection will be used.
+#'
 #' @param xarr 3-D array of coordinates of sampling units times two
 #'     axes by random samples.
 #' @param x0 2-D array of sampling units times two axes treated as
@@ -301,6 +364,13 @@
 #' @param type Mark coordinate of \code{x0} using \code{"t"}ext,
 #'     \code{"p"}oint or \code{"n"}one.
 #' @param ... Other parameters passed to to marker of \code{type}.
+#'
+#' @return Functions return invisibly \code{NULL}.
+#'
+#' @seealso \code{\link{peelhull}}, \code{\link{peelellipse}},
+#'     \code{\link{polygon}} for basic functions and
+#'     \code{\link{plot.bjnmds}} and \code{\link{plot.bjnmds}} and
+#'     \code{\link{plot.bjdbrda}} for programmatic interface.
 #'
 #' @importFrom graphics polygon
 #' @importFrom grDevices adjustcolor
@@ -384,14 +454,63 @@
 
 ### Somewhat trickier to implement than NMDS. (1) dbRDA is an
 ### eigenvector method, and if we rotate, eigenvalues would change,
-### and we may need to skip rotation, but fix the axis reflection.
+### and we need to skip rotation, but fix the axis reflection.
 ### (2) The "expected" model can have (one) negative eigenvalue, but
 ### rbeta models can have several and variable numbers of negative
 ### eigenvalues. (3) Probably we should not allow any adjustment
 ### against negative eigenvalues as these are data-set dependent and
-### destroy the beauty of the distance (excpet sqrt.dis?).
+### destroy the beauty of the distance (expect sqrt.dis?).
 
 #' Multiple dbRDA from Beta Distributed Jaccard Dissimilarity
+#'
+#' Function performs distance-based RDA on expected Beta Jaccard
+#' dissimilarities, and then reruns the analysis on given number of
+#' random Beta Jaccard dissimilarities.
+#'
+#' @details
+#'
+#' Function works only with constrained and partial constrained
+#' ordination, and only saves the randomized results of constrained
+#' ordination. To maintain the eigenvalues, function does not rotate
+#' the random results to the reference ordination, but it will reflect
+#' axes with reversed signs. The eigenvalues and magnitudes of
+#' axiswise correlations to the reference ordination can be inspected
+#' with \code{boxplot}.
+#'
+#' The display type in \code{plot} can be specified independently to
+#' each type of score (or the score can be skipped). The default
+#' display can be modified using a similarly named list of graphical
+#' argument values that will replace the defaults. For instance, to
+#' display linear combination scores as convex hull, use \code{lc =
+#' "hull"}, and modify its parameters with list \code{lc.par}.
+#'
+#' @return Function returns \code{\link{dbrda}} result object amended
+#'     with item \code{BayesJaccard} that is a list of randomized
+#'     results with following items for each random sample:
+#' \itemize{
+#'   \item \code{tot.chi} total inertia
+#'   \item \code{eig} eigenvalues of constrained axes
+#'   \item \code{r} absolute value of correlation coefficient of
+#'     randomized axis and the reference axis
+#'   \item \code{u, wa, biplot, centroids} ordination scores for linear
+#'     combination scores, weighted averages scores, biplot scores and centroid
+#'     of factor constraints; these are unscaled and are usually accessed with
+#'     \code{\link{scores.bjdbrda}} for appropriate scaling
+#' }
+#'
+#' @examples
+#' if (require(vegan)) {
+#' data(dune, dune.env)
+#' m <- bjdbrda(dune ~ A1 + Management + Moisture, dune.env)
+#' ## eigenvalues and correlations showing axis stability
+#' boxplot(m)
+#' boxplot(m, kind = "correlation")
+#' ## Default plot
+#' plot(m)
+#' ## modify plot
+#' plot(m, wa = "ellipse",
+#'    wa.par=list(col = dune.env$Management, keep = 0.607))
+#' }
 #'
 #' @param formula,data Model definition of type \code{Y ~ Var1 + Var2,
 #'     data = X}, where \code{Y} is dependent community data (handled
@@ -653,6 +772,7 @@
         if (missing(ylab))
             ylab <- "Correlation"
         bp <- boxplot(x$BayesJaccard$r, xlab = xlab, ylab = ylab, ...)
+        abline(h = 0, lty=3)
     }
     invisible(bp)
 }

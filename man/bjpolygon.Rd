@@ -54,6 +54,41 @@ enclose fixed point \code{x0}.}
 
 \item{...}{Other parameters passed to to marker of \code{type}.}
 }
+\value{
+Functions return invisibly \code{NULL}.
+}
 \description{
-Shapes to Display Scatter of Points in Multiple Ordinations
+These are low-level functions that are used by \code{plot}
+functions to draw shapes enclosing a specified proportion of
+randomized points, or connecting certain proportion of them to the
+reference points. The functions are not usually called directly by
+users, but the plots can be modified with described arguments.
+}
+\details{
+Functions require output of three-dimensional array \code{xarr} of
+randomized scores, where the last dimension is for the random
+samples, and a two-dimensional matrix of references scores
+\code{x0}.
+
+Function \code{bjpolygon} uses \code{\link{peelhull}} or
+\code{\link{peelellipse}} to find a convex hull
+(\code{\link{chull}}) or an ellipsoid hull
+(\code{\link[cluster]{ellipsoidhull}}) containing \code{keep}
+proportion of points. The reference coordinates can also be added
+to the plot, either as point or a text label
+(\code{\link{ordiellipse}}) and optionally connected to the shape
+centre (not to the centre of points). With argument \code{observed}
+the convex hull can be extended to include the reference point when
+that is outside the hull; this is used to draw wedges for arrows
+using the origin as the reference point.
+
+Function \code{bjstars} connects the reference point to \code{keep}
+proportion of closest points. If the reference point is not
+specified, the centre of points prior to selection will be used.
+}
+\seealso{
+\code{\link{peelhull}}, \code{\link{peelellipse}},
+    \code{\link{polygon}} for basic functions and
+    \code{\link{plot.bjnmds}} and \code{\link{plot.bjnmds}} and
+    \code{\link{plot.bjdbrda}} for programmatic interface.
 }

@@ -60,6 +60,7 @@ and for soft maches (Jaccard-based) as a rounded integer per 1000.
 \examples{
 
 data(spurn)
+clsupport(spurn) # exact match
 clsupport(spurn, softmatch = TRUE)
 
 

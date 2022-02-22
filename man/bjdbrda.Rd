@@ -90,6 +90,54 @@ eigenvalue boxplot.}
 
 \item{xlab, ylab}{Change labelling of axes in boxplot.}
 }
+\value{
+Function returns \code{\link{dbrda}} result object amended
+    with item \code{BayesJaccard} that is a list of randomized
+    results with following items for each random sample:
+\itemize{
+  \item \code{tot.chi} total inertia
+  \item \code{eig} eigenvalues of constrained axes
+  \item \code{r} absolute value of correlation coefficient of
+    randomized axis and the reference axis
+  \item \code{u, wa, biplot, centroids} ordination scores for linear
+    combination scores, weighted averages scores, biplot scores and centroid
+    of factor constraints; these are unscaled and are usually accessed with
+    \code{\link{scores.bjdbrda}} for appropriate scaling
+}
+}
 \description{
-Multiple dbRDA from Beta Distributed Jaccard Dissimilarity
+Function performs distance-based RDA on expected Beta Jaccard
+dissimilarities, and then reruns the analysis on given number of
+random Beta Jaccard dissimilarities.
+}
+\details{
+Function works only with constrained and partial constrained
+ordination, and only saves the randomized results of constrained
+ordination. To maintain the eigenvalues, function does not rotate
+the random results to the reference ordination, but it will reflect
+axes with reversed signs. The eigenvalues and magnitudes of
+axiswise correlations to the reference ordination can be inspected
+with \code{boxplot}.
+
+The display type in \code{plot} can be specified independently to
+each type of score (or the score can be skipped). The default
+display can be modified using a similarly named list of graphical
+argument values that will replace the defaults. For instance, to
+display linear combination scores as convex hull, use \code{lc =
+"hull"}, and modify its parameters with list \code{lc.par}.
+}
+\examples{
+if (require(vegan)) {
+data(dune, dune.env)
+m <- bjdbrda(dune ~ A1 + Management + Moisture, dune.env)
+## eigenvalues and correlations showing axis stability
+boxplot(m)
+boxplot(m, kind = "correlation")
+## Default plot
+plot(m)
+## modify plot
+plot(m, wa = "ellipse",
+   wa.par=list(col = dune.env$Management, keep = 0.607))
+}
+
 }

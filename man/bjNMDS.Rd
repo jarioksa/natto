@@ -56,6 +56,36 @@ of sampled distances; see \code{\link{bjpolygon}} for details.}
 \item{type}{Type of the plot: \code{"t"}ext, \code{"p"}oints or
 \code{"n"}one.}
 }
+\value{
+A \code{\link[vegan]{metaMDS}} result object amended with item
+\code{rscores} that is a three-dimensional array of coordinates
+from random \code{\link{bayesjaccard}} ordinations.
+}
 \description{
-Multiple NMDS Ordinations from Beta Distributed Jaccard Dissimilarity
+Function performs \code{\link[vegan]{metaMDS}} on expected Beta
+Jaccard dissimilarity with multiple starts and then a number of
+\code{\link[vegan]{monoMDS}} runs on random Beta Jaccard
+dissimilarities starting from the expected configuration, and
+Procrustes rotates the random solutions to the expected one.
+}
+\details{
+Current function is designed for visual inspection of random
+variation of ordination, and no numerical analysis functions are
+(yet) available. The \code{plot} can show the scatter of points as
+convex hulls or ellipsoid hulls containing a given proportion of
+random points, or as stars that connect the expected point to
+randomized ones. With option \code{"wedge"} the convex hull is
+extended to include the observed point if necessary. See
+\code{\link{bjpolygon}} and \code{\link{bjstars}} for technical
+details.
+
+Missing functionality includes adding species scores, adding fitted
+environmental vectors and factors and numeric summaries of the
+randomization results.
+}
+\examples{
+
+data(spurn)
+m <- bjNMDS(spurn)
+plot(m, keep = 0.607, col = "skyblue")
 }
