@@ -713,7 +713,7 @@
         x0 <- scores(x, choices = choices, display = "cn", scaling = scaling,
                      expected = TRUE)
         def <- list(xarr = xarr, x0 = x0, kind = cn , col = "skyblue")
-        if (!lc %in% c("p", "t"))
+        if (!cn %in% c("p", "t"))
             def <- modifyList(def,
                               list(alpha = 0.3, keep = 0.9, type = type))
         if (!is.null(cn.par))
@@ -732,7 +732,7 @@
         x0 <- x0[k,, drop=FALSE]
         orig <- matrix(0, nrow = nrow(x0), ncol=2)
         def <- list(xarr = xarr, x0 = x0, kind = bp, col = "blue")
-        if (!lc %in% c("p", "t")) {
+        if (!bp %in% c("p", "t")) {
             def <- modifyList(def,
                               list(x0 = orig, alpha = 0.3, keep = 0.9,
                                    type = "n", lineto = FALSE))
