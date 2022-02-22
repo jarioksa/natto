@@ -768,11 +768,11 @@
         bp <- boxplot(x$BayesJaccard$eig, xlab = xlab, ylab = ylab, ...)
         if (!is.na(points))
             points(x$CCA$eig, col = points, pch = pch, ...)
+        abline(h = 0, lty=3)
     } else if (kind == "correlation") {
         if (missing(ylab))
             ylab <- "Correlation"
         bp <- boxplot(x$BayesJaccard$r, xlab = xlab, ylab = ylab, ...)
-        abline(h = 0, lty=3)
     }
     invisible(bp)
 }
