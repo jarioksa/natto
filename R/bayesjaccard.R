@@ -676,52 +676,67 @@
     g <- NextMethod("plot", x, type = "n", display = display,
                     scaling = scaling)
     options(op) # back to user-defined old warn option
+    drawargs <- c("p","t","hull","ellipse","star", "wedge")
     ## Draw WA
     if (draw["wa"]) {
+        wa <- match.arg(wa, drawargs)
         xarr <- scores(x, choices = choices, display = "wa", scaling = scaling,
                        expected = FALSE)
         x0 <- scores(x, choices = choices, display = "wa", scaling = scaling,
                      expected = TRUE)
         def <- list(xarr = xarr, x0 = x0, kind = wa, col = "black", cex = 0.6)
-        if (!wa %in% c("p", "t"))
-            def <- modifyList(def,
-                              list(col = "gray", alpha = 0.3, keep = 0.9,
-                                   type = type))
+        ## switch default is "ellipse", "hull", "wedge"
+        def <- switch(wa,
+                      "p" =,
+                      "t" = def,
+                      "star" = modifyList(def, list(col = "gray", keep = 0.9,
+                                                    type = type)),
+                      modifyList(def, list(col = "gray", alpha = 0.3,
+                                           keep = 0.9, type = type)) )
         if (!is.null(wa.par))
             def <- modifyList(def, wa.par)
         do.call("rdadraw", def)
     }
     ## Draw LC
     if (draw["lc"]) {
+        lc <- match.arg(lc, drawargs)
         xarr <- scores(x, choices = choices, display = "lc", scaling = scaling,
                        expected = FALSE)
         x0 <- scores(x, choices = choices, display = "lc", scaling = scaling,
                      expected = TRUE)
         def <- list(xarr = xarr, x0 = x0, kind = lc, col = "darkgreen",
                     cex = 0.6)
-        if (!lc %in% c("p", "t"))
-            def <- modifyList(def,
-                              list(alpha = 0.3, keep = 0.9, type = type))
+        def <- switch(lc,
+                      "p" =,
+                      "t" = def,
+                      "star" = modifyList(def, list(keep = 0.9, type = type)),
+                      modifyList(def,
+                                 list(alpha = 0.3, keep = 0.9, type = type)) )
         if (!is.null(lc.par))
             def <- modifyList(def, lc.par)
         do.call("rdadraw", def)
     }
     ## Draw centroids
     if (draw["cn"] && !is.null(g$centroids)) {
+        cn <- match.arg(cn, drawargs)
         xarr <- scores(x, choices = choices, display = "cn", scaling = scaling,
                        expected = FALSE)
         x0 <- scores(x, choices = choices, display = "cn", scaling = scaling,
                      expected = TRUE)
         def <- list(xarr = xarr, x0 = x0, kind = cn , col = "skyblue")
-        if (!cn %in% c("p", "t"))
-            def <- modifyList(def,
-                              list(alpha = 0.3, keep = 0.9, type = type))
+        def <- switch(cn,
+                      "p" =,
+                      "t" = def,
+                      "star" = modifyList(def, list(keep = 0.9, type = type)),
+                      modifyList(def,
+                                 list(alpha = 0.3, keep = 0.9, type = type)) )
         if (!is.null(cn.par))
             def <- modifyList(def, cn.par)
         do.call("rdadraw", def)
     }
     ## Draw biplot arrows
     if (draw["bp"] && !is.null(g$biplot)) {
+        bp <- match.arg(bp, drawargs)
         arr <- ordiArrowMul(g$biplot)
         xarr <- arr * scores(x, choices = choices, display = "bp",
                              scaling = scaling, expected = FALSE)
@@ -732,16 +747,20 @@
         x0 <- x0[k,, drop=FALSE]
         orig <- matrix(0, nrow = nrow(x0), ncol=2)
         def <- list(xarr = xarr, x0 = x0, kind = bp, col = "blue")
-        if (!bp %in% c("p", "t")) {
-            def <- modifyList(def,
-                              list(x0 = orig, alpha = 0.3, keep = 0.9,
-                                   type = "n", lineto = FALSE))
-            if (!is.null(bp.par))
-                def <- modifyList(def, bp.par)
-            do.call("rdadraw", def)
-        }
+        def <- switch(bp,
+                      "p" =,
+                      "t" = def,
+                      "star" = modifyList(def,
+                                          list(x0 = orig, keep = 0.9,
+                                               type = "n")),
+                      modifyList(def,
+                                 list(x0 = orig, alpha = 0.3, keep = 0.9,
+                                      type = "n", lineto = FALSE)) )
+        if (!is.null(bp.par))
+            def <- modifyList(def, bp.par)
+        do.call("rdadraw", def)
         arrows(0, 0, x0[,1], x0[,2], col = def$col, length = 0.1)
-        if (lc != "p")
+        if (bp != "p")
             ordilabel(ordiArrowTextXY(x0, rescale=FALSE))
     }
 }
