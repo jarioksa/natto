@@ -124,7 +124,12 @@ each type of score (or the score can be skipped). The default
 display can be modified using a similarly named list of graphical
 argument values that will replace the defaults. For instance, to
 display linear combination scores as convex hull, use \code{lc =
-"hull"}, and modify its parameters with list \code{lc.par}.
+"hull"}, and modify its parameters with list \code{lc.par}. For
+available graphical parameters, see \code{\link{bjpolygon}} for
+filled shapes, \code{\link{bjstars}} for stars,
+\code{\link{points}} for points, and \code{\link[vegan]{ordilabel}}
+for text. Alternatives \code{"p"} and \code{"t"} will only show the
+scores of the reference solution.
 }
 \examples{
 if (require(vegan)) {
@@ -136,7 +141,7 @@ boxplot(m, kind = "correlation")
 ## Default plot
 plot(m)
 ## modify plot
-plot(m, wa = "ellipse",
+plot(m, cn = "star", wa = "ellipse", cn.par = list(col=gl(2,4)),
    wa.par=list(col = dune.env$Management, keep = 0.607))
 }
 
