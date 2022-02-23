@@ -55,15 +55,15 @@
 #' @examples
 #'
 #' x <- matrix(c(rnorm(100), rnorm(100, sd=2)), nrow=100, ncol=2)
-#' op <- par(mar=c(4,4,2,1), mfrow=c(2,2))
+#' op <- par(mar=c(0,0,1,0), mfrow=c(2,2))
 #' ## show first ten dropped points and hull keeping 50% of points
 #' for (crit in c("area", "distance", "mahalanobis")) {
-#'    plot(x, asp = 1, main = crit, xlab="", ylab="")
+#'    plot(x, asp = 1, main = crit, xlab="", ylab="", axes=FALSE)
 #'    for (p in c(100:90, 50)/100)
 #'        polygon(peelhull(x, keep=p, crit=crit),
 #'                col = adjustcolor("blue", alpha.f=0.04))
 #' }
-#' plot(x, asp = 1, main = "ellipse", xlab="", ylab="")
+#' plot(x, asp = 1, main = "ellipse", xlab="", ylab="", axes=FALSE)
 #' for (p in c(100:90, 50)/100)
 #'    polygon(peelellipse(x, keep=p), col=adjustcolor("blue", alpha.f=0.04))
 #'
