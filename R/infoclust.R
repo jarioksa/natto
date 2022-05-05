@@ -79,8 +79,8 @@
     N <- nrow(x)
     ## shortcut to pairwise 'infodist'
     dis <- matrix(NA, N, N)
-    dis[lower.tri(dis)] <- 2 * log(2) *
-        designdist(x, "A+B-2*J", "binary", name = "information")
+    dis[lower.tri(dis)] <-
+        designdist(x, "log(4)*(A+B-2*J)", "binary", name = "information")
     adj <- numeric(N)
     merge <- matrix(NA, nrow = N - 1, ncol = 2)
     height <- rep(NA, N - 1)
