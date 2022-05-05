@@ -4,8 +4,9 @@
 #' called by their vernacular names. The function is based on
 #' \code{\link[vegan]{designdist}} (\CRANpkg{vegan} package).
 #'
-#' @param x Input data
-#' @param method Vernacular name for a dissimilarity index
+#' @param x Input data.
+#' @param method Vernacular name for a dissimilarity index.
+#' @param help List available indices instead of calculating dissmilarities.
 #'
 #' @return Function returns a \code{\link{dist}} object of dissimilarities.
 #'
@@ -22,7 +23,7 @@
 #'
 #' @export
 `canneddist` <-
-    function(x, method)
+    function(x, method, help = FALSE)
 {
     index <- list(
         ## (A+B-2*J)/(A+B) with various names (and people rave on these)
@@ -58,7 +59,8 @@
         "sorgenfrei" = list(method = "1-J*J/A/B", terms="binary"),
         "mountford.init" = list(method = "pmax(1-2*J/(2*A*B-(A+B)*J),0)", terms="binary")
         )
-
+    if (help)
+        return(t(sapply(index, data.frame, stringsAsFactors = TRUE)))
     ind <- match.arg(method, names(index))
     z <- index[[ind]]
     designdist(x, method = z$method, terms = z$terms, name = ind)
