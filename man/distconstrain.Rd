@@ -4,8 +4,7 @@
 \alias{distconstrain}
 \title{Constrained and Residual Dissimilarities}
 \usage{
-distconstrain(formula, data, add = FALSE, residuals = FALSE,
-  squared = FALSE)
+distconstrain(formula, data, add = FALSE, residuals = FALSE, squared = FALSE)
 }
 \arguments{
 \item{formula}{The left-hand-side must be dissimilarities and the
@@ -59,4 +58,3 @@ McArdle, B.H. & Anderson, M.J. (2001). Fitting
   multivariate models to community data: a comment on distance-based
   redundancy analysis. \emph{Ecology} 82, 290--297.
 }
-
