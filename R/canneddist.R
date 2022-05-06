@@ -112,5 +112,7 @@
         return(t(sapply(index, data.frame, stringsAsFactors = TRUE)))
     ind <- match.arg(method, names(index))
     z <- index[[ind]]
-    designdist(x, method = z$method, terms = z$terms, name = ind)
+    dis <- designdist(x, method = z$method, terms = z$terms, name = ind)
+    attr(dis, "call") <- match.call()
+    dis
 }
