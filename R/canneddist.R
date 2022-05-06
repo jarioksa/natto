@@ -88,9 +88,10 @@
         "euclidean" = list(method = "sqrt(A+B-2*J)", terms = "quadratic"),
         "chord" = list(method = "sqrt(2*(1-J/sqrt(A*B)))", terms = "quadratic"),
         "geodesic" = list(method = "acos(J/sqrt(A*B))", terms = "quadratic"),
-        "manhattan" = list(method = "A+B-2*J", terms = "minimum"),
         "ochiai" = list(method = "1-J/sqrt(A*B)", terms = "binary"),
         "cosine" = list(method = "1-J/sqrt(A*B)", terms = "quadratic"),
+        "manhattan" = list(method = "A+B-2*J", terms = "minimum"),
+        "information" = list(method = "log(4)*(A+B-2*J)", terms = "binary"),
         ## Legendre & Legendre have some oddities, here as dissimilarities
         "triplejaccard" = list(method = "(A+B-2*J)/(A+B+J)", terms = "binary"),
         "sokalsneath" = list(method = "2*(A+B-2*J)/(2*A+2*B-3*J)", terms="binary"),
@@ -112,5 +113,7 @@
         return(t(sapply(index, data.frame, stringsAsFactors = TRUE)))
     ind <- match.arg(method, names(index))
     z <- index[[ind]]
-    designdist(x, method = z$method, terms = z$terms, name = ind)
+    dis <- designdist(x, method = z$method, terms = z$terms, name = ind)
+    attr(dis, "call") <- match.call()
+    dis
 }
