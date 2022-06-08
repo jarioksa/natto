@@ -3,22 +3,26 @@
 ### the real mean of points is 0, and then backtransform to
 ### distances. This is based on Euclidean geometry -- but so is all
 ### Hmsc.
+#' Mean of Distances
+#'
+#' Mean of distances is defined as the distance of each point to the
+#' mean of coordinates generating the distance.
+#'
 #' @param d Distances as a \code{dist} object
 #' @return Distances to all other points from a point that is in the
 #'     centre of the coordinates generating the distances.
-## non-exported internal function
+#' @export
 `distMeans` <-
     function(d)
 {
-    d <- as.matrix(d^2/2)
-    cnt <- colMeans(d)
-    d <- sweep(d, 2L, cnt, check.margin = FALSE)
-    cnt <- rowMeans(d)
-    d <- sweep(d, 1L, cnt, check.margin = FALSE)
+    x <- as.matrix(d^2/2)
+    ## Gower double centring
+    x <- sweep(x, 2L, colMeans(x), check.margin = FALSE)
+    x <- sweep(x, 1L, rowMeans(x), check.margin = FALSE)
     ## d is now Gower double-centred, and we need backtransform points
     ## at zero back to distances to all other points. For full matrix
     ## this would be sqrt(2*d - outer(diag(d), diag(d), "+")), but we
     ## only need the centroid for a zero-row (d == 0).
-    sqrt(diag(-d))
+    sqrt(diag(-x))
 }
 
