@@ -9,11 +9,17 @@
 #' mean of coordinates generating the distance.
 #'
 #' @param d Distances as a \code{dist} object
-#' @return Distances to all other points from a point that is in the
-#'     centre of the coordinates generating the distances.
+#' @param addcentre Add distances to the centroid as the first item in
+#'     the distance matrix. If \code{FALSE} only return mean
+#'     distances.
+#' @param label Label for the centroid when \code{addcentre = TRUE}.
+#' @return Either istances to all other points from a point that is in
+#'     the centroid of the coordinates generating the distances, or
+#'     the input dissimilarity matrix where the mean distances are
+#'     added as the first observation.
 #' @export
 `distMeans` <-
-    function(d)
+    function(d, addcentre = FALSE, label = "centroid")
 {
     x <- as.matrix(d^2/2)
     ## Gower double centring
@@ -23,6 +29,15 @@
     ## at zero back to distances to all other points. For full matrix
     ## this would be sqrt(2*d - outer(diag(d), diag(d), "+")), but we
     ## only need the centroid for a zero-row (d == 0).
-    sqrt(diag(-x))
+    cnt <- sqrt(diag(-x))
+    if (addcentre) {
+        att <- attributes(d)
+        cnt <- c(cnt, d)
+        att$Size <- att$Size + 1L
+        if (!is.null(att$Labels))
+            att$Labels <- c(label, att$Labels)
+        attributes(cnt) <- att
+    }
+    cnt
 }
 
