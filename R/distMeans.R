@@ -66,10 +66,10 @@
     ## Gower double centring
     x <- sweep(x, 2L, colMeans(x), check.margin = FALSE)
     x <- sweep(x, 1L, rowMeans(x), check.margin = FALSE)
-    ## d is now Gower double-centred, and we need backtransform points
+    ## x is now Gower double-centred, and we need backtransform points
     ## at zero back to distances to all other points. For full matrix
-    ## this would be sqrt(2*d - outer(diag(d), diag(d), "+")), but we
-    ## only need the centroid for a zero-row (d == 0).
+    ## this would be sqrt(2*x - outer(diag(x), diag(x), "+")), but
+    ## after double-centring the centre (or the mean) is zero.
     cnt <- sqrt(diag(-x))
     if (addcentre) {
         att <- attributes(d)
