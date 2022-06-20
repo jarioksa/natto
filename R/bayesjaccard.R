@@ -385,7 +385,6 @@
     kind <- match.arg(kind)
     dims <- dim(xarr)
     nobs <- dims[1]
-    nsam <- dims[3]
     ## handle colours
     if (alpha > 1)
         alpha <- alpha / 255
