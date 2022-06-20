@@ -135,7 +135,6 @@
     devtable <- cbind(tmp, c(NA, -diff(tmp)))
     dimnames(devtable) <- list(c("Null", "Threshold", "Model"),
                                c("Deviance", "Delta Dev"))
-    explained <- object$expl.deviance
     ok <- object$expl.deviance - object$devprofile <= qchisq(0.95, 1)
     oktable <- data.frame("Threshold" = object$cutoff[ok],
                           "Delta Dev" = object$expl.deviance - object$devprofile[ok],
