@@ -2,7 +2,7 @@
 % Please edit documentation in R/ortho.R
 \name{ortho}
 \alias{ortho}
-\title{Gram-Schmidt Orthogonalization}
+\title{Orthogonalization via QR Decomposition}
 \usage{
 ortho(x0, x)
 }
