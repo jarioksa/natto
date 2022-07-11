@@ -158,7 +158,8 @@
         u[,i] <- x[,take]
         colnames(u)[i] <- names(take)
         ## orthogonalize: x will be residuals
-        x <- apply(x, 2, function(z) ortho(u[,i, drop=FALSE], z))
+        Q <- qr(u[,i])
+        x <- apply(x, 2, function(z) qr.resid(Q, z))
         xx <- cov(x)
     }
     names(eig) <- colnames(u)
