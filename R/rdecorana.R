@@ -6,8 +6,18 @@
 #'
 #' @export
 `decorana` <-
-    function(x, ...)
+    function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
+             before = NULL, after = NULL, ...)
 {
+    .NotYetImplemented(iweigh)
+    .NotYetImplemented(iresc)
+    .NotYetImplemented(ira)
+    .NotYetImplemented(short)
+    .NotYetImplemented(before)
+    .NotYetImplemented(after)
+    ## constants
+    NAXES <- 4
+    ## initialize: in vegan & standard CA style
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
