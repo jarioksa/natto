@@ -158,8 +158,10 @@
         u[,i] <- x[,take]
         colnames(u)[i] <- names(take)
         ## orthogonalize: x will be residuals
-        Q <- qr(u[,i])
-        x <- apply(x, 2, function(z) qr.resid(Q, z))
+        x <- qr.resid(qr(cbind(1, u[,i])), x)
+        ## x[,take] should now be exactly 0, but may be EPS (magnitude
+        ## 1e-16), and then EPS/EPS in crit > 0
+        x[,take] <- 0
         xx <- cov(x)
     }
     names(eig) <- colnames(u)
