@@ -11,7 +11,6 @@
 {
     .NotYetImplemented(iweigh)
     .NotYetImplemented(iresc)
-    .NotYetImplemented(ira)
     .NotYetImplemented(short)
     .NotYetImplemented(before)
     .NotYetImplemented(after)
@@ -21,6 +20,31 @@
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
+    ## orthogonal CA: just do it and return
+    if (ira == 1)
+        return(orthoCA(x, aidot = aidot, adotj = adotj, naxes = NAXES))
+}
+
+#' Orthogonal Correspondence Analysis
+#'
+#' Orthogonal correspondence analysis is performed via svd of
+#' CA-initialized data.
+#'
+#' @param x initCA-initialized data.
+#' @param aidot,adotj Row and column weights summing up to 1.
+#' @param naxes Number of axes.
+#'
+#' @return Orthogonal CA scaled like in Decorana.
+#'
+## not exported
+`orthoCA` <-
+    function(x, aidot, adotj, naxes)
+{
+    m <- svd(x, nu = naxes, nv = naxes)
+    lambda <- m$d[seq_len(naxes)]^2
+    rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
+    cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
+    list(evals = lambda, rproj = rproj, cproj = cproj)
 }
 
 #' Detrending
