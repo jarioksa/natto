@@ -38,9 +38,10 @@
     ## axis 1 is detrended
     sol <- svd(x, nu=1, nv=1)
     evals[1] <- sol$d[1]^2
-    rproj[,1] <- sol$u / sqrt(aidot) * (evals[1]/(1-evals[1]))
-    cproj[,1] <- sol$v / sqrt(adotj) * (1/(1-evals[1]))
+    rproj[,1] <- sol$u / sqrt(aidot) * sqrt(evals[1]/(1-evals[1]))
+    cproj[,1] <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[1]))
     ## residual data
+    x0 <- x
     x <- x  - tcrossprod(sol$u, sol$v) * sol$d[1]
     ## Go for the detrended axes
     for (axis in 2:NAXES) {
@@ -50,7 +51,7 @@
         cycles <- 0
         ## Reciprocal averaging starting from eigenvector v
         repeat {
-            sol <- transvu(sol$v[,1], rproj, x, axis, aidot, adotj, mk)
+            sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk)
             if (abs(eig2 - sol$d) < EPS)
                 break
             eig2 <- sol$d
@@ -61,8 +62,8 @@
         }
         evals[axis] <- sol$d^2
         ## u includes eigenvalue: not needed here
-        rproj[,axis] <- sol$u / sqrt(aidot) * (1/(1-evals[axis]))
-        cproj[,axis] <- sol$v / sqrt(adotj) * (1/(1-evals[axis]))
+        rproj[,axis] <- sol$u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
+        cproj[,axis] <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
