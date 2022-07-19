@@ -4,21 +4,62 @@
 #'
 #' Similar to Fortran implementation in vegan, but all in R.
 #'
+#' This function duplicates \CRANpkg{vegan} function
+#' \code{\link[vegan]{decorana}}, and there is no need to use this
+#' function for data analysis. The function serves two
+#' purposes. Firstly, it is written in \R{} to allow easier inspection
+#' of function than compiled code in C and Fortran in
+#' \pkg{vegan}. Secondly, it is more hackable, and easier to develop
+#' new features, change code or replace functionality than in the
+#' compiled code. For instance, it would be trivial to add Detrended
+#' Constrained Correspondence Analysis, but this would be impossible
+#' without extensive changes in Fortran in the \pkg{vegan} function.
+#'
+#' Function is experimental, and at the moment it only implements
+#' basic orthogonal and detrended correspondence analysis. It does not
+#' implement many options of \code{\link[vegan]{decorana}}, most
+#' importantly, rescaling is not yet implemented.
+#'
+#' @return Currently returns a list of elements \code{evals} of
+#'     Decorana values, with \code{rproj} and \code{cproj} of scaled
+#'     row and column scores.
+#'
+#' @examples
+#' data(spurn)
+#' str(mod <- rdecorana(spurn))
+#' if (require(vegan)) {
+#' ## compare to decorana
+#' str(decorana(spurn, iresc = 0))
+#' ## ordiplot works
+#' ordiplot(mod, display="sites")
+#' }
+#'
+#' @param x input data matrix.
+#' @param iweigh Downweighting of rare species (0: no). Not yet
+#'     implemented.
+#' @param iresc Number of rescaling cycles (0: no rescaling). Not yet
+#'     implemented.
+#' @param ira Type of analyis (0: detrended, 1: orthogonal).
+#' @param mk Number of segments in detrending.
+#' @param short Shortest gradient to be rescaled. Not yet implemented.
+#' @param before,after Definition of Hill's piecewise
+#'     transformation. Not yet implemented.
+#'
 #' @export
 `rdecorana` <-
     function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
-             before = NULL, after = NULL, ...)
+             before = NULL, after = NULL)
 {
     if (!missing(iweigh))
-        .NotYetImplemented(iweigh)
+        .NotYetUsed("iweigh")
     if (!missing(iresc))
-        .NotYetImplemented(iresc)
+        .NotYetUsed("iresc")
     if (!missing(short))
-        .NotYetImplemented(short)
+        .NotYetUsed("short")
     if (!missing(before))
-        .NotYetImplemented(before)
+        .NotYetUsed("before")
     if (!missing(after))
-        .NotYetImplemented(after)
+        .NotYetUsed("after")
     ## constants
     NAXES <- 4
     EPS <- sqrt(.Machine$double.eps)
@@ -71,17 +112,17 @@
     list(evals = evals, rproj = rproj, cproj = cproj)
 }
 
-#' Orthogonal Correspondence Analysis
-#'
-#' Orthogonal correspondence analysis is performed via svd of
-#' CA-initialized data.
-#'
-#' @param x initCA-initialized data.
-#' @param aidot,adotj Row and column weights summing up to 1.
-#' @param naxes Number of axes.
-#'
-#' @return Orthogonal CA scaled like in Decorana.
-#'
+## Orthogonal Correspondence Analysis
+##
+## Orthogonal correspondence analysis is performed via svd of
+## CA-initialized data.
+##
+## @param x initCA-initialized data.
+## @param aidot,adotj Row and column weights summing up to 1.
+## @param naxes Number of axes.
+##
+## @return Orthogonal CA scaled like in Decorana.
+##
 ## not exported
 `orthoCA` <-
     function(x, aidot, adotj, naxes)
@@ -98,11 +139,10 @@
 ## orthogonalization which we do not need. Essentially the function
 ## only finds u from v, detrends u against previous axes, and finds
 ## new v. Their ratio is the eigenvalue of the step, and repeated call
-## to this routine performs simple reciprocal averaging.  #'
-## Reciprocal Averaging Step of detrended CA. Function also returns
-## normalized score vector v and eigenvalue-weightedu and the singular
-## value (squareroot of the eigenvalue) so that the output has the
-## same elements as svd().
+## to this routine performs simple reciprocal averaging.  Function
+## also returns normalized score vector v and eigenvalue-weighted u
+## and the singular value (squareroot of the eigenvalue) so that the
+## output has the same elements as svd().
 #'
 ## not exported
 `transvu` <-
@@ -125,17 +165,17 @@
     list(v = v / eig, u = sqrt(aidot) * u, d = sqrt(eig))
 }
 
-#' Detrending
-#'
-#' Detrends axis x on mk segments of x1
-#'
-#' @param x Axis to be detrended.
-#' @param aidot Weights of x.
-#' @param x1 Axis along which x is detrended.
-#' @param mk Number of segments on x1.
-#'
-#' @return Detrended values.
-#'
+## Detrending
+##
+## Detrends axis x on mk segments of x1.
+##
+## @param x Axis to be detrended.
+## @param aidot Weights of x.
+## @param x1 Axis along which x is detrended.
+## @param mk Number of segments on x1.
+##
+## @return Detrended values.
+##
 ## Not exported
 `detrend` <-
     function(x, aidot, x1, mk)
