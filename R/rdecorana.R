@@ -5,17 +5,24 @@
 #' Similar to Fortran implementation in vegan, but all in R.
 #'
 #' @export
-`decorana` <-
+`rdecorana` <-
     function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
              before = NULL, after = NULL, ...)
 {
-    .NotYetImplemented(iweigh)
-    .NotYetImplemented(iresc)
-    .NotYetImplemented(short)
-    .NotYetImplemented(before)
-    .NotYetImplemented(after)
+    if (!missing(iweigh))
+        .NotYetImplemented(iweigh)
+    if (!missing(iresc))
+        .NotYetImplemented(iresc)
+    if (!missing(short))
+        .NotYetImplemented(short)
+    if (!missing(before))
+        .NotYetImplemented(before)
+    if (!missing(after))
+        .NotYetImplemented(after)
     ## constants
     NAXES <- 4
+    EPS <- sqrt(.Machine$double.eps)
+    CYCLES <- 1000
     ## initialize: in vegan & standard CA style
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
@@ -24,8 +31,42 @@
     if (ira == 1)
         return(orthoCA(x, aidot = aidot, adotj = adotj, naxes = NAXES))
     ## ira == 0 and we go for detrended CA. First axis can be found
-    ## directly via svd, as well as the initial values for the second
-    ## axis
+    ## directly via svd.
+    rproj <- matrix(0, nrow(x), NAXES)
+    cproj <- matrix(0, ncol(x), NAXES)
+    evals <- numeric(NAXES)
+    ## axis 1 is detrended
+    sol <- svd(x, nu=1, nv=1)
+    evals[1] <- sol$d[1]^2
+    rproj[,1] <- sol$u / sqrt(aidot) * (evals[1]/(1-evals[1]))
+    cproj[,1] <- sol$v / sqrt(adotj) * (1/(1-evals[1]))
+    ## residual data
+    x <- x  - tcrossprod(sol$u, sol$v) * sol$d[1]
+    ## Go for the detrended axes
+    for (axis in 2:NAXES) {
+        ## svd of residual data
+        sol <- svd(x, nu=1, nv=1)
+        eig2 <- -1
+        cycles <- 0
+        ## Reciprocal averaging starting from eigenvector v
+        repeat {
+            sol <- transvu(sol$v[,1], rproj, x, axis, aidot, adotj, mk)
+            if (abs(eig2 - sol$d) < EPS)
+                break
+            eig2 <- sol$d
+            if ((cycles <- cycles + 1) > CYCLES) {
+                warning("no convergence on axis ", axis)
+                break
+            }
+        }
+        evals[axis] <- sol$d^2
+        ## u includes eigenvalue: not needed here
+        rproj[,axis] <- sol$u / sqrt(aidot) * (1/(1-evals[axis]))
+        cproj[,axis] <- sol$v / sqrt(adotj) * (1/(1-evals[axis]))
+        ## residual matrix
+        x <- x - tcrossprod(sol$u, sol$v)
+    }
+    list(evals = evals, rproj = rproj, cproj = cproj)
 }
 
 #' Orthogonal Correspondence Analysis
