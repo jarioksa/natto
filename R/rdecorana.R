@@ -23,6 +23,9 @@
     ## orthogonal CA: just do it and return
     if (ira == 1)
         return(orthoCA(x, aidot = aidot, adotj = adotj, naxes = NAXES))
+    ## ira == 0 and we go for detrended CA. First axis can be found
+    ## directly via svd, as well as the initial values for the second
+    ## axis
 }
 
 #' Orthogonal Correspondence Analysis
@@ -45,6 +48,38 @@
     rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
     cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
     list(evals = lambda, rproj = rproj, cproj = cproj)
+}
+
+## transvu is modelled after trans subroutine in decorana.f. The
+## decorana original is longer because it also implements
+## orthogonalization which we do not need. Essentially the function
+## only finds u from v, detrends u against previous axes, and finds
+## new v. Their ratio is the eigenvalue of the step, and repeated call
+## to this routine performs simple reciprocal averaging.  #'
+## Reciprocal Averaging Step of detrended CA. Function also returns
+## normalized score vector v and eigenvalue-weightedu and the singular
+## value (squareroot of the eigenvalue) so that the output has the
+## same elements as svd().
+#'
+## not exported
+`transvu` <-
+    function(v, rproj, x, axis, aidot, adotj, mk)
+{
+    ## v should be centred and normalized: play safe
+    cnt <- mean(sqrt(adotj) * v)
+    v <- (v - cnt)
+    v <- v / sqrt(sum(v^2))
+    ## get u from v
+    u <- x %*% v
+    u <- u / sqrt(aidot)
+    ## detrend
+    if (axis > 1)
+        for(k in c(seq_len(axis-1), rev(seq_len(axis-2))))
+            u <- detrend(u, aidot, rproj[,k], mk)
+    ## get back v
+    v <- t(sqrt(aidot) * x) %*% u
+    eig <- sqrt(sum(v^2))
+    list(v = v / eig, u = sqrt(aidot) * u, d = sqrt(eig))
 }
 
 #' Detrending
