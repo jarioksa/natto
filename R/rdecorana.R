@@ -61,8 +61,9 @@
             }
         }
         evals[axis] <- sol$d^2
-        ## u includes eigenvalue: not needed here
-        rproj[,axis] <- sol$u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
+        ## u is computed from v and includes eigenvalue
+        u <- x0 %*% sol$v
+        rproj[,axis] <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         cproj[,axis] <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
