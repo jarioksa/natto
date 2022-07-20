@@ -176,21 +176,22 @@
 ##
 ## @return Detrended values.
 ##
+#' @importFrom stats filter
+##
 ## Not exported
 `detrend` <-
     function(x, aidot, x1, mk)
 {
     x1 <- cut(x1, mk)
     ## pad segments with zeros to buffer ends
-    z <- c(0, 0, tapply(aidot*x, x1, sum), 0, 0)
-    zn <- c(0, 0, tapply(aidot, x1, sum), 0, 0)
-    z[!is.finite(z)] <- 0
-    zn[!is.finite(zn)] <- 0
-    ## mean by blocks of three segments
-    z <- (z + c(0, z[-length(z)]) + c(z[-1],0))/
-        pmax(c(zn + c(0, zn[-length(zn)]) + c(zn[-1], 0)), .Machine$double.eps)
+    z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
+    zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
+    ## mean z weighted with zn by blocks of three
+    z <- filter(z, c(1,1,1), sides=2)
+    zn <- filter(zn, c(1,1,1), sides=2)
+    z <- z / pmax(zn, .Machine$double.eps)
     ## mean of blocks of three by starting position
-    z <- (z + c(0, z[-length(z)]) + c(z[-1],0))/3
+    z <- filter(z, c(1,1,1)/3, sides=2)
     x - z[as.numeric(x1)+2]
 }
 
