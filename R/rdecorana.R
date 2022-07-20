@@ -165,6 +165,17 @@
     list(v = v / eig, u = sqrt(aidot) * u, d = sqrt(eig))
 }
 
+## Original comments of Decorana detrnd:
+##    starts with a vector x and detrends with respect to groups defined
+##    by ix.  detrending is in blocks of 3 units at a time, and the
+##    result calculated is the average of the 3 possible results that
+##    can be obtained, corresponding to 3 possible starting positions
+##    for the blocks of 3.
+
+## NB: smoothing is done twice, and for equal weights zn effectively
+## performs c(1,2,3,2,1)/3 smoothing, and defines smoothing window of
+## 5 blocks.
+
 ## Detrending
 ##
 ## Detrends axis x on mk segments of x1.
@@ -186,11 +197,11 @@
     ## pad segments with zeros to buffer ends
     z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
     zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
-    ## mean z weighted with zn by blocks of three
+    ## mean z with weights zn by blocks of three
     z <- filter(z, c(1,1,1), sides=2)
     zn <- filter(zn, c(1,1,1), sides=2)
     z <- z / pmax(zn, .Machine$double.eps)
-    ## mean of blocks of three by starting position
+    ## mean of blocks of three
     z <- filter(z, c(1,1,1)/3, sides=2)
     x - z[as.numeric(x1)+2]
 }
