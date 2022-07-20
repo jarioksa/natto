@@ -193,3 +193,28 @@
     z <- (z + c(0, z[-length(z)]) + c(z[-1],0))/3
     x - z[as.numeric(x1)+2]
 }
+
+## The original comments of Decorana smooth:
+##    takes a vector z and does (1,2,1)-smoothing until no blanks left
+##    and then 2 more iterations of (1,2,1)-smoothing.  if no blanks to
+##    begin with, then does 3 smoothings, i.e. effectively (1,6,15,20,
+##    15,6,1)-smoothing.
+##
+## @param z vector to be smoothed.
+##
+#' @importFrom stats filter
+##
+## not exported
+`smooth` <-
+    function(z)
+{
+    kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
+    mk <- seq_along(z) + 1L # index after padding c(0,z,0)
+    repeat{
+        z <- filter(c(0, z, 0), kernel, sides=2)[mk]
+        if (all(z > 0))
+            break
+    }
+    z <- filter(c(0, z, 0), kernel, sides=2)[mk]
+    filter(c(0, z, 0), kernel, sides=2)[mk]
+}
