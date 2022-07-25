@@ -101,8 +101,22 @@
         evals[axis] <- sol$d^2
         ## u is computed from v and includes eigenvalue
         u <- x0 %*% sol$v
-        rproj[,axis] <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
-        cproj[,axis] <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
+        udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
+        vdeco <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
+        ## rescaling
+        if (iresc > 0) {
+            for(i in seq_len(iresc)) {
+                z <- stretch(x0, xorig, udeco, vdeco, aidot, short = short)
+                udeco <- z$rproj
+                vdeco <- z$cproj
+            }
+            z <- postscale(z, xorig, aidot)
+            udeco <- z$rproj
+            vdeco <- z$cproj
+        }
+        ## results
+        rproj[, axis] <- udeco
+        cproj[, axis] <- vdeco
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
