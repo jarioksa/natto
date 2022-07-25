@@ -73,32 +73,27 @@
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
     evals <- numeric(NAXES)
-    ## axis 1 is detrended
-    sol <- svd(x, nu=1, nv=1)
-    evals[1] <- sol$d[1]^2
-    rproj[,1] <- sol$u / sqrt(aidot) * sqrt(evals[1]/(1-evals[1]))
-    cproj[,1] <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[1]))
-    ## residual data
     x0 <- x
-    x <- x  - tcrossprod(sol$u, sol$v) * sol$d[1]
     ## Go for the detrended axes
-    for (axis in 2:NAXES) {
+    for (axis in seq_len(NAXES)) {
         ## svd of residual data
         sol <- svd(x, nu=1, nv=1)
-        eig2 <- -1
-        cycles <- 0
-        ## Reciprocal averaging starting from eigenvector v
-        repeat {
-            sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk)
-            if (abs(eig2 - sol$d) < EPS)
-                break
-            eig2 <- sol$d
-            if ((cycles <- cycles + 1) > CYCLES) {
-                warning("no convergence on axis ", axis)
-                break
+        if (axis > 1) {
+            eig2 <- -1
+            cycles <- 0
+            ## Reciprocal averaging starting from eigenvector v
+            repeat {
+                sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk)
+                if (abs(eig2 - sol$d) < EPS)
+                    break
+                eig2 <- sol$d
+                if ((cycles <- cycles + 1) > CYCLES) {
+                    warning("no convergence on axis ", axis)
+                    break
+                }
             }
         }
-        evals[axis] <- sol$d^2
+        evals[axis] <- sol$d[1]^2
         ## u is computed from v and includes eigenvalue
         u <- x0 %*% sol$v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
