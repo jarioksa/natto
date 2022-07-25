@@ -52,10 +52,6 @@
 {
     if (!missing(iweigh))
         .NotYetUsed("iweigh")
-    if (!missing(iresc))
-        .NotYetUsed("iresc")
-    if (!missing(short))
-        .NotYetUsed("short")
     if (!missing(before))
         .NotYetUsed("before")
     if (!missing(after))
@@ -256,4 +252,61 @@
     zv <- tapply(sumsq, axbit, sum, default = 0)
     zn <- tapply(1-sqcorr, axbit, sum, default = 0)
     list(zv = zv, zn = zn)
+}
+
+`stretch` <-
+    function(x, xorig, rproj, cproj, aidot, short = 0)
+{
+    mk <- 20  # overrules user setting of mk
+    z <- segment(xorig, rproj, cproj, mk, aidot)
+    zv <- smooth(z$zv)
+    zn <- smooth(z$zn)
+    ## set within-sample square deviation to be 1
+    sd <- sqrt(sum(zv/zn)/mk)
+    rproj <- rproj/sd
+    cproj <- cproj/sd
+    along <- diff(range(rproj)) # length of axis
+    if (along < short)
+        return(list(rproj = rproj, cproj = cproj))
+    ## new mk: not user-settable
+    mk <- floor(5 * along) + 1L
+    z <- segment(xorig, rproj, cproj, mk = mk, aidot)
+    zv <- smooth(z$zv)
+    zn <- smooth(z$zn)
+    ## segment lenghts
+    zv <- 1 / sqrt(0.2/along + zv/zn)
+    zv <- zv * along/sum(zv)
+    zn <- c(0, cumsum(zv))
+    axbit <- along/mk
+    ## species scores v are rescaled!
+    iv <- trunc(cproj/axbit) + 1L
+    iv <- pmin(pmax(iv, 1), mk)
+    cproj <- zn[iv] + zv[iv] * (cproj/axbit - iv + 1)
+    rproj <- (x %*% cproj) / aidot
+    ## second pass
+    mk <- 20
+    z <- segment(xorig, rproj, cproj, mk, aidot)
+    zv <- smooth(z$zv)
+    zn <- smooth(z$zn)
+    ## set within-sample square deviation to be 1
+    sd <- sqrt(sum(zv/zn)/mk)
+    rproj <- rproj/sd
+    cproj <- cproj/sd
+    list(rproj = rproj, cproj = cproj)
+}
+
+## Scale raw results from rescaling function stretch. In decorana this
+## is part of eigy, but we want to pack that in a separate function to
+## keep the main rdecorana() cleaner.
+
+`postscale` <-
+    function(z, xorig, aidot)
+{
+    axlong <- sqrt(sum(aidot * z$rproj^2))
+    rproj <- z$rproj/axlong
+    cproj <- z$cproj/axlong
+    sumsq <- sum(xorig * outer(rproj, cproj, "-")^2)
+    sd <- sqrt(sumsq)
+    cproj <- cproj/sd
+    list(rproj = rproj, cproj = cproj)
 }
