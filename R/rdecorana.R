@@ -65,6 +65,7 @@
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 1000
     ## initialize: in vegan & standard CA style
+    xorig <- x/sum(x)
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
@@ -221,12 +222,38 @@
     function(z)
 {
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
-    mk <- seq_along(z) + 1L # index after padding c(0,z,0)
+    mk <- length(z)
+    idx <- seq_len(mk) + 1L
     repeat{
-        z <- filter(c(0, z, 0), kernel, sides=2)[mk]
+        z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
         if (all(z > 0))
             break
     }
-    z <- filter(c(0, z, 0), kernel, sides=2)[mk]
-    filter(c(0, z, 0), kernel, sides=2)[mk]
+    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+    filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+}
+
+
+## segment is the key function in rescaling and estimates the
+## dispersion of species scores on each segment of the gradient (but
+## does not do the segmenting). Original comments:
+##   given an ordination (u, v), calculates numbers and summed
+##   mean-square deviations in mk segments.  zn(k) is the number of
+##   samples in segment k; zv(k) is the summed mean-square deviation.
+##   (we aim to make zv, zn as nearly equal as possible.)
+
+`segment` <-
+    function(xorig, rproj, cproj, mk, aidot)
+{
+    ## collect statistics: these needs weights of original community
+    ## data as species abundances are used as weights (and missing
+    ## species do not contribute to site statistics).
+    sqcorr <- rowSums(xorig^2)
+    sumsq <- rowSums(xorig * outer(rproj, cproj, "-")^2)
+    sqcorr <- pmin(sqcorr/aidot^2, 0.9999) # 0.9999 as in decorana.f
+    sumsq <- sumsq/aidot
+    axbit <- cut(rproj, mk)
+    zv <- tapply(sumsq, axbit, sum, default = 0)
+    zn <- tapply(1-sqcorr, axbit, sum, default = 0)
+    list(zv = zv, zn = zn)
 }
