@@ -61,7 +61,7 @@
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 1000
     ## initialize: in vegan & standard CA style
-    xorig <- x/sum(x)
+    xorig <- as.matrix(x/sum(x))
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
@@ -101,7 +101,7 @@
         ## rescaling
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
-                z <- stretch(x0, xorig, udeco, vdeco, aidot, short = short)
+                z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
                 vdeco <- z$cproj
             }
@@ -217,6 +217,13 @@
 ##    and then 2 more iterations of (1,2,1)-smoothing.  if no blanks to
 ##    begin with, then does 3 smoothings, i.e. effectively (1,6,15,20,
 ##    15,6,1)-smoothing.
+
+## NB: smooth in Decorana does not work like described above: it does
+## so many smooths that no blanks are left, and then 3 more iterations
+## of smoothings. If no blanks to begin with, then does 3
+## smoothings. Code changed to follow the defacto code instead of the
+## documentation.
+
 ##
 ## @param z vector to be smoothed.
 ##
@@ -229,11 +236,10 @@
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
     mk <- length(z)
     idx <- seq_len(mk) + 1L
-    repeat{
+    while (any(z <= 0)) {
         z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
-        if (all(z > 0))
-            break
     }
+    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
     z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
     filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
 }
@@ -250,12 +256,15 @@
 `segment` <-
     function(xorig, rproj, cproj, mk, aidot)
 {
+    cproj <- cproj - min(rproj)
+    rproj <- rproj - min(rproj)
     ## collect statistics: these needs weights of original community
     ## data as species abundances are used as weights (and missing
     ## species do not contribute to site statistics).
     sqcorr <- rowSums(xorig^2)
-    sumsq <- rowSums(xorig * outer(rproj, cproj, "-")^2)
-    sqcorr <- pmin(sqcorr/aidot^2, 0.9999) # 0.9999 as in decorana.f
+    sumsq <- rowSums(xorig * outer(drop(rproj), drop(cproj), "-")^2)
+    sqcorr <- sqcorr/aidot^2
+    sqcorr <- pmin(sqcorr, 0.9999) # 0.9999 as in decorana.f
     sumsq <- sumsq/aidot
     axbit <- cut(rproj, mk)
     zv <- tapply(sumsq, axbit, sum, default = 0)
@@ -264,9 +273,12 @@
 }
 
 `stretch` <-
-    function(x, xorig, rproj, cproj, aidot, short = 0)
+    function(xorig, rproj, cproj, aidot, short = 0)
 {
     mk <- 20  # overrules user setting of mk
+    ## adjust rproj, cproj so that rproj starts from 0
+    cproj <- cproj - min(rproj)
+    rproj <- rproj - min(rproj)
     z <- segment(xorig, rproj, cproj, mk, aidot)
     zv <- smooth(z$zv)
     zn <- smooth(z$zn)
@@ -279,6 +291,7 @@
         return(list(rproj = rproj, cproj = cproj))
     ## new mk: not user-settable
     mk <- floor(5 * along) + 1L
+    mk <- min(max(10, mk), 45)
     z <- segment(xorig, rproj, cproj, mk = mk, aidot)
     zv <- smooth(z$zv)
     zn <- smooth(z$zn)
@@ -288,10 +301,10 @@
     zn <- c(0, cumsum(zv))
     axbit <- along/mk
     ## species scores v are rescaled!
-    iv <- trunc(cproj/axbit) + 1L
-    iv <- pmin(pmax(iv, 1), mk)
-    cproj <- zn[iv] + zv[iv] * (cproj/axbit - iv + 1)
-    rproj <- (x %*% cproj) / aidot
+    iay <- trunc(cproj/axbit) + 1L
+    iay<- pmin(pmax(iay, 1), mk)
+    cproj <- zn[iay] + zv[iay] * (cproj/axbit - iay + 1)
+    rproj <- drop(xorig %*% cproj)/aidot
     ## second pass
     mk <- 20
     z <- segment(xorig, rproj, cproj, mk, aidot)
@@ -314,7 +327,7 @@
     axlong <- sqrt(sum(aidot * z$rproj^2))
     rproj <- z$rproj/axlong
     cproj <- z$cproj/axlong
-    sumsq <- sum(xorig * outer(rproj, cproj, "-")^2)
+    sumsq <- sum(xorig * outer(drop(rproj), drop(cproj), "-")^2)
     sd <- sqrt(sumsq)
     cproj <- cproj/sd
     list(rproj = rproj, cproj = cproj)
