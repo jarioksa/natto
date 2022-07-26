@@ -95,15 +95,24 @@
         }
         evals[axis] <- sol$d[1]^2
         ## u is computed from v and includes eigenvalue
-        u <- x0 %*% sol$v
+        v <- sol$v
+        if (-min(v) > max(v))
+            v <- -v
+        u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
-        vdeco <- sol$v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
+        vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
         ## rescaling
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
                 vdeco <- z$cproj
+                if (-min(vdeco) > max(vdeco)) {
+                    udeco <- -udeco
+                    vdeco <- -vdeco
+                }
+                vdeco <- vdeco - min(udeco)
+                udeco <- udeco - min(udeco)
             }
         }
         ## results
