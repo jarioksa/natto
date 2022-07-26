@@ -253,12 +253,19 @@
 
 ## segment is the key function in rescaling and estimates the
 ## dispersion of species scores on each segment of the gradient (but
-## does not do the segmenting). Original comments:
+## does not do the segmenting). Original comments (subroutine segmnt):
 ##   given an ordination (u, v), calculates numbers and summed
 ##   mean-square deviations in mk segments.  zn(k) is the number of
 ##   samples in segment k; zv(k) is the summed mean-square deviation.
 ##   (we aim to make zv, zn as nearly equal as possible.)
 
+#' @param xorig Original data: not the initCA data matrix, but we need
+#'     original abundances and original zeros.
+#' @param rproj,cproj Row and column scores.
+#' @param mk Number of segments.
+#' @param aidot Row weights.
+##
+## not exported
 `segment` <-
     function(xorig, rproj, cproj, mk, aidot)
 {
@@ -278,6 +285,20 @@
     list(zv = zv, zn = zn)
 }
 
+## The main driver routine for non-linear rescaling of axis. The
+## original decorana comments (subroutine strtch):
+##    takes an axis (x,y) and scales to unit mean square dev of species
+##    scores per sample.  an attempt is made for longer axes (l > short)
+##    to squeeze them in and out so that they have the right mean square
+##    deviation all the way along the axis and not only on average.
+
+#' @param xorig Original x data.
+#' @param rproj,cproj Row and column scores to be rescaled.
+#' @param aidot Row weights
+#' @param short Shortest gradient to be rescaled. The length is
+#'     estimated in the first pass of segment.
+##
+## not exported
 `stretch` <-
     function(xorig, rproj, cproj, aidot, short = 0)
 {
