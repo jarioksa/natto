@@ -102,16 +102,11 @@
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
-                udeco <- z$rproj
-                vdeco <- z$cproj
             }
-            z <- postscale(z, xorig, aidot)
-            udeco <- z$rproj
-            vdeco <- z$cproj
         }
         ## results
-        rproj[, axis] <- udeco
-        cproj[, axis] <- vdeco
+        rproj[, axis] <- z$rproj
+        cproj[, axis] <- z$cproj
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
@@ -313,22 +308,6 @@
     ## set within-sample square deviation to be 1
     sd <- sqrt(sum(zv/zn)/mk)
     rproj <- rproj/sd
-    cproj <- cproj/sd
-    list(rproj = rproj, cproj = cproj)
-}
-
-## Scale raw results from rescaling function stretch. In decorana this
-## is part of eigy, but we want to pack that in a separate function to
-## keep the main rdecorana() cleaner.
-
-`postscale` <-
-    function(z, xorig, aidot)
-{
-    axlong <- sqrt(sum(aidot * z$rproj^2))
-    rproj <- z$rproj/axlong
-    cproj <- z$cproj/axlong
-    sumsq <- sum(xorig * outer(drop(rproj), drop(cproj), "-")^2)
-    sd <- sqrt(sumsq)
     cproj <- cproj/sd
     list(rproj = rproj, cproj = cproj)
 }
