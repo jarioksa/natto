@@ -102,11 +102,13 @@
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
+                udeco <- z$rproj
+                vdeco <- z$cproj
             }
         }
         ## results
-        rproj[, axis] <- z$rproj
-        cproj[, axis] <- z$cproj
+        rproj[, axis] <- udeco
+        cproj[, axis] <- vdeco
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
