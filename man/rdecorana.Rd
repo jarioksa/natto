@@ -18,25 +18,25 @@ rdecorana(
 \arguments{
 \item{x}{input data matrix.}
 
-\item{iweigh}{Downweighting of rare species (0: no). Not yet
-implemented.}
+\item{iweigh}{Downweighting of rare species (0: no).}
 
-\item{iresc}{Number of rescaling cycles (0: no rescaling). Not yet
-implemented.}
+\item{iresc}{Number of rescaling cycles (0: no rescaling).}
 
 \item{ira}{Type of analyis (0: detrended, 1: orthogonal).}
 
 \item{mk}{Number of segments in detrending.}
 
-\item{short}{Shortest gradient to be rescaled. Not yet implemented.}
+\item{short}{Shortest gradient to be rescaled.}
 
-\item{before, after}{Definition of Hill's piecewise
-transformation. Not yet implemented.}
+\item{before, after}{Definition of Hill's piecewise transformation.}
 }
 \value{
 Currently returns a list of elements \code{evals} of
     Decorana values, with \code{rproj} and \code{cproj} of scaled
     row and column scores.
+
+Row and column scores and the convergence criterion which
+    for orthogonal CA is the eigenvalue.
 }
 \description{
 Similar to Fortran implementation in vegan, but all in R.

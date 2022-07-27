@@ -35,32 +35,32 @@
 #' }
 #'
 #' @param x input data matrix.
-#' @param iweigh Downweighting of rare species (0: no). Not yet
-#'     implemented.
-#' @param iresc Number of rescaling cycles (0: no rescaling). Not yet
-#'     implemented.
+#' @param iweigh Downweighting of rare species (0: no).
+#' @param iresc Number of rescaling cycles (0: no rescaling).
 #' @param ira Type of analyis (0: detrended, 1: orthogonal).
 #' @param mk Number of segments in detrending.
-#' @param short Shortest gradient to be rescaled. Not yet implemented.
-#' @param before,after Definition of Hill's piecewise
-#'     transformation. Not yet implemented.
+#' @param short Shortest gradient to be rescaled.
+#' @param before,after Definition of Hill's piecewise transformation.
+#'
+#' @return Row and column scores and the convergence criterion which
+#'     for orthogonal CA is the eigenvalue.
+#'
+#' @importFrom vegan downweight
 #'
 #' @export
 `rdecorana` <-
     function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
              before = NULL, after = NULL)
 {
-    if (!missing(iweigh))
-        .NotYetUsed("iweigh")
-    if (!missing(before))
-        .NotYetUsed("before")
-    if (!missing(after))
-        .NotYetUsed("after")
     ## constants
     NAXES <- 4
     EPS <- sqrt(.Machine$double.eps)
     CYCLES <- 1000
-    ## initialize: in vegan & standard CA style
+    DWLIMIT <- 5
+    ## transform & initialize: in vegan & standard CA style
+    if (!is.null(before))
+        x <- beforeafter(x, before, after)
+    x <- downweight(x, DWLIMIT)
     xorig <- as.matrix(x/sum(x))
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
@@ -124,6 +124,32 @@
     list(evals = evals, rproj = rproj, cproj = cproj)
 }
 
+## Hill's piecewise data transformation with linear interpolation.
+## @param x Input data matrix.
+## @param before,after Values of \code{x} before and after
+##     transformation. Other values are interpolated linearly.
+##
+## @return \code{x} data with transformed values.
+##
+#' @importFrom stats approx
+##
+## not exported
+`beforeafter` <-
+    function(x, before, after)
+{
+    if (is.null(before) || is.null(after))
+        stop("both 'before' and 'after' must be given")
+    if (is.unsorted(before))
+        stop("'before' must be sorted")
+    if (length(before) != length(after))
+        stop("'before' and 'after' must have same lengths")
+    for(i in seq_len(nrow(x))) {
+        k <- x[i,] > 0
+        x[i, k] <- approx(before, after, x[i, k], rule = 2)$y
+    }
+    x
+}
+
 ## Orthogonal Correspondence Analysis
 ##
 ## Orthogonal correspondence analysis is performed via svd of
@@ -155,7 +181,16 @@
 ## also returns normalized score vector v and eigenvalue-weighted u
 ## and the singular value (squareroot of the eigenvalue) so that the
 ## output has the same elements as svd().
-#'
+##
+## @param v Column scores.
+## @param rproj Matrix of row scores from previous axes.
+## @param x CA-initialized input data matrix.
+## @param aidot,adotj Row and column weights.
+## @param mk Number of segments passed to \code{detrend}.
+##
+## @return Similar data structure as from \code{svd}: row and column
+##     scores \code{u}, \code{v} and singular value \code{d}.
+##
 ## not exported
 `transvu` <-
     function(v, rproj, x, axis, aidot, adotj, mk)
@@ -197,7 +232,7 @@
 ## @param x1 Axis along which x is detrended.
 ## @param mk Number of segments on x1.
 ##
-## @return Detrended values.
+## @return Detrended values: residuals of \code{x}.
 ##
 #' @importFrom stats filter
 ##
@@ -233,7 +268,9 @@
 ##
 ## @param z vector to be smoothed.
 ##
-#' @importFrom stats filter
+## @return Smoothed values of \code{z}.
+##
+## @importFrom stats filter
 ##
 ## not exported
 `smooth` <-
@@ -242,23 +279,36 @@
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
     mk <- length(z)
     idx <- seq_len(mk) + 1L
+    ## smooth till no blanks left...
     while (any(z <= 0)) {
         z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
     }
-    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
-    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
-    filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+    ## ... and then three times more
+    for (dummy in seq_len(3)) {
+        z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+    }
+    z
 }
 
 
 ## segment is the key function in rescaling and estimates the
 ## dispersion of species scores on each segment of the gradient (but
-## does not do the segmenting). Original comments:
+## does not do the segmenting). Original comments (subroutine segmnt):
 ##   given an ordination (u, v), calculates numbers and summed
 ##   mean-square deviations in mk segments.  zn(k) is the number of
 ##   samples in segment k; zv(k) is the summed mean-square deviation.
 ##   (we aim to make zv, zn as nearly equal as possible.)
 
+## @param xorig Original data: not the initCA data matrix, but we need
+##     original abundances and original zeros.
+## @param rproj,cproj Row and column scores.
+## @param mk Number of segments.
+## @param aidot Row weights.
+##
+## @return Sum of dispersion of species scores \code{zv} and their
+##     corrected totals \code{zn} by segments \code{mk}.
+##
+## not exported
 `segment` <-
     function(xorig, rproj, cproj, mk, aidot)
 {
@@ -278,6 +328,22 @@
     list(zv = zv, zn = zn)
 }
 
+## The main driver routine for non-linear rescaling of axis. The
+## original decorana comments (subroutine strtch):
+##    takes an axis (x,y) and scales to unit mean square dev of species
+##    scores per sample.  an attempt is made for longer axes (l > short)
+##    to squeeze them in and out so that they have the right mean square
+##    deviation all the way along the axis and not only on average.
+
+## @param xorig Original x data.
+## @param rproj,cproj Row and column scores to be rescaled.
+## @param aidot Row weights
+## @param short Shortest gradient to be rescaled. The length is
+##     estimated in the first pass of segment.
+##
+## @return Rescaled row and column scores \code{rproj}, \code{cproj}.
+##
+## not exported
 `stretch` <-
     function(xorig, rproj, cproj, aidot, short = 0)
 {
