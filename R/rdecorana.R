@@ -15,11 +15,6 @@
 #' Constrained Correspondence Analysis, but this would be impossible
 #' without extensive changes in Fortran in the \pkg{vegan} function.
 #'
-#' Function is experimental, and at the moment it only implements
-#' basic orthogonal and detrended correspondence analysis. It does not
-#' implement many options of \code{\link[vegan]{decorana}}, most
-#' importantly, rescaling is not yet implemented.
-#'
 #' @return Currently returns a list of elements \code{evals} of
 #'     Decorana values, with \code{rproj} and \code{cproj} of scaled
 #'     row and column scores.
@@ -60,7 +55,8 @@
     ## transform & initialize: in vegan & standard CA style
     if (!is.null(before))
         x <- beforeafter(x, before, after)
-    x <- downweight(x, DWLIMIT)
+    if (iweigh)
+        x <- downweight(x, DWLIMIT)
     xorig <- as.matrix(x/sum(x))
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
@@ -273,7 +269,7 @@
 ## @importFrom stats filter
 ##
 ## not exported
-`smooth` <-
+`smooth121` <-
     function(z)
 {
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
@@ -352,8 +348,8 @@
     cproj <- cproj - min(rproj)
     rproj <- rproj - min(rproj)
     z <- segment(xorig, rproj, cproj, mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## set within-sample square deviation to be 1
     sd <- sqrt(sum(zv/zn)/mk)
     rproj <- rproj/sd
@@ -365,8 +361,8 @@
     mk <- floor(5 * along) + 1L
     mk <- min(max(10, mk), 45)
     z <- segment(xorig, rproj, cproj, mk = mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## segment lenghts
     zv <- 1 / sqrt(0.2/along + zv/zn)
     zv <- zv * along/sum(zv)
@@ -380,8 +376,8 @@
     ## second pass
     mk <- 20
     z <- segment(xorig, rproj, cproj, mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## set within-sample square deviation to be 1
     sd <- sqrt(sum(zv/zn)/mk)
     rproj <- rproj/sd
