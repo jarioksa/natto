@@ -60,7 +60,8 @@
     ## transform & initialize: in vegan & standard CA style
     if (!is.null(before))
         x <- beforeafter(x, before, after)
-    x <- downweight(x, DWLIMIT)
+    if (iweigh)
+        x <- downweight(x, DWLIMIT)
     xorig <- as.matrix(x/sum(x))
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
