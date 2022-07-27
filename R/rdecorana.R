@@ -273,7 +273,7 @@
 ## @importFrom stats filter
 ##
 ## not exported
-`smooth` <-
+`smooth121` <-
     function(z)
 {
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
@@ -352,8 +352,8 @@
     cproj <- cproj - min(rproj)
     rproj <- rproj - min(rproj)
     z <- segment(xorig, rproj, cproj, mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## set within-sample square deviation to be 1
     sd <- sqrt(sum(zv/zn)/mk)
     rproj <- rproj/sd
@@ -365,8 +365,8 @@
     mk <- floor(5 * along) + 1L
     mk <- min(max(10, mk), 45)
     z <- segment(xorig, rproj, cproj, mk = mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## segment lenghts
     zv <- 1 / sqrt(0.2/along + zv/zn)
     zv <- zv * along/sum(zv)
@@ -380,8 +380,8 @@
     ## second pass
     mk <- 20
     z <- segment(xorig, rproj, cproj, mk, aidot)
-    zv <- smooth(z$zv)
-    zn <- smooth(z$zn)
+    zv <- smooth121(z$zv)
+    zn <- smooth121(z$zn)
     ## set within-sample square deviation to be 1
     sd <- sqrt(sum(zv/zn)/mk)
     rproj <- rproj/sd
