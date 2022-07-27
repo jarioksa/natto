@@ -15,11 +15,6 @@
 #' Constrained Correspondence Analysis, but this would be impossible
 #' without extensive changes in Fortran in the \pkg{vegan} function.
 #'
-#' Function is experimental, and at the moment it only implements
-#' basic orthogonal and detrended correspondence analysis. It does not
-#' implement many options of \code{\link[vegan]{decorana}}, most
-#' importantly, rescaling is not yet implemented.
-#'
 #' @return Currently returns a list of elements \code{evals} of
 #'     Decorana values, with \code{rproj} and \code{cproj} of scaled
 #'     row and column scores.
