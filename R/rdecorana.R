@@ -256,12 +256,15 @@
     kernel <- c(0.25, 0.5, 0.25) # (1,2,1)-smoothing
     mk <- length(z)
     idx <- seq_len(mk) + 1L
+    ## smooth till no blanks left...
     while (any(z <= 0)) {
         z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
     }
-    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
-    z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
-    filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+    ## ... and then three times more
+    for (dummy in seq_len(3)) {
+        z <- filter(c(z[1], z, z[mk]), kernel, sides=2)[idx]
+    }
+    z
 }
 
 
