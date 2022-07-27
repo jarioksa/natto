@@ -45,6 +45,9 @@
 #' @param before,after Definition of Hill's piecewise
 #'     transformation. Not yet implemented.
 #'
+#' @return Row and column scores and the convergence criterion which
+#'     for orthogonal CA is the eigenvalue.
+#'
 #' @export
 `rdecorana` <-
     function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
@@ -156,6 +159,15 @@
 ## and the singular value (squareroot of the eigenvalue) so that the
 ## output has the same elements as svd().
 #'
+#' @param v Column scores.
+#' @param rproj Matrix of row scores from previous axes.
+#' @param x CA-initialized input data matrix.
+#' @param aidot,adotj Row and column weights.
+#' @param mk Number of segments passed to \code{detrend}.
+#'
+#' @return Similar data structure as from \code{svd}: row and column
+#'     scores \code{u}, \code{v} and singular value \code{d}.
+#'
 ## not exported
 `transvu` <-
     function(v, rproj, x, axis, aidot, adotj, mk)
@@ -197,7 +209,7 @@
 ## @param x1 Axis along which x is detrended.
 ## @param mk Number of segments on x1.
 ##
-## @return Detrended values.
+## @return Detrended values: residuals of \code{x}.
 ##
 #' @importFrom stats filter
 ##
@@ -231,7 +243,9 @@
 ## documentation.
 
 ##
-## @param z vector to be smoothed.
+#' @param z vector to be smoothed.
+#'
+#' @return Smoothed values of \code{z}.
 ##
 #' @importFrom stats filter
 ##
@@ -264,6 +278,9 @@
 #' @param rproj,cproj Row and column scores.
 #' @param mk Number of segments.
 #' @param aidot Row weights.
+#'
+#' @return Sum of dispersion of species scores \code{zv} and their
+#'     corrected totals \code{zn} by segments \code{mk}.
 ##
 ## not exported
 `segment` <-
@@ -297,7 +314,9 @@
 #' @param aidot Row weights
 #' @param short Shortest gradient to be rescaled. The length is
 #'     estimated in the first pass of segment.
-##
+#'
+#' @return Rescaled row and column scores \code{rproj}, \code{cproj}.
+#'
 ## not exported
 `stretch` <-
     function(xorig, rproj, cproj, aidot, short = 0)
