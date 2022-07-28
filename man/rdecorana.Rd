@@ -7,7 +7,7 @@
 rdecorana(
   x,
   iweigh = 0,
-  iresc = 0,
+  iresc = 4,
   ira = 0,
   mk = 26,
   short = 0,
