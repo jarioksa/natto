@@ -2,6 +2,7 @@
 % Please edit documentation in R/rdecorana.R
 \name{rdecorana}
 \alias{rdecorana}
+\alias{scores.rdecorana}
 \title{Decorana: R implementation}
 \usage{
 rdecorana(
@@ -14,9 +15,11 @@ rdecorana(
   before = NULL,
   after = NULL
 )
+
+\method{scores}{rdecorana}(x, display = "sites", choices = 1:4, origin = FALSE, ...)
 }
 \arguments{
-\item{x}{input data matrix.}
+\item{x}{\code{rdecorana} result object.}
 
 \item{iweigh}{Downweighting of rare species (0: no).}
 
@@ -29,6 +32,14 @@ rdecorana(
 \item{short}{Shortest gradient to be rescaled.}
 
 \item{before, after}{Definition of Hill's piecewise transformation.}
+
+\item{display}{Scores for \code{"sites"} or \code{"species"}.}
+
+\item{choices}{Axes to returned.}
+
+\item{origin}{Return centred scores.}
+
+\item{...}{Other arguments passed to functions.}
 }
 \value{
 Currently returns a list of elements \code{evals} of
