@@ -43,15 +43,49 @@ Similar to Fortran implementation in vegan, but all in R.
 }
 \details{
 This function duplicates \CRANpkg{vegan} function
-\code{\link[vegan]{decorana}}, and there is no need to use this
-function for data analysis. The function serves two
-purposes. Firstly, it is written in \R{} to allow easier inspection
-of function than compiled code in C and Fortran in
-\pkg{vegan}. Secondly, it is more hackable, and easier to develop
-new features, change code or replace functionality than in the
-compiled code. For instance, it would be trivial to add Detrended
-Constrained Correspondence Analysis, but this would be impossible
-without extensive changes in Fortran in the \pkg{vegan} function.
+\code{\link[vegan]{decorana}}, but is written in \R{}. It is
+slower, and does not have all features and support of tye
+\pkg{vegan} function, and there is no need to use this function for
+data analysis. The function serves two purposes. Firstly, as an
+\R{} functin it is easier to inspect the algorithm than from C or
+Fortran code. Secondly, it is more hackable, and it is easier to
+develop new features, change code or replace functionality than in
+the compiled code. For instance, it would be trivial to add
+Detrended Constrained Correspondence Analysis, but this would be
+impossible without extensive changes in Fortran in the \pkg{vegan}
+function.
+
+The main function \code{rdecorana} performs janitorial tasks, and
+for detrended CA it has basically only two loops. The first loop
+finds the next correspondence analysis axis for species and sites,
+and the second loop performs optional (if \code{iresc > 0})
+nonlinear rescaling of that axis.
+
+Two non-exported functions are used for finding the correspondence
+analysis axis: \code{transvu} runs one step of reciprocal averaging
+and the step is repeated so many times that the criterion value
+converges. Function \code{transvu} calls \code{detrend} that
+performs Hill's non-linear rescaling on \code{mk} segments. See
+Examples on alternative detrending methods. In all cases detrending
+against previous axis is done one axis by time starting from first,
+and then going again down to the first. For axis 4 the order of
+detrendings is 1, 2, 3, 2, 1. The criterion value is the one that
+\pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
+values}: for orthogonal CA is the eigenvalue, but for detrended CA
+it is a combination of eigenvalues and strength of detrending.
+
+Non-linear rescaling is performed by function \code{stretch} that
+calls two functions: \code{segment} to estimate the dispersion of
+species, and \code{smooth121} to smooth those estimates on segments
+(that number of segments is selected internally and \code{mk} has
+no influence. The criterion values for community data \eqn{x} with
+species and site scores \eqn{v, u} are based on
+\eqn{x_ij(u_i-v_j)^2}{x[ij] * (u[i]-v[j])^2} summarized over sites
+\eqn{i}. Site scores \eqn{u} are weighted averages of species
+scores \eqn{v}, and therefore species scores should be
+symmetrically around corresponding site scores and the statistic
+describes their weighted dispersion. The purpose of rescaling is to
+make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
 }
 \examples{
 data(spurn)
@@ -62,5 +96,24 @@ str(decorana(spurn, iresc = 0))
 ## ordiplot works
 ordiplot(mod, display="sites")
 }
+## Examples on replacing the detrend() function with other
+## alternatives. These need to use the same call as detrend() if we
+## do not change the call in transvu.
+##
+## --- Smooth detrending
+## detrend <- function(x, aidot, x1, mk)
+##      residuals(loess(x ~ x1, weights=aidot))
+## If you have this in the natto Namespace, you must use
+## environment(detrend) <- environment(qrao) # any natto function
+## assignInNamespace("detrend", detrend, "natto")
+## ... but if you source() rdecorana.R, just do it!
+## --- Quadratic polynomial detrending
+## detrend <- function(x, aidot, x1, mk)
+##       residuals(lm.wfit(poly(x1, 2), x, w = aidot))
+## --- Orthogonal CA
+## detrend <- function(x, aidot, x1, mk)
+##       residuals(lm(x ~ x1, w = aidot))
+## All these could handle all previous axes simultaneosly, but this
+## requires editing transvu call.
 
 }
