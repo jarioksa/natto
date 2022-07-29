@@ -461,3 +461,49 @@
     cproj <- cproj/sd
     list(rproj = rproj, cproj = cproj)
 }
+
+###################################
+##
+## End hardcore decorana code: R support functions
+###################################
+
+#' @export
+`print.rdecorana` <-
+    function(x, ...)
+{
+    cat("Rdecorana\n\n")
+    print(rbind("Decorana values" = x$evals,
+                "Axis lengths" = apply(x$rproj, 2, function(z) diff(range(z)))
+                ))
+    cat("\n")
+    invisible(x)
+}
+
+#' @param x \code{rdecorana} result object.
+#' @param display Scores for \code{"sites"} or \code{"species"}.
+#' @param choices Axes to returned.
+#' @param origin Return centred scores.
+#' @param ... Other arguments passed to functions.
+#'
+#' @importFrom stats weighted.mean
+#' @importFrom vegan scores
+#'
+#' @rdname rdecorana
+#' @export
+`scores.rdecorana` <-
+    function(x, display = "sites", choices = 1:4, origin = FALSE, ...)
+{
+    x
+    display <- match.arg(display, c("sites", "species"))
+    sco <- switch(display,
+                  "sites" = x$rproj,
+                  "species" = x$cproj)
+    if (origin) {
+        cnt <- apply(x$rproj, 2, weighted.mean, x$aidot)
+        sco <- sweep(sco, 2, cnt, "-")
+    }
+    sco <- sco[, choices, drop=FALSE]
+    sco
+}
+
+
