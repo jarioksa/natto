@@ -121,6 +121,9 @@
     ## directly via svd.
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
+    colnames(rproj) <- colnames(cproj) <- paste0("DCA", seq_len(NAXES))
+    rownames(rproj) <- rownames(x)
+    rownames(cproj) <- colnames(x)
     evals <- numeric(NAXES)
     x0 <- x
     ## Go for the detrended axes. This implements the simple and naive
@@ -177,7 +180,8 @@
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
-    list(evals = evals, rproj = rproj, cproj = cproj)
+    structure(list(evals = evals, rproj = rproj, cproj = cproj,
+                   aidot = aidot, adotj = adotj), class = "rdecorana")
 }
 
 ## Hill's piecewise data transformation with linear interpolation.
@@ -225,7 +229,11 @@
     lambda <- m$d[seq_len(naxes)]^2
     rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
     cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
-    list(evals = lambda, rproj = rproj, cproj = cproj)
+    colnames(cproj) <- colnames(rproj) <- paste0("RA", seq_len(naxes))
+    rownames(rproj) <- rownames(x)
+    rownames(cproj) <- colnames(x)
+    structure(list(evals = lambda, rproj = rproj, cproj = cproj, aidot = aidot,
+         adotj = adotj), class = "rdecorana")
 }
 
 ## transvu is modelled after trans subroutine in decorana.f. The
