@@ -5,15 +5,49 @@
 #' Similar to Fortran implementation in vegan, but all in R.
 #'
 #' This function duplicates \CRANpkg{vegan} function
-#' \code{\link[vegan]{decorana}}, and there is no need to use this
-#' function for data analysis. The function serves two
-#' purposes. Firstly, it is written in \R{} to allow easier inspection
-#' of function than compiled code in C and Fortran in
-#' \pkg{vegan}. Secondly, it is more hackable, and easier to develop
-#' new features, change code or replace functionality than in the
-#' compiled code. For instance, it would be trivial to add Detrended
-#' Constrained Correspondence Analysis, but this would be impossible
-#' without extensive changes in Fortran in the \pkg{vegan} function.
+#' \code{\link[vegan]{decorana}}, but is written in \R{}. It is
+#' slower, and does not have all features and support of tye
+#' \pkg{vegan} function, and there is no need to use this function for
+#' data analysis. The function serves two purposes. Firstly, as an
+#' \R{} functin it is easier to inspect the algorithm than from C or
+#' Fortran code. Secondly, it is more hackable, and it is easier to
+#' develop new features, change code or replace functionality than in
+#' the compiled code. For instance, it would be trivial to add
+#' Detrended Constrained Correspondence Analysis, but this would be
+#' impossible without extensive changes in Fortran in the \pkg{vegan}
+#' function.
+#'
+#' The main function \code{rdecorana} performs janitorial tasks, and
+#' for detrended CA it has basically only two loops. The first loop
+#' finds the next correspondence analysis axis for species and sites,
+#' and the second loop performs optional (if \code{iresc > 0})
+#' nonlinear rescaling of that axis.
+#'
+#' Two non-exported functions are used for finding the correspondence
+#' analysis axis: \code{transvu} runs one step of reciprocal averaging
+#' and the step is repeated so many times that the criterion value
+#' converges. Function \code{transvu} calls \code{detrend} that
+#' performs Hill's non-linear rescaling on \code{mk} segments. See
+#' Examples on alternative detrending methods. In all cases detrending
+#' against previous axis is done one axis by time starting from first,
+#' and then going again down to the first. For axis 4 the order of
+#' detrendings is 1, 2, 3, 2, 1. The criterion value is the one that
+#' \pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
+#' values}: for orthogonal CA is the eigenvalue, but for detrended CA
+#' it is a combination of eigenvalues and strength of detrending.
+#'
+#' Non-linear rescaling is performed by function \code{stretch} that
+#' calls two functions: \code{segment} to estimate the dispersion of
+#' species, and \code{smooth121} to smooth those estimates on segments
+#' (that number of segments is selected internally and \code{mk} has
+#' no influence. The criterion values for community data \eqn{x} with
+#' species and site scores \eqn{v, u} are based on
+#' \eqn{x_ij(u_i-v_j)^2}{x[ij] * (u[i]-v[j])^2} summarized over sites
+#' \eqn{i}. Site scores \eqn{u} are weighted averages of species
+#' scores \eqn{v}, and therefore species scores should be
+#' symmetrically around corresponding site scores and the statistic
+#' describes their weighted dispersion. The purpose of rescaling is to
+#' make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
 #'
 #' @return Currently returns a list of elements \code{evals} of
 #'     Decorana values, with \code{rproj} and \code{cproj} of scaled
@@ -28,6 +62,25 @@
 #' ## ordiplot works
 #' ordiplot(mod, display="sites")
 #' }
+#' ## Examples on replacing the detrend() function with other
+#' ## alternatives. These need to use the same call as detrend() if we
+#' ## do not change the call in transvu.
+#' ##
+#' ## --- Smooth detrending
+#' ## detrend <- function(x, aidot, x1, mk)
+#' ##      residuals(loess(x ~ x1, weights=aidot))
+#' ## If you have this in the natto Namespace, you must use
+#' ## environment(detrend) <- environment(qrao) # any natto function
+#' ## assignInNamespace("detrend", detrend, "natto")
+#' ## ... but if you source() rdecorana.R, just do it!
+#' ## --- Quadratic polynomial detrending
+#' ## detrend <- function(x, aidot, x1, mk)
+#' ##       residuals(lm.wfit(poly(x1, 2), x, w = aidot))
+#' ## --- Orthogonal CA
+#' ## detrend <- function(x, aidot, x1, mk)
+#' ##       residuals(lm(x ~ x1, w = aidot))
+#' ## All these could handle all previous axes simultaneosly, but this
+#' ## requires editing transvu call.
 #'
 #' @param x input data matrix.
 #' @param iweigh Downweighting of rare species (0: no).
@@ -44,7 +97,7 @@
 #'
 #' @export
 `rdecorana` <-
-    function(x, iweigh = 0, iresc = 0, ira = 0, mk = 26, short = 0,
+    function(x, iweigh = 0, iresc = 4, ira = 0, mk = 26, short = 0,
              before = NULL, after = NULL)
 {
     ## constants
@@ -68,9 +121,16 @@
     ## directly via svd.
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
+    colnames(rproj) <- colnames(cproj) <- paste0("DCA", seq_len(NAXES))
+    rownames(rproj) <- rownames(x)
+    rownames(cproj) <- colnames(x)
     evals <- numeric(NAXES)
     x0 <- x
-    ## Go for the detrended axes
+    ## Go for the detrended axes. This implements the simple and naive
+    ## power method of finding the largest eigenvalue and
+    ## corresponding eigenvectors independent of previous ones as
+    ## definded by detrend(). Hill's Fortran code has a clever boosted
+    ## method, but it is not implemented here.
     for (axis in seq_len(NAXES)) {
         ## svd of residual data
         sol <- svd(x, nu=1, nv=1)
@@ -94,6 +154,9 @@
         v <- sol$v
         if (-min(v) > max(v))
             v <- -v
+        ## NB. In all analyses site scores u are found from species
+        ## scores v. Species scores were detrended, but site scores
+        ## are their weighted averages and relaxed from detrending.
         u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
@@ -117,7 +180,8 @@
         ## residual matrix
         x <- x - tcrossprod(sol$u, sol$v)
     }
-    list(evals = evals, rproj = rproj, cproj = cproj)
+    structure(list(evals = evals, rproj = rproj, cproj = cproj,
+                   aidot = aidot, adotj = adotj), class = "rdecorana")
 }
 
 ## Hill's piecewise data transformation with linear interpolation.
@@ -165,7 +229,11 @@
     lambda <- m$d[seq_len(naxes)]^2
     rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
     cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
-    list(evals = lambda, rproj = rproj, cproj = cproj)
+    colnames(cproj) <- colnames(rproj) <- paste0("RA", seq_len(naxes))
+    rownames(rproj) <- rownames(x)
+    rownames(cproj) <- colnames(x)
+    structure(list(evals = lambda, rproj = rproj, cproj = cproj, aidot = aidot,
+         adotj = adotj), class = "rdecorana")
 }
 
 ## transvu is modelled after trans subroutine in decorana.f. The
@@ -198,7 +266,8 @@
     ## get u from v
     u <- x %*% v
     u <- u / sqrt(aidot)
-    ## detrend
+    ## detrend against previous axes going scales up and down: for
+    ## axis 4 against axes 1, 2, 3, 2, 1 in this order.
     if (axis > 1)
         for(k in c(seq_len(axis-1), rev(seq_len(axis-2))))
             u <- detrend(u, aidot, rproj[,k], mk)
@@ -240,11 +309,13 @@
     ## pad segments with zeros to buffer ends
     z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
     zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
-    ## mean z with weights zn by blocks of three
+    ## mean z with weights zn by blocks of three. filter c(1,1,1)
+    ## defines running sum, but we average after getting thses sums.
     z <- filter(z, c(1,1,1), sides=2)
     zn <- filter(zn, c(1,1,1), sides=2)
     z <- z / pmax(zn, .Machine$double.eps)
-    ## mean of blocks of three
+    ## mean of blocks of three: filter c(1,1,1)/3 defines running
+    ## mean.
     z <- filter(z, c(1,1,1)/3, sides=2)
     x - z[as.numeric(x1)+2]
 }
@@ -314,6 +385,9 @@
     ## data as species abundances are used as weights (and missing
     ## species do not contribute to site statistics).
     sqcorr <- rowSums(xorig^2)
+    ## the turn-over statistic based on x[i,j]*(rproj[i]-cproj[j])^2,
+    ## and when summarized for rows i, dispersion of species scores
+    ## cproj[j] over site scores rproj[
     sumsq <- rowSums(xorig * outer(drop(rproj), drop(cproj), "-")^2)
     sqcorr <- sqcorr/aidot^2
     sqcorr <- pmin(sqcorr, 0.9999) # 0.9999 as in decorana.f
@@ -343,6 +417,7 @@
 `stretch` <-
     function(xorig, rproj, cproj, aidot, short = 0)
 {
+    ## Step 1 estimates the gradient length (along)
     mk <- 20  # overrules user setting of mk
     ## adjust rproj, cproj so that rproj starts from 0
     cproj <- cproj - min(rproj)
@@ -357,8 +432,8 @@
     along <- diff(range(rproj)) # length of axis
     if (along < short)
         return(list(rproj = rproj, cproj = cproj))
-    ## new mk: not user-settable
-    mk <- floor(5 * along) + 1L
+    ## Step 2 rescales segments on bits 1/5 of along
+    mk <- floor(5 * along) + 1L # new mk: not user-settable
     mk <- min(max(10, mk), 45)
     z <- segment(xorig, rproj, cproj, mk = mk, aidot)
     zv <- smooth121(z$zv)
@@ -368,13 +443,15 @@
     zv <- zv * along/sum(zv)
     zn <- c(0, cumsum(zv))
     axbit <- along/mk
-    ## species scores v are rescaled!
+    ## The rescaling was made for site scores u, but species scores v
+    ## are rescaled, and then site scores are found as the weighted
+    ## averages of species scores
     iay <- trunc(cproj/axbit) + 1L
     iay<- pmin(pmax(iay, 1), mk)
     cproj <- zn[iay] + zv[iay] * (cproj/axbit - iay + 1)
     rproj <- drop(xorig %*% cproj)/aidot
-    ## second pass
-    mk <- 20
+    ## Step 3 linearly adjusts the axis to average dispersion = 1
+    mk <- 20 # not user-settable
     z <- segment(xorig, rproj, cproj, mk, aidot)
     zv <- smooth121(z$zv)
     zn <- smooth121(z$zn)
@@ -384,3 +461,49 @@
     cproj <- cproj/sd
     list(rproj = rproj, cproj = cproj)
 }
+
+###################################
+##
+## End hardcore decorana code: R support functions
+###################################
+
+#' @export
+`print.rdecorana` <-
+    function(x, ...)
+{
+    cat("Rdecorana\n\n")
+    print(rbind("Decorana values" = x$evals,
+                "Axis lengths" = apply(x$rproj, 2, function(z) diff(range(z)))
+                ))
+    cat("\n")
+    invisible(x)
+}
+
+#' @param x \code{rdecorana} result object.
+#' @param display Scores for \code{"sites"} or \code{"species"}.
+#' @param choices Axes to returned.
+#' @param origin Return centred scores.
+#' @param ... Other arguments passed to functions.
+#'
+#' @importFrom stats weighted.mean
+#' @importFrom vegan scores
+#'
+#' @rdname rdecorana
+#' @export
+`scores.rdecorana` <-
+    function(x, display = "sites", choices = 1:4, origin = FALSE, ...)
+{
+    x
+    display <- match.arg(display, c("sites", "species"))
+    sco <- switch(display,
+                  "sites" = x$rproj,
+                  "species" = x$cproj)
+    if (origin) {
+        cnt <- apply(x$rproj, 2, weighted.mean, x$aidot)
+        sco <- sweep(sco, 2, cnt, "-")
+    }
+    sco <- sco[, choices, drop=FALSE]
+    sco
+}
+
+
