@@ -13,14 +13,15 @@ Currently **natto** contains
  * Polar Ordination A.K.A. Bray-Curtis Ordination.
  * Orlóci's Position Vector Ordination and a related method using
    species as ordination axes.
- * Implementation of Decorana in R: easier to study the algorithm and
-   develop the method than with Fortran code.
+ * Implementation of Decorana in **R**: easier to study the algorithm
+   and develop the method than with Fortran code.
  * Estimate residual species associations in CCA and RDA.
  * Randomized clustering and ordination based on Bayesian Jaccard
-   dissimilarity. Dissimilarities are random numbers from Beta
-   distribution and each evaluation yields a new set dissimilarities.
-   For clustering, this can be used to assess the support of clusters,
-   and for ordination the confidence areas of coordinates.
+   dissimilarity with applications. Dissimilarities are random numbers
+   from Beta distribution and each evaluation yields a new set of
+   dissimilarities.  For clustering, this can be used to assess the
+   support of clusters, and for ordination the confidence areas of
+   coordinates.
  * Hierarchical clustering based on information analysis after Williams,
    Lambert & Lance, *J. Ecol.* **54,** 427-445 (1966).
  * beta and gamma diversity clustering.
