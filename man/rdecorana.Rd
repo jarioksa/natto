@@ -100,10 +100,10 @@ make this dispersion 1 all over the axis. The procedure is complicated, and is b
 }
 \examples{
 data(spurn)
-str(mod <- rdecorana(spurn))
+(mod <- rdecorana(spurn))
 if (require(vegan)) {
 ## compare to decorana
-str(decorana(spurn, iresc = 0))
+decorana(spurn)
 ## ordiplot works
 ordiplot(mod, display="sites")
 }
