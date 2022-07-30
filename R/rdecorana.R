@@ -55,10 +55,10 @@
 #'
 #' @examples
 #' data(spurn)
-#' str(mod <- rdecorana(spurn))
+#' (mod <- rdecorana(spurn))
 #' if (require(vegan)) {
 #' ## compare to decorana
-#' str(decorana(spurn, iresc = 0))
+#' decorana(spurn)
 #' ## ordiplot works
 #' ordiplot(mod, display="sites")
 #' }
@@ -181,7 +181,8 @@
         x <- x - tcrossprod(sol$u, sol$v)
     }
     structure(list(evals = evals, rproj = rproj, cproj = cproj,
-                   aidot = aidot, adotj = adotj), class = "rdecorana")
+                   aidot = aidot, adotj = adotj, call = match.call()),
+              class = "rdecorana")
 }
 
 ## Hill's piecewise data transformation with linear interpolation.
@@ -198,11 +199,11 @@
     function(x, before, after)
 {
     if (is.null(before) || is.null(after))
-        stop("both 'before' and 'after' must be given")
+        stop("both 'before' and 'after' must be given", call. = FALSE)
     if (is.unsorted(before))
-        stop("'before' must be sorted")
+        stop("'before' must be sorted", call. = FALSE)
     if (length(before) != length(after))
-        stop("'before' and 'after' must have same lengths")
+        stop("'before' and 'after' must have same lengths", call. = FALSE)
     for(i in seq_len(nrow(x))) {
         k <- x[i,] > 0
         x[i, k] <- approx(before, after, x[i, k], rule = 2)$y
@@ -233,7 +234,10 @@
     rownames(rproj) <- rownames(x)
     rownames(cproj) <- colnames(x)
     structure(list(evals = lambda, rproj = rproj, cproj = cproj, aidot = aidot,
-         adotj = adotj), class = "rdecorana")
+                   adotj = adotj,
+                   call = match.call(sys.function(sys.parent()),
+                                     sys.call(sys.parent()))),
+              class = "rdecorana")
 }
 
 ## transvu is modelled after trans subroutine in decorana.f. The
@@ -469,12 +473,12 @@
 
 #' @export
 `print.rdecorana` <-
-    function(x, ...)
+    function(x, digits = max(3, getOption("digits") - 3), ...)
 {
-    cat("Rdecorana\n\n")
+    cat("\n", deparse(x$call), "\n\n", sep = "")
     print(rbind("Decorana values" = x$evals,
                 "Axis lengths" = apply(x$rproj, 2, function(z) diff(range(z)))
-                ))
+                ), digits = digits)
     cat("\n")
     invisible(x)
 }
