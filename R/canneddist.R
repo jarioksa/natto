@@ -47,7 +47,7 @@
 #'
 #' Yue, J.C. & Clayton, M.K. (2005). A similarity measure based on
 #' species proportions. \emph{Communications in Statistics Theory and
-#' Mehtods} 34, 2123--2131. \doi{10.1080/STA-200066418}.
+#' Methods} 34, 2123--2131. \doi{10.1080/STA-200066418}.
 #'
 #' @param x Input data.
 #' @param method Vernacular name for a dissimilarity index.
@@ -88,8 +88,8 @@
         "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary"),
         "ruzicka" = list(method = "(A+B-2*J)/(A+B-J)", terms = "minimum"),
         "similarityratio" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
-        ## Yue & Clarkson (2005) Commun Stat Theory Methods 23, 2123-2131
-        "yueclarkson" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
+        ## Yue & Clayton (2005) Commun Stat Theory Methods 23, 2123-2131
+        "yueclayton" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
         ## Legendre & Legendre: metric distances
         "euclidean" = list(method = "sqrt(A+B-2*J)", terms = "quadratic"),
         "chord" = list(method = "sqrt(2*(1-J/sqrt(A*B)))", terms = "quadratic"),
