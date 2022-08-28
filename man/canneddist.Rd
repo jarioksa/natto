@@ -66,6 +66,10 @@ evaluation. \emph{Biological Review} 57, 669--689.
 
 Legendre, P. & Legendre, L. (2012). \emph{Numerical Ecology.} 3rd
 English Ed., Elsevier.
+
+Yue, J.C. & Clayton, M.K. (2005). A similarity measure based on
+species proportions. \emph{Communications in Statistics Theory and
+Mehtods} 34, 2123--2131. \doi{10.1080/STA-200066418}.
 }
 \seealso{
 Function is a wrapper to
