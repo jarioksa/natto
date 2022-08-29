@@ -80,46 +80,69 @@
 {
     index <- list(
         ## (A+B-2*J)/(A+B) with various names (and people rave on these)
-        "sorensen" = list(method = "(A+B-2*J)/(A+B)", terms = "binary"),
-        "bray" =   list(method = "(A+B-2*J)/(A+B)", terms = "minimum"),
-        "whittaker" =  list(method = "(A+B-2*J)/(A+B)", terms = "binary"),
-        "steinhaus" = list(method = "(A+B-2*J)/(A+B)", terms = "minimum"),
+        "sorensen" = list(method = "(A+B-2*J)/(A+B)", terms = "binary",
+                          maxdist = 1),
+        "bray" =   list(method = "(A+B-2*J)/(A+B)", terms = "minimum",
+                        maxdist = 1),
+        "whittaker" =  list(method = "(A+B-2*J)/(A+B)", terms = "binary",
+                            maxdist = 1),
+        "steinhaus" = list(method = "(A+B-2*J)/(A+B)", terms = "minimum",
+                           maxdist = 1),
         ## Another popular one
-        "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary"),
-        "ruzicka" = list(method = "(A+B-2*J)/(A+B-J)", terms = "minimum"),
-        "similarityratio" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
+        "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary",
+                         maxdist = 1),
+        "ruzicka" = list(method = "(A+B-2*J)/(A+B-J)", terms = "minimum",
+                         maxdist = 1),
+        "similarityratio" = list(method = "(A+B-2*J)/(A+B-J)",
+                                 terms = "quadratic", maxdist = 1),
         ## Yue & Clayton (2005) Commun Stat Theory Methods 23, 2123-2131
-        "yueclayton" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic"),
+        "yueclayton" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic",
+                            maxdist = 1),
         ## Legendre & Legendre: metric distances
-        "euclidean" = list(method = "sqrt(A+B-2*J)", terms = "quadratic"),
-        "chord" = list(method = "sqrt(2*(1-J/sqrt(A*B)))", terms = "quadratic"),
-        "geodesic" = list(method = "acos(J/sqrt(A*B))", terms = "quadratic"),
-        "ochiai" = list(method = "1-J/sqrt(A*B)", terms = "binary"),
-        "cosine" = list(method = "1-J/sqrt(A*B)", terms = "quadratic"),
-        "manhattan" = list(method = "A+B-2*J", terms = "minimum"),
-        "information" = list(method = "log(4)*(A+B-2*J)", terms = "binary"),
+        "euclidean" = list(method = "sqrt(A+B-2*J)", terms = "quadratic",
+                           maxdist = NA),
+        "chord" = list(method = "sqrt(2*(1-J/sqrt(A*B)))", terms = "quadratic",
+                       maxdist = sqrt(2)),
+        "geodesic" = list(method = "acos(J/sqrt(A*B))", terms = "quadratic",
+                          maxdist = pi/2),
+        "ochiai" = list(method = "1-J/sqrt(A*B)", terms = "binary",
+                        maxdist = 1),
+        "cosine" = list(method = "1-J/sqrt(A*B)", terms = "quadratic",
+                        maxdist = 1),
+        "manhattan" = list(method = "A+B-2*J", terms = "minimum",
+                           maxdist = NA),
+        "information" = list(method = "log(4)*(A+B-2*J)", terms = "binary",
+                             maxdist = NA),
         ## Legendre & Legendre have some oddities, here as dissimilarities
-        "triplejaccard" = list(method = "(A+B-2*J)/(A+B+J)", terms = "binary"),
-        "sokalsneath" = list(method = "2*(A+B-2*J)/(2*A+2*B-3*J)", terms="binary"),
-        "russellrao" = list(method = "1-J/P", terms = "binary"),
+        "triplejaccard" = list(method = "(A+B-2*J)/(A+B+J)", terms = "binary",
+                               maxdist = 1),
+        "sokalsneath" = list(method = "2*(A+B-2*J)/(2*A+2*B-3*J)",
+                             terms="binary", maxdist = 1),
+        "russellrao" = list(method = "1-J/P", terms = "binary", maxdist = 1),
         ## Kulczynskis
-        "kulczynski" = list(method =  "1-J/2/A-J/2/B", terms = "minimum"),
-        "b.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary"),
+        "kulczynski" = list(method =  "1-J/2/A-J/2/B", terms = "minimum",
+                            maxdist = 1),
+        "b.kulczynski" = list(method = "1-J/2/A-J/2/B", terms="binary",
+                              maxdist = 1),
         ## Raup-Crick with equal sampling probs
-        "raup" = list(method = "1-phyper(J-1,A,P-A,B)", terms="binary"),
+        "raup" = list(method = "1-phyper(J-1,A,P-A,B)", terms="binary",
+                      maxdist = 1),
         ## 1 if no shared species, 0 if there is a shared species
-        "shared" = list(method = "J==0", terms = "binary"),
+        "shared" = list(method = "J==0", terms = "binary", maxdist = 1),
         ## Hubalek 1982, Biol Rev 57, 669-689 adds (as distances):
-        "braunblanquet" = list(method = "1-J/pmax(A,B)", terms="binary"),
-        "simpson" = list(method = "1-J/pmin(A,B)", terms="binary"),
-        "sorgenfrei" = list(method = "1-J*J/A/B", terms="binary"),
-        "mountford.init" = list(method = "pmax(1-2*J/(2*A*B-(A+B)*J),0)", terms="binary")
+        "braunblanquet" = list(method = "1-J/pmax(A,B)", terms="binary",
+                               maxdist = 1),
+        "simpson" = list(method = "1-J/pmin(A,B)", terms="binary", maxdist = 1),
+        "sorgenfrei" = list(method = "1-J*J/A/B", terms="binary", maxdist = 1),
+        "mountford.init" = list(method = "pmax(1-2*J/(2*A*B-(A+B)*J),0)",
+                                terms="binary", maxdist = 1)
         )
     if (help)
         return(t(sapply(index, data.frame, stringsAsFactors = TRUE)))
     ind <- match.arg(method, names(index))
     z <- index[[ind]]
-    dis <- designdist(x, method = z$method, terms = z$terms, name = ind)
+    dis <- designdist(x, method = z$method, terms = z$terms, name = ind,
+                      maxdist = z$maxdist)
     attr(dis, "call") <- match.call()
     dis
 }
