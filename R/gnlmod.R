@@ -13,7 +13,10 @@
 #' @param \dots Other parameters passed to \code{\link{nlm}} that
 #' performs the actual regression.
 
-#' @return The \code{\link{nlm}} result object.
+#' @return The \code{\link{nlm}} result object augmented with some
+#'     elements of \code{\link{glm}} object.
+#'
+#' @importFrom stats family getInitial nlm
 #'
 #' @export
 `gnlmod` <-
@@ -45,6 +48,13 @@
             -t(wts * (y - mu) / V(mu)) %*% attr(mu, "gradient")
         ll
     }
-    nlm(loss, p = p, y = y, SSmodel = SSmodel, Dev, V, wts = wts,
-        hessian = TRUE, ...)
+    out <- nlm(loss, p = p, y = y, SSmodel = SSmodel, Dev, V, wts = wts,
+               hessian = TRUE, ...)
+    out$y <- y
+    mu <- eval(SSmodel, envir = split(out$estimate, pnames))
+    out$fitted.values <- mu
+    out$residuals <- (y - mu) / mu
+    out$data <- data
+    out$deviance <- 2 * out$minimum
+    out
 }
