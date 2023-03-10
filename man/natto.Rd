@@ -4,6 +4,3 @@
 \name{natto}
 \alias{natto}
 \title{natto.}
-\description{
-natto.
-}
