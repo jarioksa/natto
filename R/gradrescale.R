@@ -1,6 +1,11 @@
 ### Rescale observed ecological gradient similarly as a decorana axis
 #' @title Rescale Ecological Gradient to Constant Community Heterogeneity
 #'
+#' Observed environmental gradient is rescaled similarly as axis in
+#' \code{\link{rdecorana}} ahd \code{\link[vegan]{decorana}}. The goal
+#' is that weighted averages of species have equal dispersion along
+#' the rescaled gradient.
+#' 
 #' @param grad Observed numeric gradient.
 #' @param comm Community data matrix.
 #'
