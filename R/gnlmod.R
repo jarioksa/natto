@@ -63,6 +63,7 @@
     out$df.residual <- n.ok - length(out$estimate)
     intercept <- sum(wts * y)/sum(wts)
     out$null.deviance <- sum(fam$dev.resids(y, intercept, wts))
+    out$rank <- pnames
     out$aic <- fam$aic(y, length(y), mu, wts, 2 * out$minimum) +
         2 * length(p)
     out$family <- fam
@@ -113,6 +114,101 @@
     cat("Null Deviance:	   ",	format(signif(x$null.deviance, digits)),
 	"\nResidual Deviance:", format(signif(x$deviance, digits)),
 	"\tAIC:", format(signif(x$aic, digits)))
+    cat("\n")
+    invisible(x)
+}
+
+#' @rdname gnlmod
+#' @export
+`summary.gnlmod` <-
+    function(object, dispersion = NULL, correlation = FALSE,
+             symbolic.cor = FALSE, ...)
+{
+    df.r <- object$df.residual
+    df.f <- object$rank
+    if (is.null(dispersion))
+        dispersion <-
+            if (object$family$family %in% c("poisson", "binomial")) 1
+            else if (df.r > 0)
+                sum(object$weights * object$residuals^2) / df.r
+            else
+                NaN
+
+    ## covariance matrix from the hessian
+    cf <- object$estimate
+    covmat <- dispersion * solve(object$hessian)
+    var.cf <- diag(covmat)
+    s.err <- sqrt(var.cf)
+    zvalue <- cf/s.err
+    pvalue <- 2 * pnorm(-abs(zvalue))
+    cf.table <- cbind(cf, s.err, zvalue, pvalue)
+    dimnames(cf.table) <-
+        list(names(cf),
+             c("Estimate", "Std. Error", "z value","Pr(>|z|)"))
+    ## answer
+    keep <- match(c("call","family","deviance", "aic", "df.residual",
+                    "null.deviance","df.null", "iterations"),
+                  names(object), 0L)
+    ans <- c(object[keep],
+             list(deviance.resid = residuals(object, type = "deviance"),
+		  coefficients = cf.table,
+		  dispersion = dispersion,
+		  df = c(object$rank, df.r, df.f),
+		  cov.scaled = covmat))
+    class(ans) <- c("summary.gnlmod", "summary.glm")
+    ans
+}
+
+#' @export
+`print.summary.gnlmod` <-
+        function (x, digits = max(3L, getOption("digits") - 3L),
+	      symbolic.cor = x$symbolic.cor,
+	      signif.stars = getOption("show.signif.stars"), ...)
+{
+    cat("\nCall:\n",
+	paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n", sep = "")
+
+    cat("\nCoefficients:\n")
+    coefs <- x$coefficients
+    printCoefmat(coefs, digits = digits, signif.stars = signif.stars,
+                     na.print = "NA", ...)
+
+    ##
+    cat("\n(Dispersion parameter for ", x$family$family,
+	" family taken to be ", format(x$dispersion), ")\n\n",
+	apply(cbind(paste(format(c("Null","Residual"), justify="right"),
+                          "deviance:"),
+		    format(unlist(x[c("null.deviance","deviance")]),
+			   digits = max(5L, digits + 1L)), " on",
+		    format(unlist(x[c("df.null","df.residual")])),
+		    " degrees of freedom\n"),
+	      1L, paste, collapse = " "), sep = "")
+    if(nzchar(mess <- naprint(x$na.action))) cat("  (", mess, ")\n", sep = "")
+    cat("AIC: ", format(x$aic, digits = max(4L, digits + 1L)),"\n\n",
+	"Number of nlm iterations: ", x$iterations,
+	"\n", sep = "")
+
+    correl <- x$correlation
+    if(!is.null(correl)) {
+# looks most sensible not to give NAs for undefined coefficients
+#         if(!is.null(aliased) && any(aliased)) {
+#             nc <- length(aliased)
+#             correl <- matrix(NA, nc, nc, dimnames = list(cn, cn))
+#             correl[!aliased, !aliased] <- x$correl
+#         }
+	p <- NCOL(correl)
+	if(p > 1) {
+	    cat("\nCorrelation of Coefficients:\n")
+	    if(is.logical(symbolic.cor) && symbolic.cor) {# NULL < 1.7.0 objects
+		print(symnum(correl, abbr.colnames = NULL))
+	    } else {
+		correl <- format(round(correl, 2L), nsmall = 2L,
+                                 digits = digits)
+		correl[!lower.tri(correl)] <- ""
+		print(correl[-1, -p, drop=FALSE], quote = FALSE)
+	    }
+	}
+    }
     cat("\n")
     invisible(x)
 }
