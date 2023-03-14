@@ -51,6 +51,7 @@
     }
     out <- nlm(loss, p = p, y = y, SSmodel = SSmodel, Dev, V, wts = wts,
                hessian = TRUE, ...)
+    names(out$estimate) <- pnames
     out$y <- y
     out$nobs <- length(y)
     mu <- eval(SSmodel, envir = split(out$estimate, pnames))
@@ -60,6 +61,8 @@
     n.ok <- length(y) - sum(wts == 0)
     out$df.null <- n.ok - 1
     out$df.residual <- n.ok - length(out$estimate)
+    intercept <- sum(wts * y)/sum(wts)
+    out$null.deviance <- sum(fam$dev.resids(y, intercept, wts))
     out$aic <- fam$aic(y, length(y), mu, wts, 2 * out$minimum) +
         2 * length(p)
     out$family <- fam
@@ -72,7 +75,8 @@
 }
 
 ##
-
+#' @rdname gnlmod
+#' @export
 `predict.gnlmod` <-
     function(object, newdata, type = "response", ...)
 {
@@ -82,4 +86,33 @@
     as.vector(eval(object$formula[[3]],
                    as.list(c(newdata,
                              split(object$estimate, names(object$estimate))))))
+}
+
+#' @importFrom stats coef
+#' @export
+`coef.gnlmod` <-
+    function(object)
+        object$estimate
+
+## print is edited from stats:::print.glm
+#' @export
+`print.gnlmod` <-
+    function(x, digits = max(3L, getOption("digits") - 3L), ...)
+{
+    cat("\nCall:  ",
+	paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
+    if(length(coef(x))) {
+        cat("Coefficients")
+        cat(":\n")
+        print.default(format(coef(x), digits = digits),
+                      print.gap = 2, quote = FALSE)
+    } else cat("No coefficients\n\n")
+    cat("\nDegrees of Freedom:", x$df.null, "Total (i.e. Null); ",
+        x$df.residual, "Residual\n")
+    if(nzchar(mess <- naprint(x$na.action))) cat("  (",mess, ")\n", sep = "")
+    cat("Null Deviance:	   ",	format(signif(x$null.deviance, digits)),
+	"\nResidual Deviance:", format(signif(x$deviance, digits)),
+	"\tAIC:", format(signif(x$aic, digits)))
+    cat("\n")
+    invisible(x)
 }
