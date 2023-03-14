@@ -32,9 +32,10 @@
     ## starting values
     p <- getInitial(formula, data)
     pnames <- names(p)
-    ## error distribution
-    Dev <- family()$dev.resids
-    V <- family()$variance
+    ## family
+    fam <- family(link="identity")
+    Dev <- fam$dev.resids
+    V <- fam$variance
     if (missing(wts))
         wts <- rep(1, length(y))
     ## loss function
@@ -51,10 +52,34 @@
     out <- nlm(loss, p = p, y = y, SSmodel = SSmodel, Dev, V, wts = wts,
                hessian = TRUE, ...)
     out$y <- y
+    out$nobs <- length(y)
     mu <- eval(SSmodel, envir = split(out$estimate, pnames))
     out$fitted.values <- mu
     out$residuals <- (y - mu) / mu
+    out$prior.weights = wts
+    n.ok <- length(y) - sum(wts == 0)
+    out$df.null <- n.ok - 1
+    out$df.residual <- n.ok - length(out$estimate)
+    out$aic <- fam$aic(y, length(y), mu, wts, 2 * out$minimum) +
+        2 * length(p)
+    out$family <- fam
     out$data <- data
+    out$formula <- formula
     out$deviance <- 2 * out$minimum
+    out$call <- match.call()
+    class(out) <- c("gnlmod", "glm")
     out
+}
+
+##
+
+`predict.gnlmod` <-
+    function(object, newdata, type = "response", ...)
+{
+    if (type != "response")
+        stop('only type = "response" implemented')
+    if (missing(newdata)) return(as.vector(fitted(object)))
+    as.vector(eval(object$formula[[3]],
+                   as.list(c(newdata,
+                             split(object$estimate, names(object$estimate))))))
 }
