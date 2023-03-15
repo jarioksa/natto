@@ -118,11 +118,11 @@
     invisible(x)
 }
 
+#' @importFrom stats cov2cor
 #' @rdname gnlmod
 #' @export
 `summary.gnlmod` <-
-    function(object, dispersion = NULL, correlation = FALSE,
-             symbolic.cor = FALSE, ...)
+    function(object, dispersion = NULL, correlation = FALSE, ...)
 {
     df.r <- object$df.residual
     df.f <- object$rank
@@ -136,6 +136,8 @@
 
     ## covariance matrix from the hessian
     cf <- object$estimate
+    covmat.unscaled <- solve(object$hessian)
+    dimnames(covmat.unscaled) <- list(names(cf), names(cf))
     covmat <- dispersion * solve(object$hessian)
     var.cf <- diag(covmat)
     s.err <- sqrt(var.cf)
@@ -154,7 +156,10 @@
 		  coefficients = cf.table,
 		  dispersion = dispersion,
 		  df = c(object$rank, df.r, df.f),
+                  cov.unscaled = covmat.unscaled,
 		  cov.scaled = covmat))
+    if (correlation)
+        ans$correlation <- cov2cor(covmat.unscaled)
     class(ans) <- c("summary.gnlmod", "summary.glm")
     ans
 }
