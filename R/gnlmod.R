@@ -2,7 +2,50 @@
 #'
 #' Non-linear regression (\code{\link{nls}}) \code{\link{selfStart}}
 #' model generalized to use exponential \code{\link{family}} error
-#' distributions
+#' distributions.
+#'
+#' @details
+#'
+#' Function combines three \R{} functions for fitting non-linear
+#' models with exponential family errors:
+#' \enumerate{
+#'   \item Non-linear regression is defined by
+#'      \code{\link{selfStart}} like in \code{\link{nls}}. In addition to
+#'      defining the nonlinear function, these also provide initial values and
+#'      derivatives of model parameters.
+#'   \item \code{\link{family}} functions are used to define the error
+#'      distribution allowing use of other than least squares models. The
+#'      \code{family} functions provide the likelihood function for fitting,
+#'      and allows finding the partial derivatives of model parameters for the
+#'      likelihood function (see McCullagh & Nelder 1989, p. 41).
+#'   \item The likelihood function (with partial derivatives) is optimized with
+#'      \code{\link{nlm}}.
+#' }
+#' The result object is mostly similar to \code{\link{glm}} object, and can be
+#' handled with many \code{glm} method functions, except those that assume
+#' linear model of fitting.
+#'
+#' @references
+#' McCullagh, P & Nelder, J.A. (1989) \emph{Generalized Linear Models}, 2nd ed.
+#'    Chapman & Hall.
+#'
+#' @examples
+#' ## Compare to vegan species-area models
+#' if (require(vegan)) {
+#' data(sipoo, sipoo.map)
+#' S <- specnumber(sipoo)
+#' ## Arrhenius model in vegan with least squares
+#' nls(S ~ SSarrhenius(area, k, z), sipoo.map)
+#' ## Assume Poisson error
+#' (mod <- gnlmod(S ~ SSarrhenius(area, k, z), sipoo.map, family=poisson))
+#' ## Arrhenius should be identical to Poisson glm with log-link
+#' glm(S ~ log(area), sipoo.map, family=poisson) # (Intercept) = log(k)
+#' ## some method functions
+#' fitted(mod)
+#' predict(mod)
+#' predict(mod, newdata = list(area = seq(1, 250, len=31)))
+#' summary(mod)
+#' }
 #'
 #' @param formula Model formula for a \code{\link{selfStart}}
 #' \code{\link{nls}} model.
@@ -13,8 +56,8 @@
 #' @param \dots Other parameters passed to \code{\link{nlm}} that
 #' performs the actual regression.
 
-#' @return The \code{\link{nlm}} result object augmented with some
-#'     elements of \code{\link{glm}} object.
+#' @return Combination of \code{\link{nlm}} and \code{\link{glm}}
+#'     result objects.
 #'
 #' @importFrom stats family getInitial nlm
 #'
@@ -77,6 +120,9 @@
 
 ##
 #' @rdname gnlmod
+#' @param object \code{gnlmod} result object.
+#' @param newdata New independent data for prediction.
+#' @param type Type of predicted values; only \code{"response"} implemented.
 #' @export
 `predict.gnlmod` <-
     function(object, newdata, type = "response", ...)
@@ -120,6 +166,11 @@
 
 #' @importFrom stats cov2cor
 #' @rdname gnlmod
+#' @param dipersion The dispersion parameter for the family
+#'     used. Either a single numerical value of \code{NULL} (the
+#'     default), when it is inferred from the \code{object}.
+#' @param correlation logical; if \code{TRUE}, the correlation matrix
+#'     of the estimated parameters is returned and printed.
 #' @export
 `summary.gnlmod` <-
     function(object, dispersion = NULL, correlation = FALSE, ...)
