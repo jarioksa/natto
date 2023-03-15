@@ -32,12 +32,12 @@ performs the actual regression.}
 
 \item{type}{Type of predicted values; only \code{"response"} implemented.}
 
-\item{correlation}{logical; if \code{TRUE}, the correlation matrix
-of the estimated parameters is returned and printed.}
-
-\item{dipersion}{The dispersion parameter for the family
+\item{dispersion}{The dispersion parameter for the family
 used. Either a single numerical value of \code{NULL} (the
 default), when it is inferred from the \code{object}.}
+
+\item{correlation}{logical; if \code{TRUE}, the correlation matrix
+of the estimated parameters is returned and printed.}
 }
 \value{
 Combination of \code{\link{nlm}} and \code{\link{glm}}

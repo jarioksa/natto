@@ -59,7 +59,7 @@
 #' @return Combination of \code{\link{nlm}} and \code{\link{glm}}
 #'     result objects.
 #'
-#' @importFrom stats family getInitial nlm
+#' @importFrom stats family gaussian getInitial nlm
 #'
 #' @export
 `gnlmod` <-
@@ -138,7 +138,7 @@
 #' @importFrom stats coef
 #' @export
 `coef.gnlmod` <-
-    function(object)
+    function(object, ...)
         object$estimate
 
 ## print is edited from stats:::print.glm
@@ -166,11 +166,12 @@
 
 #' @importFrom stats cov2cor
 #' @rdname gnlmod
-#' @param dipersion The dispersion parameter for the family
+#' @param dispersion The dispersion parameter for the family
 #'     used. Either a single numerical value of \code{NULL} (the
 #'     default), when it is inferred from the \code{object}.
 #' @param correlation logical; if \code{TRUE}, the correlation matrix
 #'     of the estimated parameters is returned and printed.
+#' @importFrom stats naprint pnorm
 #' @export
 `summary.gnlmod` <-
     function(object, dispersion = NULL, correlation = FALSE, ...)
@@ -214,7 +215,7 @@
     class(ans) <- c("summary.gnlmod", "summary.glm")
     ans
 }
-
+#' @importFrom stats naprint symnum
 #' @export
 `print.summary.gnlmod` <-
         function (x, digits = max(3L, getOption("digits") - 3L),
