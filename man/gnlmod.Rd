@@ -59,15 +59,15 @@ models with exponential family errors:
      derivatives of model parameters.
   \item \code{\link{family}} functions are used to define the error
      distribution allowing use of other than least squares models. The
-     \code{family} functions provide the likelihood function for fitting,
+     \code{family} functions provide the log-likelihood function for fitting,
      and allows finding the partial derivatives of model parameters for the
-     likelihood function (see McCullagh & Nelder 1989, p. 41).
-  \item The likelihood function (with partial derivatives) is optimized with
-     \code{\link{nlm}}.
+     log-likelihood function (see McCullagh & Nelder 1989, p. 41).
+  \item The log-likelihood function (with partial derivatives) is optimized
+     with \code{\link{nlm}}.
 }
 The result is mostly similar to \code{\link{glm}} object, and can be
 handled with many \code{glm} method functions, except those that assume
-linear model of fitting.
+linear fit.
 }
 \examples{
 ## Compare to vegan species-area models
