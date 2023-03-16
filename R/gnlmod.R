@@ -21,7 +21,7 @@
 #'   \item The likelihood function (with partial derivatives) is optimized with
 #'      \code{\link{nlm}}.
 #' }
-#' The result object is mostly similar to \code{\link{glm}} object, and can be
+#' The result is mostly similar to \code{\link{glm}} object, and can be
 #' handled with many \code{glm} method functions, except those that assume
 #' linear model of fitting.
 #'
@@ -31,7 +31,7 @@
 #'
 #' @examples
 #' ## Compare to vegan species-area models
-#' if (require(vegan)) {
+#' require(vegan) || stop("needs vegan")
 #' data(sipoo, sipoo.map)
 #' S <- specnumber(sipoo)
 #' ## Arrhenius model in vegan with least squares
@@ -45,7 +45,6 @@
 #' predict(mod)
 #' predict(mod, newdata = list(area = seq(1, 250, len=31)))
 #' summary(mod)
-#' }
 #'
 #' @param formula Model formula for a \code{\link{selfStart}}
 #' \code{\link{nls}} model.
@@ -56,8 +55,9 @@
 #' @param \dots Other parameters passed to \code{\link{nlm}} that
 #' performs the actual regression.
 
-#' @return Combination of \code{\link{nlm}} and \code{\link{glm}}
-#'     result objects.
+#' @return Function returns the \code{\link{nlm}} result object, but
+#'     it is amended with \code{\link{glm}} object related to
+#'     \code{\link{family}}.
 #'
 #' @importFrom stats family gaussian getInitial nlm
 #'
@@ -201,7 +201,7 @@
              c("Estimate", "Std. Error", "z value","Pr(>|z|)"))
     ## answer
     keep <- match(c("call","family","deviance", "aic", "df.residual",
-                    "null.deviance","df.null", "iterations"),
+                    "null.deviance","df.null", "iterations", "code"),
                   names(object), 0L)
     ans <- c(object[keep],
              list(deviance.resid = residuals(object, type = "deviance"),
@@ -242,7 +242,7 @@
 	      1L, paste, collapse = " "), sep = "")
     if(nzchar(mess <- naprint(x$na.action))) cat("  (", mess, ")\n", sep = "")
     cat("AIC: ", format(x$aic, digits = max(4L, digits + 1L)),"\n\n",
-	"Number of nlm iterations: ", x$iterations,
+	"Number of nlm iterations: ", x$iterations, " (nlm code: ", x$code, ")",
 	"\n", sep = "")
 
     correl <- x$correlation

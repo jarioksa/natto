@@ -40,8 +40,9 @@ default), when it is inferred from the \code{object}.}
 of the estimated parameters is returned and printed.}
 }
 \value{
-Combination of \code{\link{nlm}} and \code{\link{glm}}
-    result objects.
+Function returns the \code{\link{nlm}} result object, but
+    it is amended with \code{\link{glm}} object related to
+    \code{\link{family}}.
 }
 \description{
 Non-linear regression (\code{\link{nls}}) \code{\link{selfStart}}
@@ -64,13 +65,13 @@ models with exponential family errors:
   \item The likelihood function (with partial derivatives) is optimized with
      \code{\link{nlm}}.
 }
-The result object is mostly similar to \code{\link{glm}} object, and can be
+The result is mostly similar to \code{\link{glm}} object, and can be
 handled with many \code{glm} method functions, except those that assume
 linear model of fitting.
 }
 \examples{
 ## Compare to vegan species-area models
-if (require(vegan)) {
+require(vegan) || stop("needs vegan")
 data(sipoo, sipoo.map)
 S <- specnumber(sipoo)
 ## Arrhenius model in vegan with least squares
@@ -84,7 +85,6 @@ fitted(mod)
 predict(mod)
 predict(mod, newdata = list(area = seq(1, 250, len=31)))
 summary(mod)
-}
 
 }
 \references{
