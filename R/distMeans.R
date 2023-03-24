@@ -35,8 +35,14 @@
 #'     the distance matrix. If \code{FALSE} only return mean
 #'     distances.
 #' @param label Label for the centroid when \code{addcentre = TRUE}.
-#' @return Either distances to all other points from a point that is in
-#'     the centroid of the coordinates generating the distances, or
+#' @param formula,data Formula where the left-hand-side is the
+#'     dissimilarity structure, and right-hand-side defines the mean
+#'     from which the dissimilarities are calculated. The terms in the
+#'     right-hand-side can be given in \code{data}.
+#' @param \dots Other parameters (ignored).
+#'
+#' @return Either distances to all other points from a point that is
+#'     in the centroid of the coordinates generating the distances, or
 #'     the input dissimilarity matrix where the mean distances are
 #'     added as the first observation.
 #' @examples
@@ -60,7 +66,13 @@
 #' head(mcent$points)
 #' @export
 `distMeans` <-
-    function(d, addcentre = FALSE, label = "centroid")
+    function(...)
+        UseMethod("distMeans")
+
+#' @rdname distMeans
+#' @export
+`distMeans.default` <-
+    function(d, addcentre = FALSE, label = "centroid", ...)
 {
     x <- as.matrix(d^2/2)
     ## Gower double centring
@@ -82,3 +94,12 @@
     cnt
 }
 
+#' @rdname distMeans
+#' @export
+`distMeans.formula` <-
+    function(formula, data, ...)
+{
+    x <- vegan:::initDBRDA(eval(formula[[2]]))
+    mm <- model.matrix(delete.response(terms(formula)), data)
+    sqrt(diag(vegan:::ordPartial(x, mm)$Y))
+}
