@@ -2,11 +2,19 @@
 % Please edit documentation in R/distMeans.R
 \name{distMeans}
 \alias{distMeans}
+\alias{distMeans.default}
+\alias{distMeans.formula}
 \title{Mean of Distances}
 \usage{
-distMeans(d, addcentre = FALSE, label = "centroid")
+distMeans(...)
+
+\method{distMeans}{default}(d, addcentre = FALSE, label = "centroid", ...)
+
+\method{distMeans}{formula}(formula, data, ...)
 }
 \arguments{
+\item{\dots}{Other parameters (ignored).}
+
 \item{d}{Distances as a \code{dist} object}
 
 \item{addcentre}{Add distances to the centroid as the first item in
@@ -14,10 +22,15 @@ the distance matrix. If \code{FALSE} only return mean
 distances.}
 
 \item{label}{Label for the centroid when \code{addcentre = TRUE}.}
+
+\item{formula, data}{Formula where the left-hand-side is the
+dissimilarity structure, and right-hand-side defines the mean
+from which the dissimilarities are calculated. The terms in the
+right-hand-side can be given in \code{data}.}
 }
 \value{
-Either distances to all other points from a point that is in
-    the centroid of the coordinates generating the distances, or
+Either distances to all other points from a point that is
+    in the centroid of the coordinates generating the distances, or
     the input dissimilarity matrix where the mean distances are
     added as the first observation.
 }
