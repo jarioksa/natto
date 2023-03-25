@@ -6,12 +6,15 @@
 #' Mean of Distances
 #'
 #' Mean of distances is defined as the distance of each point to the
-#' mean of coordinates generating the distance.
+#' mean or expected value of coordinates generating the distances.
 #'
 #' @details Function is analagous to \code{\link{colMeans}} or
 #'     \code{\link{rowMeans}} and returns values that are at the mean
 #'     of distances of each row or column of a symmetric distance
-#'     matrix. Such means cannot be directly found as marginal means
+#'     matrix. Alternatively, the use of formula calculates mean
+#'     distances to the fitted values.
+#'
+#'     Means of distances cannot be directly found as marginal means
 #'     of distance matrix, but they must be found after Gower double
 #'     centring (Gower 1966). After double centring, the means are
 #'     zero, and when backtransformed to original distances, these
@@ -24,6 +27,17 @@
 #'     strongly non-Euclidean indices may be imaginary, and given as
 #'     \code{NaN}.
 #'
+#'     Average mean distances can be regarded as a measure of beta
+#'     diversity, and formula interface allows analysis of beta
+#'     diversity within factor levels or with covariates. Such
+#'     analysis is preferable to conventional averaging of
+#'     dissimilarities or regression analysis of dissimilarities.
+#'     Analysis of mean distances is consistent with directly grouping
+#'     observed rectangular data, and overall beta diversity can be
+#'     decomposed into components defined by the formula, and handles
+#'     inflating \eqn{n} observations to \eqn{n(n-1)/2}
+#'     dissimilarities in analysis.
+#'
 #' @references Gower, J.C. (1966) Some distance properties of latent
 #'     root and vector methods used in multivariate analysis.
 #'     \emph{Biometrika} \bold{53}, 325-328.
@@ -35,10 +49,17 @@
 #'     the distance matrix. If \code{FALSE} only return mean
 #'     distances.
 #' @param label Label for the centroid when \code{addcentre = TRUE}.
-#' @return Either distances to all other points from a point that is in
-#'     the centroid of the coordinates generating the distances, or
-#'     the input dissimilarity matrix where the mean distances are
-#'     added as the first observation.
+#' @param formula,data Formula where the left-hand-side is the
+#'     dissimilarity structure, and right-hand-side defines the mean
+#'     from which the dissimilarities are calculated. The terms in the
+#'     right-hand-side can be given in \code{data}.
+#' @param \dots Other parameters (ignored).
+#'
+#' @return Distances to all other points from a point that is in the
+#'     centroid or fitted value (with formula interface) of the
+#'     coordinates generating the distances. Default method allows
+#'     returning the input dissimilarity matrix where the mean
+#'     distances are added as the first observation.
 #' @examples
 #' ## Euclidean distances to the mean of coordinates ...
 #' xy <- matrix(runif(5*2), 5, 2)
@@ -60,7 +81,13 @@
 #' head(mcent$points)
 #' @export
 `distMeans` <-
-    function(d, addcentre = FALSE, label = "centroid")
+    function(...)
+        UseMethod("distMeans")
+
+#' @rdname distMeans
+#' @export
+`distMeans.default` <-
+    function(d, addcentre = FALSE, label = "centroid", ...)
 {
     x <- as.matrix(d^2/2)
     ## Gower double centring
@@ -82,3 +109,12 @@
     cnt
 }
 
+#' @rdname distMeans
+#' @export
+`distMeans.formula` <-
+    function(formula, data, ...)
+{
+    x <- vegan:::initDBRDA(eval(formula[[2]]))
+    mm <- model.matrix(delete.response(terms(formula)), data)
+    sqrt(diag(vegan:::ordPartial(x, mm)$Y))
+}

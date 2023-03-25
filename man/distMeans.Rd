@@ -2,11 +2,19 @@
 % Please edit documentation in R/distMeans.R
 \name{distMeans}
 \alias{distMeans}
+\alias{distMeans.default}
+\alias{distMeans.formula}
 \title{Mean of Distances}
 \usage{
-distMeans(d, addcentre = FALSE, label = "centroid")
+distMeans(...)
+
+\method{distMeans}{default}(d, addcentre = FALSE, label = "centroid", ...)
+
+\method{distMeans}{formula}(formula, data, ...)
 }
 \arguments{
+\item{\dots}{Other parameters (ignored).}
+
 \item{d}{Distances as a \code{dist} object}
 
 \item{addcentre}{Add distances to the centroid as the first item in
@@ -14,22 +22,31 @@ the distance matrix. If \code{FALSE} only return mean
 distances.}
 
 \item{label}{Label for the centroid when \code{addcentre = TRUE}.}
+
+\item{formula, data}{Formula where the left-hand-side is the
+dissimilarity structure, and right-hand-side defines the mean
+from which the dissimilarities are calculated. The terms in the
+right-hand-side can be given in \code{data}.}
 }
 \value{
-Either distances to all other points from a point that is in
-    the centroid of the coordinates generating the distances, or
-    the input dissimilarity matrix where the mean distances are
-    added as the first observation.
+Distances to all other points from a point that is in the
+    centroid or fitted value (with formula interface) of the
+    coordinates generating the distances. Default method allows
+    returning the input dissimilarity matrix where the mean
+    distances are added as the first observation.
 }
 \description{
 Mean of distances is defined as the distance of each point to the
-mean of coordinates generating the distance.
+mean or expected value of coordinates generating the distances.
 }
 \details{
 Function is analagous to \code{\link{colMeans}} or
     \code{\link{rowMeans}} and returns values that are at the mean
     of distances of each row or column of a symmetric distance
-    matrix. Such means cannot be directly found as marginal means
+    matrix. Alternatively, the use of formula calculates mean
+    distances to the fitted values.
+
+    Means of distances cannot be directly found as marginal means
     of distance matrix, but they must be found after Gower double
     centring (Gower 1966). After double centring, the means are
     zero, and when backtransformed to original distances, these
@@ -41,6 +58,17 @@ Function is analagous to \code{\link{colMeans}} or
     non-Euclidean dissimilarities. However, the means of very
     strongly non-Euclidean indices may be imaginary, and given as
     \code{NaN}.
+
+    Average mean distances can be regarded as a measure of beta
+    diversity, and formula interface allows analysis of beta
+    diversity within factor levels or with covariates. Such
+    analysis is preferable to conventional averaging of
+    dissimilarities or regression analysis of dissimilarities.
+    Analysis of mean distances is consistent with directly grouping
+    observed rectangular data, and overall beta diversity can be
+    decomposed into components defined by the formula, and handles
+    inflating \eqn{n} observations to \eqn{n(n-1)/2}
+    dissimilarities in analysis.
 }
 \examples{
 ## Euclidean distances to the mean of coordinates ...
