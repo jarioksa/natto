@@ -1,6 +1,6 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%\VignetteEngine{knitr::knitr} 
-%\VignetteIndexEntry{beta and gamma diversity clustering}
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Rao standardization}
 %\VignettePackage{natto}
 
 \documentclass[a4paper,10pt,twocolumn]{article}
@@ -34,7 +34,6 @@ opts_chunk$set(fig.lp = "fig:", size = "footnotesize", out.width = "1.05\\linewi
                strip.white=TRUE)
 require(vegan)
 require(natto)
-source("raostand.R", keep.source=TRUE)
 data(dune, dune.env, dune.phylodis)
 @
 
@@ -73,7 +72,7 @@ analysis.
 \begin{equation}
   \label{eq:rao}
   H= \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}\, ,
-\end{equation} 
+\end{equation}
 where $p$ is the proportion of species $j$ and $k$ of the community,
 and $S$ is the number of species, so that $\sum_{i=1}^S p_i = 1$, and
 $d$ is the dissimilarity among species. In this assay we only study
@@ -149,7 +148,7 @@ implement dissimilarity measures, we can also implement Rao entropy.
     $A+B-2J$ & No. of different species & Squared Euclidean & Manhattan\\
     $\frac{1}{2}(A+B)-J$ & No name & Jensen & No name \\
     $\frac{A+B-2J}{A+B}$ & S{\o}rensen & No name & Bray-Curtis \\
-    $\frac{A+B-2J}{A+B-J}$ & Jaccard & Similarity Ratio &Quantitative Jaccard\\ 
+    $\frac{A+B-2J}{A+B-J}$ & Jaccard & Similarity Ratio &Quantitative Jaccard\\
     $1-\frac{J}{\sqrt{AB}}$ & Ochiai & Cosine complement & No name \\
     \bottomrule
   \end{tabular}
@@ -198,7 +197,7 @@ $\mathbf{D} \neq \{\sqrt{d_{jk}}\}$, but it is defined by matrix
 multiplication $\mathbf{D}^{1/2} \mathbf{D}^{1/2} = \mathbf{D}$. The
 matrix square root is easiest to find via eigen decomposition: If
 \begin{equation}
-  \mathbf{R} = \mathbf{U \Lambda U'} 
+  \mathbf{R} = \mathbf{U \Lambda U'}
 \end{equation}
 then
 \begin{equation}
@@ -215,7 +214,7 @@ $\mathbf{R} = 1 - \mathbf{D}$ when $\mathbf{D}$ is Euclidean, or
 eigenvalues of $-\frac{1}{2}\mathbf{\bar D}^2$ are non-negative
 \citep{Gower66}, where $\mathbf{\bar D}$ is the double-centred
 dissimilarity matrix. This is the same condition as for valid
-dissimilarities in Rao's quadratic entropy \citep{Pavoine05}. 
+dissimilarities in Rao's quadratic entropy \citep{Pavoine05}.
 
 I used notation $\mathbf{R}$ for similarities, because they are
 correlation-like and matrix takes the role of correlation structure in
@@ -240,13 +239,13 @@ and $\mathbf{R}$ positive semidefinite \citep{Pavoine05}.
 
 <<dunephylo, echo=FALSE, fig.cap="Dated phylogenetic tree of species in Dutch Dune meadows">>=
 plot(hclust(dune.phylodis), hang=-1, ylab = "Time (Myr)", sub="", main="", xlab="")
-@ 
+@
 
 Function for Rao standardization function is
 
 <<raostand, echo=FALSE, comment=NA, highlight=TRUE>>=
 dump("raostand", file="")
-@ 
+@
 
 Most of the functions take care that species distances are bounded in
 $(0,1)$, and in diversity calculations, row sums are $1$. However, we
@@ -256,19 +255,19 @@ are explicit here and take care of this manually:
 D <- dune.phylodis/max(dune.phylodis)
 P <- as.matrix(decostand(dune, "tot"))
 Z <- raostand(P, D)
-@ 
+@
 
 The standardized matrix $\mathbf{Z} = \mathbf{PR}^{1/2}$ has the
 following properties:
 
 Standardization was applied to matrix \code{P} where each row sums up
-to unity. The Simpson index can be found directly from 
+to unity. The Simpson index can be found directly from
 
 <<simpson>>=
 tol <- sqrt(.Machine$double.eps)
-all(abs(1 - rowSums(P^2) - 
+all(abs(1 - rowSums(P^2) -
             diversity(dune, "simpson")) < tol)
-@ 
+@
 Rao's quadratic entropy can be found from  $\mathbf{Z}$ similarly as
 the Simpson index:
 \begin{equation}
@@ -276,7 +275,7 @@ the Simpson index:
 \end{equation}
 <<qrao>>=
 all(abs(1 - rowSums(Z^2) - qrao(dune, D)) < tol)
-@ 
+@
 Alternatively, Rao's quadratic entropy can be found from
 the crossproduct of standardized data
 $\mathbf{Z}$:
@@ -284,19 +283,19 @@ $\mathbf{Z}$:
   1-\mathrm{diag}(\mathbf{ZZ'}) = \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}
 \end{equation}
 <<crossrao>>=
-all(abs(1 - diag(tcrossprod(Z)) - 
+all(abs(1 - diag(tcrossprod(Z)) -
             qrao(dune, D)) < tol)
-@ 
+@
 The Jensen distances $\delta$ (eq.~\ref{eq:jensen}) can be found from the elements
 $\{g_{ij}\} = \mathbf{G} = \mathbf{ZZ'}$ with reversal of signs
 \begin{equation}
-  \tfrac{1}{2}(g_{ii} + g_{jj}) - g_{ij} = H_{ij} - \tfrac{1}{2}(H_i+H_j)\, 
+  \tfrac{1}{2}(g_{ii} + g_{jj}) - g_{ij} = H_{ij} - \tfrac{1}{2}(H_i+H_j)\,
 \end{equation}
 and the Eulidean distances of $\mathbf{Z}$ are $(2\delta_{ij})^{1/2}$:
 
 <<dist>>=
 all(abs(distrao(dune, D) - dist(Z)^2/2) < tol)
-@ 
+@
 
 All postulated equalities were true which shows that the suggested
 standardization indeed works. We can add Rao's method to any
@@ -315,11 +314,11 @@ work with Shannon index.
 In this section we apply Rao standardization for analyses based on
 phylogenetic dissimilarities. The data can be tabulated using
 clustering based on phylogenetic Bray-Curtis dissimilarity
-(Fig.~\ref{fig:tabasco}): 
+(Fig.~\ref{fig:tabasco}):
 
 <<tabasco, fig.cap="Data table ordered by species phylogeny and clustering based on phylogenetic Bray-Curtis dissimilarity">>=
 tabasco(dune, hclust(vegdist(Z)), hclust(D))
-@ 
+@
 
 Unconstrained ordination based on phylogenetic Bray-Curtis ordination
 can be performed with NMDS (Fig.~\ref{fig:nmds}):
@@ -329,9 +328,9 @@ ord <- metaMDS(Z, trace=FALSE)
 ord
 plot(ord, type="n")
 text(ord, dis="si", cex=0.7)
-ordilabel(ord, dis="sp", priority=colSums(dune), 
+ordilabel(ord, dis="sp", priority=colSums(dune),
           cex=0.8)
-@ 
+@
 The species are strongly clustered by their phylogeny. In particularly
 grasses form a very compact group, and so do major clades in Dicots
 (Fig.~\ref{fig:nmds}).
@@ -345,20 +344,20 @@ m0 <- rda(Z ~ 1, dune.env)
 m1 <- rda(Z ~ ., dune.env)
 (m <- ordistep(m0, formula(m1)))
 plot(m, scaling="sites")
-@ 
+@
 The corresponding model with non-phylogenetic Euclidean distances has
 somewhat higher total inertia, but quite a large part of variation is
 also expressed by the phylogetic distances:\par
 <<rdanonphylo, size='scriptsize', R.options=list(width=62)>>=
 update(m, P ~ .)
-@ 
+@
 
 <<stack,echo=FALSE,fig.cap="Raw data (on the left) and Rao standardized data for sample plot 1.">>=
 par(mar=c(8,1,2,1))
 linestack(P[1,], side="left")
-linestack(Z[1,], add=TRUE) 
+linestack(Z[1,], add=TRUE)
 title(main="Original vs. Rao Standardized")
-@ 
+@
 
 Using explicit Rao standardization allows us to see how the data
 actually looks (Fig.~\ref{fig:stack}). The displayed sample plot has
@@ -375,7 +374,7 @@ separated from the vascular plants (Fig.~\ref{fig:dunephylo}). The
 standardization may sound odd, but it must be understood that it only
 makes the effect transparent. Similar adjustment is done when
 phylogenetic or functional analysis is done without explicit
-standardization. 
+standardization.
 
 \bibliography{rao}
 

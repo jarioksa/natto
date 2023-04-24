@@ -1,6 +1,7 @@
 ### standardize data matrix 'x' with distances 'd' so Simpson
 ### diversity will be Rao's quadratic entroy and Euclidean distances
 ### will be (transformed) Rao dissimilarity: x <- x %*% (1-d)^1/2
+#' @export
 `raostand`<-
     function(x, d)
 {
