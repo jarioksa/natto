@@ -1,6 +1,14 @@
 ### standardize data matrix 'x' with distances 'd' so Simpson
 ### diversity will be Rao's quadratic entroy and Euclidean distances
 ### will be (transformed) Rao dissimilarity: x <- x %*% (1-d)^1/2
+#' Standardize Data to Yield Rao Satistics
+#'
+#' Function standardizes data so that it gives Rao phylogenetic
+#' diversity and Euclidean distance give Rao phylogenetic distance.
+#'
+#' @param x Community data.
+#' @param d Phylogenetic distances.
+#'
 #' @export
 `raostand`<-
     function(x, d)
