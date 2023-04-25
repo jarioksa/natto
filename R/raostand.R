@@ -3,8 +3,45 @@
 ### will be (transformed) Rao dissimilarity: x <- x %*% (1-d)^1/2
 #' Standardize Data to Yield Rao Satistics
 #'
-#' Function standardizes data so that it gives Rao phylogenetic
-#' diversity and Euclidean distance give Rao phylogenetic distance.
+#' Function \code{raostand} modified data so that it is compatible to
+#' other functions, and Rao's quadratic entropy and Rao distances can
+#' be directly found from the standarized data.
+#'
+#' @details
+#'
+#' Function \code{raostand} standardizes data similarlty as implicitly
+#' done in \code{qrao} and \code{raodist} when \code{propx =
+#' TRUE}. For standardized data \code{Z}, quadratic entropy is found
+#' as \code{1 - rowSums(Z^2)}, and Rao distances can be found via
+#' Euclidean distances of \code{Z}. The standardized data allows
+#' calculating any generic community dissimilarity, and using \code{Z}
+#' in \code{\link[vegan]{rda}} allows performing phylogenitically
+#' constrained RDA. The standardization does not preserve absences,
+#' but zero abundances will be boosted to positive values when the
+#' sampling unit has related species.  More details can be found in
+#' vignette.
+#'
+#' @examples
+#' ## Rao standardization
+#' ## Phylogenetic diversity
+#' data(dune, dune.phylodis, dune.env)
+#' Z <- raostand(dune, dune.phylodis)
+#' all.equal(1 - rowSums(Z^2), qrao(dune, dune.phylodis),
+#'      check.attributes = FALSE)
+#' ## Phylogenetic distance
+#' all.equal(dist(Z), distrao(dune, dune.phylodis, method="euclidean"),
+#'      check.attributes = FALSE)
+#' ## plot with standardized values
+#' tabasco(Z, hclust(dist(Z)), hclust(dune.phylodis))
+#' ## phylogenetic polar ordination
+#' pol <- polarord(vegdist(Z))
+#' sppscores(pol) <- Z
+#' plot(pol)
+#' ## Phylogenetically constrainted RDA
+#' mod <- rda(raostand(dune, dune.phylodis, propx = FALSE) ~ Management + Moisture,
+#'     dune.env)
+#' anova(mod, by = "margin")
+#' plot(mod, scaling = "sites")
 #'
 #' @importFrom vegan decostand
 #'
@@ -18,6 +55,7 @@
 #'     max(d)}) or truncate dissimilarities at \code{dmax} (if
 #'     \code{dmax < max(d)}).
 #'
+#' @rdname qrao
 #' @export
 `raostand`<-
     function(x, d, propx = TRUE, dmax)
@@ -29,13 +67,15 @@
     dn <- attr(x, "dimnames")
     ## distances d to similarity matrix
     d <- as.dist(d)
+    if (anyNA(d))
+        stop("missing values are not accepted")
     if (!missing(dmax)) {
         d <- d/dmax
-        if (max(d, na.rm = na.rm) > 1)
+        if (max(d) > 1)
             d[d > 1] <- 1
     }
-    else if (max(d, na.rm = na.rm) > 1)
-        d <- d/max(d, na.rm = na.rm)
+    else if (max(d) > 1)
+        d <- d/max(d)
     d <- as.matrix(d)
     d <- 1 - d
     ## check that diagonals are 1
