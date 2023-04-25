@@ -1,0 +1,381 @@
+% -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Rao standardization}
+%\VignettePackage{natto}
+
+\documentclass[a4paper,10pt,twocolumn]{article}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{inconsolata}
+
+\usepackage[round]{natbib}
+\renewcommand{\cite}{\citep}
+
+\author{Jari Oksanen}
+\title{Rao Standardization}
+\begin{document}
+\bibliographystyle{jss}
+
+\newcommand{\code}[1]{{\tt #1}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+\newcommand{\fun}[1]{\texttt{#1}}
+\newcommand{\R}{\textsf{R}}
+%%
+<<prelim, echo = FALSE, results = "hide", message=FALSE>>=
+library("knitr")
+opts_chunk$set(fig.lp = "fig:", size = "footnotesize", out.width = "1.05\\linewidth",
+               fig.align = "center", fig.show = "hold", fig.path = "figs/",
+               strip.white=TRUE)
+require(vegan)
+require(natto)
+data(dune, dune.env, dune.phylodis)
+@
+
+\maketitle
+%\tableofcontents
+
+\section{Introduction}
+
+\citet{Rao86} introduced perhaps the most often used measure of
+functional or phylogenetic diversity, Rao quadratic entropy. The
+quadratic entropy is a generalization of Simpson or Gini-Simpson index
+of diversity that takes into account the non-independence of
+species. If species are all functionally (in traits) or
+phylogenetically related, the community is less diverse than a
+community with dissimilar species. The dissimilarity measure weights
+taxa by their similarity, and two communities sharing no species can
+be similar to each other if the species are similar in traits or
+related in traits.
+
+There are several \R{} functions that implement Rao's quadratic
+diversity and some that also implement the related
+dissimilarity. Perhaps the most well-known are those in the \pkg{ade4}
+package (functions \code{divc} and \code{disc}, both by Sandrine
+Pavoine). I have also implemented them as \code{qrao} and
+\code{distrao} in \pkg{natto}. These are single-purpose functions to
+perform exactly this task. This documents inspects the possibility of
+implementing Rao's measures as a general standardization of the
+community data. This would allow implementing Rao's method with
+minimal intrusion in \pkg{vegan} diversity and dissimilarity
+functions, and also in general data analysis, such as in redundancy
+analysis.
+
+\section{Rao's Diversity and Distance}
+
+\citet{Rao86} defined quadratic entropy $H$ for a community as
+\begin{equation}
+  \label{eq:rao}
+  H= \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}\, ,
+\end{equation}
+where $p$ is the proportion of species $j$ and $k$ of the community,
+and $S$ is the number of species, so that $\sum_{i=1}^S p_i = 1$, and
+$d$ is the dissimilarity among species. In this assay we only study
+the case where dissimilarities are bounded in $(0,1)$ where $1$ means
+completely different and independent species, and $0$ means identical
+species. The dissimilarity matrix has zero diagonal: species is always
+identical to itself and does not contribute to the quadratic
+entropy. If all species are completely and equally different, matrix
+$\mathbf{D} = \{d_{jk}\}$ has zero diagonal and the off-diagonal
+elements are ones. In that case Simpson-Gini diversity index is
+$1 - H$.
+
+\citet{Rao86} defined a dissimilarity index that was based on
+eq.~\ref{eq:rao}, but the species indexed there as $j$ and $k$ come
+from different communities, and we have their cross product. With this
+model, the quadratic entropies (diversities) for communities $i$ and
+$j$ are denoted as $H_i$ and $H_j$ and their cross product as
+$H_{ij}$. The distance between two communities is defined as
+\citep[][eq.~2.1.3]{Rao86}
+\begin{equation}
+  \label{eq:jensen}
+  \delta_{ij} = H_{ij} - \tfrac{1}{2}(H_i + H_j)\, .
+\end{equation}
+\citet{Rao86} calls this Jensen distance, and we see later that it is
+actually one half of squared Euclidean distance.
+
+\citet{Rao86} does not use matrix notation, but matrix
+$\mathbf{H} = \{H_{ij}\}$ can be found as
+\begin{equation}
+  \label{eq:Hmat}
+  \mathbf{H} = \mathbf{P D P'} \, ,
+\end{equation}
+where $\mathbf{P}$ is a matrix of proportions of species in sites
+and $\mathbf{D}$ is the among species dissimilarity matrix. The
+diagonal of $\mathbf{H}$ gives the quadratic entropies $H_i$ and
+$H_j$, and the off-diagonal elements the cross products $H_{ij}$.
+
+\section{Incorporation of Rao's Method in vegan}
+
+In this section we study how to implement Rao's method in \pkg{vegan}
+in a non-intrusive way. We study specifically \pkg{vegan} function
+\code{designdist} that is the most flexible and configurable
+dissimilarity function in \pkg{vegan}. Dissimilarity functions need
+both the Rao entropy and cross product terms, or diagonal and
+off-diagonal elements of $H$ (eq.~\ref{eq:jensen}). If we can
+implement dissimilarity measures, we can also implement Rao entropy.
+
+\begin{table*}[t]
+  \centering
+  \caption{\label{tab:terms} Terms used in defining formulae for
+    dissimilarity functions.  }
+  \begin{tabular}{cccc}
+    \\
+    \toprule
+ & Binary terms & Quadratic terms &  Minimum terms\\
+    \cline{2-4}
+    $J$& No. of shared species & $\sum_{i=1}^S x_{ij} x_{ik}$ &  $\sum_{i=1}^S \min(x_{ij}, x_{ik})$\\
+    $A$ & No. of species in $j$ & $\sum_{i=1}^S x_{ij}^2$ & $\sum_{i=1}^S x_{ij}$\\
+    $B$ & No. of species in $k$ & $\sum_{i=1}^S x_{ik}^2$ & $\sum_{i=1}^S x_{ik}$\\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \caption{\label{tab:formulae} Formulae and common names for some
+    popular dissimilarity measures using terms defined in Table~\ref{tab:terms}.}
+  \begin{tabular}{cccc}
+    \\
+    \toprule
+    & Binary terms & Quadratic terms & Minimum terms\\
+    \cline{2-4}
+    $A+B-2J$ & No. of different species & Squared Euclidean & Manhattan\\
+    $\frac{1}{2}(A+B)-J$ & No name & Jensen & No name \\
+    $\frac{A+B-2J}{A+B}$ & S{\o}rensen & No name & Bray-Curtis \\
+    $\frac{A+B-2J}{A+B-J}$ & Jaccard & Similarity Ratio &Quantitative Jaccard\\
+    $1-\frac{J}{\sqrt{AB}}$ & Ochiai & Cosine complement & No name \\
+    \bottomrule
+  \end{tabular}
+\end{table*}
+
+In \code{designdist} we make a difference between \textit{terms}
+(Table~\ref{tab:terms}) and \textit{formulae}
+(Table~\ref{tab:formulae}) using these terms. Terms can be binary,
+quadratic or first degree terms using minima between variables.  The
+quadratic terms are estimated through matrix multiplication
+$\mathbf{XX'}$. With binary data, the multiplication gives the binary
+parameters of number of species in each community in the diagonal, and
+the numbers of shared species between communities in the off-diagonal
+elements. We can incorporate species dissimilarities in matrix
+multiplication similarly as in eq.~\ref{eq:Hmat}. However, for
+standard dissimilarity measures we must have similarities
+$\mathbf{R} = 1 - \mathbf{D}$ instead of dissimilarities. For
+$\mathbf{D}$ bounded in $(0,1)$, the diagonal elements of $\mathbf{R}$
+are $1$, and off-diagonal elements are complements of dissimilarity
+$\{r_{jk}\} = \{1-d_{jk}\}$, and Rao style quadratic terms will be
+given by
+\begin{equation}
+  \label{eq:raoterms}
+  \mathbf{Q} = \mathbf{P R P'}\,,
+\end{equation}
+and $\mathbf{Q} = 1 - \mathbf{H}$. The Jensen distance of
+eq.~\ref{eq:jensen} will be expressed in the form given in
+Table~\ref{tab:formulae}, e.g., with reversal of signs. The complement
+$1-q_i$ of the cross product matrix is Rao's quadratic entropy,
+andSimpson's diversity evaluated with eq.~\ref{eq:raoterms} is Rao's
+quadratic entropy.
+
+The form of eq.~\ref{eq:raoterms} cannot be applied for the minimum
+terms (Table~\ref{tab:terms}), and this would limit applying Rao
+methods to quadratic and binary terms. However, if we standardize data by
+\begin{equation}
+  \label{eq:raostand}
+  \mathbf{Z} = \mathbf{P R}^{1/2}\,,
+\end{equation}
+then $\mathbf{Q} = \mathbf{Z Z'}$. Matrix $\mathbf{Z}$ has same rows
+and columns as data matrix $\mathbf{P}$, and it can be used to
+estimate the minimum terms of Table~\ref{tab:terms}.
+
+Matrix square root is not square root of its elements
+$\mathbf{D} \neq \{\sqrt{d_{jk}}\}$, but it is defined by matrix
+multiplication $\mathbf{D}^{1/2} \mathbf{D}^{1/2} = \mathbf{D}$. The
+matrix square root is easiest to find via eigen decomposition: If
+\begin{equation}
+  \mathbf{R} = \mathbf{U \Lambda U'}
+\end{equation}
+then
+\begin{equation}
+  \label{eq:matsqrt}
+  \mathbf{R}^{1/2} = \mathbf{U \Lambda}^{1/2} \mathbf{U'}\,
+\end{equation}
+where $\mathbf{U}$ are orthonormal eigenvectors and
+$\mathbf{\Lambda}$ is the diagonal matrix of eigenvalues, and
+$\mathbf{\Lambda}^{1/2} = \mathrm{diag}(\sqrt{\lambda_i})$. For real
+valued matrix squareroot, all eigenvalues must be non-negative and the
+matrix $\mathbf{R}$ must be positive semidefinite. This is true of all
+correlation and covariance matrices, and it seems to be true of
+$\mathbf{R} = 1 - \mathbf{D}$ when $\mathbf{D}$ is Euclidean, or
+eigenvalues of $-\frac{1}{2}\mathbf{\bar D}^2$ are non-negative
+\citep{Gower66}, where $\mathbf{\bar D}$ is the double-centred
+dissimilarity matrix. This is the same condition as for valid
+dissimilarities in Rao's quadratic entropy \citep{Pavoine05}.
+
+I used notation $\mathbf{R}$ for similarities, because they are
+correlation-like and matrix takes the role of correlation structure in
+linear modelling \citep{PinheiroBates00}.
+
+\section{Implementation and Proof of the Concept}
+
+In this section I give the implementation of Rao standardization
+(eq.~\ref{eq:raostand}) and demonstrate that standardized data can be
+used to find Rao's quadratic entropy as Simpson diversity of
+standardized data, and Jensen distance from the Euclidean distance of
+standardized data.
+
+Rao's quadratic entropy is estimated with function \fun{qrao} and
+Rao's distance with \fun{distrao}, both in the \pkg{natto}
+package. For other analyses I use function in base \R{} and
+\pkg{vegan} package. I analyse Terschelling dune meadow vegetation,
+and I use coalescence ages from inferred phylogeny for among species
+dissimilarities (Fig.~\ref{fig:dunephylo}). The phylogeny is
+an ultrametric tree which guarantees that $\mathbf{D}$ is Euclidean
+and $\mathbf{R}$ positive semidefinite \citep{Pavoine05}.
+
+<<dunephylo, echo=FALSE, fig.cap="Dated phylogenetic tree of species in Dutch Dune meadows">>=
+plot(hclust(dune.phylodis), hang=-1, ylab = "Time (Myr)", sub="", main="", xlab="")
+@
+
+Function for Rao standardization function is
+
+<<raostand, echo=FALSE, comment=NA, highlight=TRUE>>=
+dump("raostand", file="")
+@
+
+Most of the functions take care that species distances are bounded in
+$(0,1)$, and in diversity calculations, row sums are $1$. However, we
+are explicit here and take care of this manually:
+
+<<handle>>=
+D <- dune.phylodis/max(dune.phylodis)
+P <- as.matrix(decostand(dune, "tot"))
+Z <- raostand(P, D)
+@
+
+The standardized matrix $\mathbf{Z} = \mathbf{PR}^{1/2}$ has the
+following properties:
+
+Standardization was applied to matrix \code{P} where each row sums up
+to unity. The Simpson index can be found directly from
+
+<<simpson>>=
+tol <- sqrt(.Machine$double.eps)
+all(abs(1 - rowSums(P^2) -
+            diversity(dune, "simpson")) < tol)
+@
+Rao's quadratic entropy can be found from  $\mathbf{Z}$ similarly as
+the Simpson index:
+\begin{equation}
+  1-\sum_{j=1}^S z_i^2 = \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}
+\end{equation}
+<<qrao>>=
+all(abs(1 - rowSums(Z^2) - qrao(dune, D)) < tol)
+@
+Alternatively, Rao's quadratic entropy can be found from
+the crossproduct of standardized data
+$\mathbf{Z}$:
+\begin{equation}
+  1-\mathrm{diag}(\mathbf{ZZ'}) = \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}
+\end{equation}
+<<crossrao>>=
+all(abs(1 - diag(tcrossprod(Z)) -
+            qrao(dune, D)) < tol)
+@
+The Jensen distances $\delta$ (eq.~\ref{eq:jensen}) can be found from the elements
+$\{g_{ij}\} = \mathbf{G} = \mathbf{ZZ'}$ with reversal of signs
+\begin{equation}
+  \tfrac{1}{2}(g_{ii} + g_{jj}) - g_{ij} = H_{ij} - \tfrac{1}{2}(H_i+H_j)\,
+\end{equation}
+and the Eulidean distances of $\mathbf{Z}$ are $(2\delta_{ij})^{1/2}$:
+
+<<dist>>=
+all(abs(distrao(dune, D) - dist(Z)^2/2) < tol)
+@
+
+All postulated equalities were true which shows that the suggested
+standardization indeed works. We can add Rao's method to any
+\pkg{vegan} function with minimal changes in the code. In
+dissimilarity functions (\fun{vegdist}, \fun{designdist}) the input
+data must be tranformed with \fun{raostand}, but the data need not
+have unit row totals. This allows using the Rao method also with
+minimum terms, such as with the popular Bray-Curtis and Jaccard
+indices. It is possible to add Rao's quadratic entropy and its species
+equivalent into \fun{diversity} by applying \fun{raostand} after
+transforming rows to unit totals. However, the standardization does
+work with Shannon index.
+
+\section{Extension and Example}
+
+In this section we apply Rao standardization for analyses based on
+phylogenetic dissimilarities. The data can be tabulated using
+clustering based on phylogenetic Bray-Curtis dissimilarity
+(Fig.~\ref{fig:tabasco}):
+
+<<tabasco, fig.cap="Data table ordered by species phylogeny and clustering based on phylogenetic Bray-Curtis dissimilarity">>=
+tabasco(dune, hclust(vegdist(Z)), hclust(D))
+@
+
+Unconstrained ordination based on phylogenetic Bray-Curtis ordination
+can be performed with NMDS (Fig.~\ref{fig:nmds}):
+
+<<nmds,fig.cap="NMDS based on phylogenetic Bray-Curtis dissimilarity", size='footnotesize'>>=
+ord <- metaMDS(Z, trace=FALSE)
+ord
+plot(ord, type="n")
+text(ord, dis="si", cex=0.7)
+ordilabel(ord, dis="sp", priority=colSums(dune),
+          cex=0.8)
+@
+The species are strongly clustered by their phylogeny. In particularly
+grasses form a very compact group, and so do major clades in Dicots
+(Fig.~\ref{fig:nmds}).
+
+Redundancy Analysis (RDA) is based on Euclidean distances, and when
+performed on Rao standardized data, the analysis will be based on
+phylogenetic distances among sample plots. In the following, we use
+automatic procedure to build a constrained model (Fig.~\ref{fig:rda}):\par
+<<rda, R.options=list(width=62), size='scriptsize', fig.cap="Constrained ordination based on phylogenetic Euclidean distances">>=
+m0 <- rda(Z ~ 1, dune.env)
+m1 <- rda(Z ~ ., dune.env)
+(m <- ordistep(m0, formula(m1)))
+plot(m, scaling="sites")
+@
+The corresponding model with non-phylogenetic Euclidean distances has
+somewhat higher total inertia, but quite a large part of variation is
+also expressed by the phylogetic distances:\par
+<<rdanonphylo, size='scriptsize', R.options=list(width=62)>>=
+update(m, P ~ .)
+@
+
+<<stack,echo=FALSE,fig.cap="Raw data (on the left) and Rao standardized data for sample plot 1.">>=
+par(mar=c(8,1,2,1))
+linestack(P[1,], side="left")
+linestack(Z[1,], add=TRUE)
+title(main="Original vs. Rao Standardized")
+@
+
+Using explicit Rao standardization allows us to see how the data
+actually looks (Fig.~\ref{fig:stack}). The displayed sample plot has
+only five species: four grasses (\emph{Lolium perenne}, \emph{Poa
+  pratensis}, \emph{Elymus repens} and \emph{Poa trivialis}) and one
+species of Compositae (\emph{Achillea millefolium}), and all other
+species have zero abundance. Rao standardization elevates all grasses
+and also other Monocots (\emph{Eleocharis palustre}, \emph{Juncus
+  bufonius}, \emph{J.~articulatus}) to higher value than the only
+observed Dicot \emph{A.~millefolium}. The only missing species that
+remain at zero value are the two bryophytes (\emph{Calliergonella
+  cuspidata}, \emph{Brachythecium rutabulum}) that are both maximally
+separated from the vascular plants (Fig.~\ref{fig:dunephylo}). The
+standardization may sound odd, but it must be understood that it only
+makes the effect transparent. Similar adjustment is done when
+phylogenetic or functional analysis is done without explicit
+standardization.
+
+\bibliography{rao}
+
+\end{document}
