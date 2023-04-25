@@ -9,7 +9,8 @@ the package is not a code kindergarten with guaranteed tenure track to
 
 Currently **natto** contains
 
- * Rao's quadratic entropy and corresponding dissimilarities.
+ * Rao's quadratic entropy, corresponding dissimilarities and
+   compatible data standardization.
  * Polar Ordination A.K.A. Bray-Curtis Ordination.
  * Orlóci's Position Vector Ordination and a related method using
    species as ordination axes.
