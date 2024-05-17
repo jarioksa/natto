@@ -341,7 +341,7 @@
 ##
 ## @return Smoothed values of \code{z}.
 ##
-## @importFrom stats filter
+#' @importFrom stats filter
 ##
 ## not exported
 `smooth121` <-
