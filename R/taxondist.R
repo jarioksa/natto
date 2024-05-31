@@ -9,30 +9,36 @@
 #'     matrix.
 #' @param taxdist Taxonomic, phylogenetic or other dissimilarity
 #'     matrix among species (columns of x).
+#' @param method Type of returned dissimilarity measure.
 #'
-#' @return list of Clarke's Gammaplus and Thetaplus elements as
-#'     distance structures.
+#' @return Clarke's taxonomic dissimilarity index as defined in
+#'     \code{type}.
+#'
 #' @export
 `taxondist` <-
-    function (x, taxdist)
+    function (x, taxdist, method = c("gamma", "theta"))
 {
+    method <- match.arg(method)
     x <- as.matrix(x)
     x <- ifelse(x > 0, 1, 0)
     taxdist <- as.matrix(taxdist)
     if (NCOL(taxdist) != NCOL(x))
         stop("Number of columns do not match in 'x' and 'taxdist'")
     N <- NROW(x)
-    Gammaplus <- matrix(0, N, N)
-    Thetaplus <- matrix(0, N, N)
+    dis <- matrix(0, N, N)
     for(j in 1:(N-1)) {
         for(i in (j+1):N) {
             crosstd <- (outer(x[i,], x[j,]) * taxdist)[x[i,] > 0, x[j,] > 0,
                                                        drop = FALSE]
-           min1 <- apply(crosstd, 1, min)
-           min2 <- apply(crosstd, 2, min)
-           Gammaplus[i,j] <- mean(c(min1, min2))
-           Thetaplus[i,j] <- (mean(min1) + mean(min2))/2
+            min1 <- apply(crosstd, 1, min)
+            min2 <- apply(crosstd, 2, min)
+            dis[i,j] <- switch(method,
+                               "gamma" = mean(c(min1, min2)),
+                               "theta" = (mean(min1) + mean(min2))/2)
         }
     }
-    list(Gammaplus = as.dist(Gammaplus), Thetaplus = as.dist(Thetaplus))
+    dis <- as.dist(dis)
+    attr(dis, "call") <- match.call()
+    attr(dis, "method") <- paste("clarke", method, sep=".")
+    dis
 }

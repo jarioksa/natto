@@ -5,7 +5,7 @@
 \title{Return Gammaplus and Thetaplus Elements of Clarke's Taxonomic
 Community Dissimilarity}
 \usage{
-taxondist(x, taxdist)
+taxondist(x, taxdist, method = c("gamma", "theta"))
 }
 \arguments{
 \item{x}{Community data; will be treated as binary presence/absence
@@ -13,10 +13,12 @@ matrix.}
 
 \item{taxdist}{Taxonomic, phylogenetic or other dissimilarity
 matrix among species (columns of x).}
+
+\item{method}{Type of returned dissimilarity measure.}
 }
 \value{
-list of Clarke's Gammaplus and Thetaplus elements as
-    distance structures.
+Clarke's taxonomic dissimilarity index as defined in
+    \code{type}.
 }
 \description{
 Return Gammaplus and Thetaplus Elements of Clarke's Taxonomic
