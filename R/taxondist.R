@@ -40,5 +40,7 @@
     dis <- as.dist(dis)
     attr(dis, "call") <- match.call()
     attr(dis, "method") <- paste("clarke", method, sep=".")
+    attr(dis, "Labels") <- rownames(x)
+    attr(dis, "maxdist") <- NA
     dis
 }
