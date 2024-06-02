@@ -5,16 +5,18 @@
 \title{Return Gammaplus and Thetaplus Elements of Clarke's Taxonomic
 Community Dissimilarity}
 \usage{
-taxondist(x, taxdist, method = c("gamma", "theta"))
+taxondist(x, d, method = c("gamma", "theta"), dmax)
 }
 \arguments{
 \item{x}{Community data; will be treated as binary presence/absence
 matrix.}
 
-\item{taxdist}{Taxonomic, phylogenetic or other dissimilarity
+\item{d}{Taxonomic, phylogenetic or other dissimilarity
 matrix among species (columns of x).}
 
 \item{method}{Type of returned dissimilarity measure.}
+
+\item{dmax}{Truncate dissimilarities to \code{dmax}.}
 }
 \value{
 Clarke's taxonomic dissimilarity index as defined in

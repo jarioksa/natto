@@ -105,6 +105,7 @@
     div
 }
 #' @param method Distance measure to be used (see Details).
+#' @importFrom stats as.dist
 #' @rdname qrao
 #' @export
 `distrao` <-
@@ -137,7 +138,8 @@
     if (method == "euclidean")
         out <- sqrt(2*out)
     out <- as.dist(out)
-    attr(out, "method") <- paste("rao", method)
+    attr(out, "method") <- paste("rao", method, sep = ".")
     attr(out, "call") <- match.call()
+    attr(out, "maxdist") <- NA
     out
 }

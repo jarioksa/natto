@@ -7,28 +7,32 @@
 #'
 #' @param x Community data; will be treated as binary presence/absence
 #'     matrix.
-#' @param taxdist Taxonomic, phylogenetic or other dissimilarity
+#' @param d Taxonomic, phylogenetic or other dissimilarity
 #'     matrix among species (columns of x).
+#' @param dmax Truncate dissimilarities to \code{dmax}.
 #' @param method Type of returned dissimilarity measure.
 #'
 #' @return Clarke's taxonomic dissimilarity index as defined in
 #'     \code{type}.
 #'
+#' @importFrom stats as.dist
 #' @export
 `taxondist` <-
-    function (x, taxdist, method = c("gamma", "theta"))
+    function (x, d, method = c("gamma", "theta"), dmax)
 {
     method <- match.arg(method)
     x <- as.matrix(x)
     x <- ifelse(x > 0, 1, 0)
-    taxdist <- as.matrix(taxdist)
-    if (NCOL(taxdist) != NCOL(x))
-        stop("Number of columns do not match in 'x' and 'taxdist'")
+    if (!missing(dmax) && any(d > dmax))
+        d[d > dmax] <- dmax
+    d <- as.matrix(d)
+    if (NCOL(d) != NCOL(x))
+        stop("Number of columns do not match in 'x' and 'd'")
     N <- NROW(x)
     dis <- matrix(0, N, N)
     for(j in 1:(N-1)) {
         for(i in (j+1):N) {
-            crosstd <- (outer(x[i,], x[j,]) * taxdist)[x[i,] > 0, x[j,] > 0,
+            crosstd <- (outer(x[i,], x[j,]) * d)[x[i,] > 0, x[j,] > 0,
                                                        drop = FALSE]
             min1 <- apply(crosstd, 1, min)
             min2 <- apply(crosstd, 2, min)
