@@ -52,7 +52,7 @@
 #' variables, assumptions on the shape of species response etc.). You
 #' should be cautious in interpreting the results (and the same
 #' applies also to the analogous Bayesian model).
-#' 
+#'
 #'
 #' @references
 #'
@@ -71,9 +71,9 @@
 #' \strong{11,} 442--447.
 #'
 #' @seealso \CRANpkg{Hmsc} has analogous function
-#'     \code{\link[Hmsc]{computeAssociations}}. However, in \pkg{Hmsc}
-#'     the associations are based on Bayesian latent factors which are
-#'     an essential natural component of the analysis whereas here we
+#'     \code{computeAssociations}. However, in \pkg{Hmsc} the
+#'     associations are based on Bayesian latent factors which are an
+#'     essential natural component of the analysis whereas here we
 #'     apply post-analysis tricks to extract something similar.
 #'
 #' @param x Constrained ordination result from

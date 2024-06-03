@@ -1,4 +1,3 @@
-#' @inheritParams points.humpfit
 #' @param xlab,ylab Axis labels.
 #' @param lwd Line width.
 #' @param l.col,p.col Line and point colours.

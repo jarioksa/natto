@@ -125,12 +125,11 @@ parameter is the location of the \code{hump}.
 
 Function may be very difficult to fit and easily gets trapped into
 local solutions, or fails with non-Poisson families, and function
-\code{profile} should be used to inspect the fitted models. If you
-have loaded \code{package} \pkg{MASS}, you can use functions
-\code{\link[MASS]{plot.profile}}, \code{\link[MASS]{pairs.profile}}
-for graphical inspection of the profiles, and
-\code{\link[MASS]{confint.profile.glm}} for the profile based
-confidence intervals.
+\code{profile} should be used to inspect the fitted models. You can
+use \code{plot.profile}, \code{pairs.profile} for graphical
+inspection of the profiles, and \code{confint} for the profile
+based confidence intervals. (With \R{} prior to 4.4-0 you must use
+\code{library(MASS)} to access these functions.)
 
 The original model intended to show that there is no need to
 speculate about \dQuote{competition} and \dQuote{stress} (Al-Mufti
