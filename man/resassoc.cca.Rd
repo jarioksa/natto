@@ -97,8 +97,8 @@ the R-package Hmsc. \emph{Methods in Ecology and Evolution}
 }
 \seealso{
 \CRANpkg{Hmsc} has analogous function
-    \code{\link[Hmsc]{computeAssociations}}. However, in \pkg{Hmsc}
-    the associations are based on Bayesian latent factors which are
-    an essential natural component of the analysis whereas here we
+    \code{computeAssociations}. However, in \pkg{Hmsc} the
+    associations are based on Bayesian latent factors which are an
+    essential natural component of the analysis whereas here we
     apply post-analysis tricks to extract something similar.
 }

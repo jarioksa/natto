@@ -84,9 +84,9 @@ species space. Orlóci (1973b) suggesed SVO as a method of selecting
 a subset of species or variables that contributes most of the
 variance in the data. The current \code{spvectord} function can
 also be used for this purpose, although it is mainly geared for
-ordination. \CRANpkg{dave} package has function
-\code{\link[dave]{orank}} specifically written for variable or
-species selection using the same algorithm.
+ordination. \CRANpkg{dave} package has function \code{orank}
+specifically written for variable or species selection using the
+same algorithm.
 }
 \examples{
 data(spurn)
