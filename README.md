@@ -9,8 +9,9 @@ the package is not a code kindergarten with guaranteed tenure track to
 
 Currently **natto** contains
 
- * Rao's quadratic entropy, corresponding dissimilarities and
-   compatible data standardization.
+ * Rao's quadratic entropy, phylogenetic dissimilarities and
+   phylogenetic data standardization, plus related Clarke's taxonomic
+   dissimilarity.
  * Polar Ordination A.K.A. Bray-Curtis Ordination.
  * Orlóci's Position Vector Ordination and a related method using
    species as ordination axes.
@@ -53,4 +54,9 @@ directly from `github`:
 install.packages("devtools") # if you have not yet installed devtools
 library(devtools)
 install_github("jarioksa/natto")
+```
+Binary package can be installed via R-Universe:
+```r
+install.packages("natto", repos = c("https://jarioksa.r-universe.dev",
+"https://cloud.r-project.org"))
 ```
