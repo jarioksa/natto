@@ -58,9 +58,11 @@
 #' Biology} 21, 24--43.
 #'
 #' @seealso There are other implementations of this function in
-#' \R. Most notably functions \code{\link[ade4]{divc}} and
-#' \code{\link[ade4]{disc}} in \pkg{ade4}. However, these may square
-#' input dissimilarities and divide results by 2 depending on options.
+#'     \R. Most notably functions \code{\link[ade4]{divc}} and
+#'     \code{\link[ade4]{disc}} in \pkg{ade4}. However, these may
+#'     square input dissimilarities and divide results by 2 depending
+#'     on options.  Function \code{\link{taxondist}} provides Clarke's
+#'     taxonomic dissimilarity.
 #'
 #' @examples
 #' if (require(vegan)) {
