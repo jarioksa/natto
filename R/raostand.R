@@ -93,6 +93,8 @@
     d <- vec %*% (sqrt(ev) * t(vec))
     ## transform
     x <- x %*% d
+    if (any(abs(x) < TOL))
+        x[abs(x) < TOL] <- 0
     attr(x, "dimnames") <- dn
     x
 }
