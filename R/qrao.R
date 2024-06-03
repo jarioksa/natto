@@ -58,9 +58,11 @@
 #' Biology} 21, 24--43.
 #'
 #' @seealso There are other implementations of this function in
-#' \R. Most notably functions \code{\link[ade4]{divc}} and
-#' \code{\link[ade4]{disc}} in \pkg{ade4}. However, these may square
-#' input dissimilarities and divide results by 2 depending on options.
+#'     \R. Most notably functions \code{\link[ade4]{divc}} and
+#'     \code{\link[ade4]{disc}} in \pkg{ade4}. However, these may
+#'     square input dissimilarities and divide results by 2 depending
+#'     on options.  Function \code{\link{taxondist}} provides Clarke's
+#'     taxonomic dissimilarity.
 #'
 #' @examples
 #' if (require(vegan)) {
@@ -105,6 +107,7 @@
     div
 }
 #' @param method Distance measure to be used (see Details).
+#' @importFrom stats as.dist
 #' @rdname qrao
 #' @export
 `distrao` <-
@@ -137,7 +140,8 @@
     if (method == "euclidean")
         out <- sqrt(2*out)
     out <- as.dist(out)
-    attr(out, "method") <- paste("rao", method)
+    attr(out, "method") <- paste("rao", method, sep = ".")
     attr(out, "call") <- match.call()
+    attr(out, "maxdist") <- NA
     out
 }
