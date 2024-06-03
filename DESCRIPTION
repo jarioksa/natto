@@ -1,6 +1,6 @@
 Package: natto
 Title: An Extreme 'vegan' Package of Experimental Code
-Version: 0.2
+Version: 0.3
 Authors@R: person(given = "Jari", family = "Oksanen",
                   role = c("cre","aut"),
                   email = "jhoksane@gmail.com")
