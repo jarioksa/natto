@@ -11,12 +11,14 @@ taxondist(x, d, method = c("gamma", "theta"), dmax)
 \item{x}{Community data; will be treated as binary presence/absence
 matrix.}
 
-\item{d}{Taxonomic, phylogenetic or other dissimilarity
-matrix among species (columns of x).}
+\item{d}{Taxonomic, phylogenetic or other dissimilarities among
+species (columns of \code{x}).}
 
-\item{method}{Type of returned dissimilarity measure.}
+\item{method}{Type of returned dissimilarity index.}
 
-\item{dmax}{Truncate dissimilarities to \code{dmax}.}
+\item{dmax}{Scale dissimilarities by \code{dmax} (if \code{dmax >
+max(d)}) or truncate dissimilarities at \code{dmax} (if
+\code{dmax < max(d)}).}
 }
 \value{
 Clarke's taxonomic dissimilarity index as defined in

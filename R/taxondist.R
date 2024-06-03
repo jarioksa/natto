@@ -7,10 +7,12 @@
 #'
 #' @param x Community data; will be treated as binary presence/absence
 #'     matrix.
-#' @param d Taxonomic, phylogenetic or other dissimilarity
-#'     matrix among species (columns of x).
-#' @param dmax Truncate dissimilarities to \code{dmax}.
-#' @param method Type of returned dissimilarity measure.
+#' @param d Taxonomic, phylogenetic or other dissimilarities among
+#'     species (columns of \code{x}).
+#' @param dmax Scale dissimilarities by \code{dmax} (if \code{dmax >
+#'     max(d)}) or truncate dissimilarities at \code{dmax} (if
+#'     \code{dmax < max(d)}).
+#' @param method Type of returned dissimilarity index.
 #'
 #' @return Clarke's taxonomic dissimilarity index as defined in
 #'     \code{type}.
@@ -23,8 +25,15 @@
     method <- match.arg(method)
     x <- as.matrix(x)
     x <- ifelse(x > 0, 1, 0)
-    if (!missing(dmax) && any(d > dmax))
-        d[d > dmax] <- dmax
+    d <- as.dist(d)
+    ## scale or truncate by dmax
+    if (!missing(dmax)) {
+        d <- d/dmax
+        if (max(d) > 1)
+            d[d > 1] <- 1
+    } else if (max(d) > 1) {
+        d <- d/max(d)
+    }
     d <- as.matrix(d)
     if (NCOL(d) != NCOL(x))
         stop("Number of columns do not match in 'x' and 'd'")
@@ -45,6 +54,6 @@
     attr(dis, "call") <- match.call()
     attr(dis, "method") <- paste("clarke", method, sep=".")
     attr(dis, "Labels") <- rownames(x)
-    attr(dis, "maxdist") <- NA
+    attr(dis, "maxdist") <- 1
     dis
 }
