@@ -14,10 +14,11 @@
 #' @param pts Coordinates of points, a two-column matrix
 #' @param keep Proportion of points kept
 #' @param criterion Criterion to remove a point on the
-#'     hull. \code{"area"} removes the point that reduces the area of
-#'     the new hull as much as possible, while \code{"distance"} and
-#'     \code{"mahalanobis"} remove the point that has the largest
-#'     total distance to all points on and within the hull.
+#'     hull. \code{"area"} removes the point that reduces the area
+#'     most, \code{"distance"} remove the point at the hull that has
+#'     the largest total distance to all points on and within the
+#'     hull, and \code{"mahalanobis"} remove the point with longest
+#'     Mahalanobis distance to the centroid.
 #'
 #' @details
 #'
@@ -137,13 +138,19 @@
 #' @rdname peelhull
 #' @export
 `peelellipse` <-
-    function(pts, keep = 0.9)
+    function(pts, keep = 0.9, criterion = c("area", "mahalanobis"))
 {
     stopifnot(ncol(pts) == 2, keep <= 1, keep > 0)
+    criterion <- match.arg(criterion)
     ndrop <- as.integer(nrow(pts) * (1 - keep))
     for (k in seq_len(ndrop)) {
-        del <- which.max(mahalanobis(pts, colMeans(pts), cov(pts)))
-        pts <- pts[-del,, drop=FALSE]
+        del <-
+            switch(criterion,
+                   "mahalanobis" = which.max(mahalanobis(pts, colMeans(pts),
+                                                         cov(pts))),
+                   "area" = which.min(sapply(seq_len(nrow(pts)), function(i)
+                                             volume(ellipsoidhull(pts[-i,])))))
+            pts <- pts[-del,, drop=FALSE]
     }
     ell <- ellipsoidhull(pts)
     out <- predict(ell)

@@ -8,7 +8,7 @@
 \usage{
 peelhull(pts, keep = 0.9, criterion = c("area", "distance", "mahalanobis"))
 
-peelellipse(pts, keep = 0.9)
+peelellipse(pts, keep = 0.9, criterion = c("area", "mahalanobis"))
 }
 \arguments{
 \item{pts}{Coordinates of points, a two-column matrix}
@@ -16,10 +16,11 @@ peelellipse(pts, keep = 0.9)
 \item{keep}{Proportion of points kept}
 
 \item{criterion}{Criterion to remove a point on the
-hull. \code{"area"} removes the point that reduces the area of
-the new hull as much as possible, while \code{"distance"} and
-\code{"mahalanobis"} remove the point that has the largest
-total distance to all points on and within the hull.}
+hull. \code{"area"} removes the point that reduces the area
+most, \code{"distance"} remove the point at the hull that has
+the largest total distance to all points on and within the
+hull, and \code{"mahalanobis"} remove the point with longest
+Mahalanobis distance to the centroid.}
 }
 \value{
 A two-column matrix of coordinates of peeled hull or
