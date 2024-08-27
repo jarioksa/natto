@@ -8,7 +8,7 @@
 \usage{
 peelhull(pts, keep = 0.9, criterion = c("area", "distance", "mahalanobis"))
 
-peelellipse(pts, keep = 0.9)
+peelellipse(pts, keep = 0.9, criterion = c("area", "mahalanobis"))
 }
 \arguments{
 \item{pts}{Coordinates of points, a two-column matrix}
@@ -16,10 +16,11 @@ peelellipse(pts, keep = 0.9)
 \item{keep}{Proportion of points kept}
 
 \item{criterion}{Criterion to remove a point on the
-hull. \code{"area"} removes the point that reduces the area of
-the new hull as much as possible, while \code{"distance"} and
-\code{"mahalanobis"} remove the point that has the largest
-total distance to all points on and within the hull.}
+hull. \code{"area"} removes the point that reduces the area
+most, \code{"distance"} remove the point at the hull that has
+the largest total distance to all points on and within the
+hull, and \code{"mahalanobis"} remove the point with longest
+Mahalanobis distance to the centroid.}
 }
 \value{
 A two-column matrix of coordinates of peeled hull or
@@ -34,17 +35,13 @@ the hull or ellipse one by one. The points are selected either so
 that the area of the remaining hull is reduced as much as possible
 at every step (de Smith, Goodrich & Longley 2007), or removing the
 point that has the maximal total distance to all remaining
-points.
+points or longest Mahalanobis distance to the group.
 }
 \details{
 Reduction of area is the only criterion that really is based the
-area of the ellipse and only uses points on the hull. The other
-methods are based on the distances to all points within and on the
-hull. In \code{peelpoly}, the distance can be either isometric
-Euclidean distance or Mahalanobis distance where the distance is
-evaluated with respect to the covariance ellipse of points in the
-polygon. Function \code{peelellipse} is based on Mahalanobis
-distance. The functions only work in 2D.
+area. The other methods are based on the distances to all points
+within and on the hull or on the Mahalanobis distance. The
+functions only work in 2D.
 
 The algorithms are naïve, and stepwise removal of single points
 does not guarantee smallest possible final hull. Two outlier points
@@ -53,9 +50,7 @@ removing both together would give a large reduction of the
 hull. The \code{"distance"} criterion produces circular hulls, but
 \code{"mahalanobis"} will better preserve the original elongation
 of the configuration, although it rarely gives smaller areas than
-\code{"area"} criterion. \code{peelellipse} and \code{peelhull}
-with criterion \code{"mahalanobis"} results have the same points on
-the perimeter of the shape.
+\code{"area"} criterion.
 }
 \examples{
 
