@@ -88,6 +88,10 @@
                             maxdist = 1),
         "steinhaus" = list(method = "(A+B-2*J)/(A+B)", terms = "minimum",
                            maxdist = 1),
+        ## Zero-adjusted Bray Curtis of Clarke & al. (2006) J Exp Marine
+        ## Biol & Ecol 330:55-80
+        "bray0" = list(method = "(A+B-2*J)/(A+B+2*min(x[x>0]))",
+                                 terms = "minimum", maxdist = NA),
         ## Another popular one
         "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary",
                          maxdist = 1),
@@ -95,6 +99,7 @@
                          maxdist = 1),
         "similarityratio" = list(method = "(A+B-2*J)/(A+B-J)",
                                  terms = "quadratic", maxdist = 1),
+
         ## Yue & Clayton (2005) Commun Stat Theory Methods 23, 2123-2131
         "yueclayton" = list(method = "(A+B-2*J)/(A+B-J)", terms = "quadratic",
                             maxdist = 1),
