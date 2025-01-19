@@ -38,6 +38,12 @@
 #' @encoding UTF-8
 #' @references
 #'
+#' Clarke, K.R., Somerfield, P.J. & Chapman, M.G. (2006).
+#' On resemblance measures for ecological studies,
+#' including taxonomic dissimilarities and a zero-adjusted
+#' Bray-Curtis coefficient for denuded assemblages.
+#' \emph{J. Exp. Marine Biol. & Ecol.} 330, 55-80. (\code{bray0}).
+#'
 #' \enc{Hubálek}{Hubalek}, Z. (1982). Coefficients of association and
 #' similarity, based on binary (presence-absence) data: an
 #' evaluation. \emph{Biological Review} 57, 669--689.
