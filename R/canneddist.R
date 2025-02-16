@@ -97,7 +97,7 @@
         ## Zero-adjusted Bray Curtis of Clarke & al. (2006) J Exp Marine
         ## Biol & Ecol 330:55-80
         "bray0" = list(method = "(A+B-2*J)/(A+B+2*min(x[x>0]))",
-                                 terms = "minimum", maxdist = NA),
+                                 terms = "minimum", maxdist = 1),
         ## Another popular one
         "jaccard" = list(method = "(A+B-2*J)/(A+B-J)", terms = "binary",
                          maxdist = 1),
