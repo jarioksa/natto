@@ -114,11 +114,9 @@
     function(x, d, method = c("jensen", "euclidean", "standardized"), dmax)
 {
     method <- match.arg(method)
-    ## Handle as in qrao
     x <- as.matrix(x)
-    x <- decostand(x, "tot")
     if (missing(d)) {
-        d <- 1 - diag(nrow = ncol(x))
+        d <- diag(nrow = ncol(x))
     } else {
         d <- as.dist(d)
         ## scale or truncate by dmax (NB, no NA allowed)
@@ -135,8 +133,7 @@
     ## Distances
     if (method == "standardized")
         H <- log(H)
-    diaH <- diag(H)
-    out <- H - outer(diaH, diaH, "+")/2
+    out <- outer(diag(H), diag(H), "+")/2 - H
     if (method == "euclidean")
         out <- sqrt(2*out)
     out <- as.dist(out)
