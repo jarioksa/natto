@@ -47,9 +47,7 @@ Currently **natto** contains
 
 ### Installation
 
-There are no binary packages available at the moment, but if you install 
-Hadley Wickham's **devtools** package from `CRAN`, you can install **natto**
-directly from `github`:
+Install **natto** directly from `github`:
 ```R
 install.packages("devtools") # if you have not yet installed devtools
 library(devtools)
