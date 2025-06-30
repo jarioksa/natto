@@ -29,7 +29,7 @@
 #'
 #' Function \code{distrao} finds distances based on quadratic entropy
 #' for sampling units. Rao (1982) suggested distance \eqn{d_{ij} =
-#' H_{ij} - \frac{1}{2}(H_i + H_j)}{d[ij] = H[ij] - 0.5*(H[i]+H[j])},
+#' \frac{1}{2}(H_i + H_j) - H_{ij}}{d[ij] = 0.5*(H[i]+H[j]) - H[ij]},
 #' where \eqn{H_i}{H[i]} and \eqn{H_j}{H[j]} are Rao entropies for
 #' sites \eqn{i} and \eqn{j} and \eqn{H_{ij}}{H[ij]} is the similar
 #' entropy evaluated so that the species proportions \eqn{p} are from
@@ -111,10 +111,13 @@
 #' @rdname qrao
 #' @export
 `distrao` <-
-    function(x, d, method = c("jensen", "euclidean", "standardized"), dmax)
+    function(x, d, method = c("jensen", "euclidean", "standardized"),
+             propx = TRUE, dmax)
 {
     method <- match.arg(method)
     x <- as.matrix(x)
+    if (propx)
+        x <- decostand(x, "total")
     if (missing(d)) {
         d <- diag(nrow = ncol(x))
     } else {
