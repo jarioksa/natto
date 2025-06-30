@@ -126,7 +126,7 @@
                 d[d > 1] <- 1
         } else if (max(d) > 1)
             d <- d/max(d)
-        d <- as.matrix(d)
+        d <- 1 - as.matrix(d)
     }
     ## qrao found only diagonal elements, but now we need off-diagonal, too.
     H <- x %*% d %*% t(x)
