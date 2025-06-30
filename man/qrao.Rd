@@ -8,7 +8,8 @@
 \usage{
 qrao(x, d, na.rm = FALSE, dmax)
 
-distrao(x, d, method = c("jensen", "euclidean", "standardized"), dmax)
+distrao(x, d, method = c("jensen", "euclidean", "standardized"),
+  propx = TRUE, dmax)
 
 raostand(x, d, propx = TRUE, dmax)
 }
@@ -69,7 +70,7 @@ diversity.
 
 Function \code{distrao} finds distances based on quadratic entropy
 for sampling units. Rao (1982) suggested distance \eqn{d_{ij} =
-H_{ij} - \frac{1}{2}(H_i + H_j)}{d[ij] = H[ij] - 0.5*(H[i]+H[j])},
+\frac{1}{2}(H_i + H_j) - H_{ij}}{d[ij] = 0.5*(H[i]+H[j]) - H[ij]},
 where \eqn{H_i}{H[i]} and \eqn{H_j}{H[j]} are Rao entropies for
 sites \eqn{i} and \eqn{j} and \eqn{H_{ij}}{H[ij]} is the similar
 entropy evaluated so that the species proportions \eqn{p} are from
@@ -80,16 +81,17 @@ suggested a standardized distance that is based on logarithms of
 elements \eqn{H}.
 
 Function \code{raostand} standardizes data similarlty as implicitly
-done in \code{qrao} and \code{raodist} when \code{propx =
-TRUE}. For standardized data \code{Z}, quadratic entropy is found
-as \code{1 - rowSums(Z^2)}, and Rao distances can be found via
-Euclidean distances of \code{Z}. The standardized data allows
-calculating any generic community dissimilarity, and using \code{Z}
-in \code{\link[vegan]{rda}} allows performing phylogenitically
-constrained RDA. The standardization does not preserve absences,
-but zero abundances will be boosted to positive values when the
-sampling unit has related species.  More details can be found in
-vignette.
+done in \code{qrao} and \code{raodist}. Function \code{qrao} always
+standardizes rows to unit sum, but this is optional in
+\code{raodist} and \code{raostand}. For standardized data \code{Z},
+quadratic entropy is found as \code{1 - rowSums(Z^2)}, and Rao
+distances can be found via Euclidean distances of \code{Z}. The
+standardized data allows calculating any generic community
+dissimilarity, and using \code{Z} in \code{\link[vegan]{rda}}
+allows performing phylogenitically constrained RDA. The
+standardization does not preserve absences, but zero abundances
+will be boosted to positive values when the sampling unit has
+related species.  More details can be found in vignette.
 }
 \examples{
 if (require(vegan)) {

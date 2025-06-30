@@ -10,16 +10,17 @@
 #' @details
 #'
 #' Function \code{raostand} standardizes data similarlty as implicitly
-#' done in \code{qrao} and \code{raodist} when \code{propx =
-#' TRUE}. For standardized data \code{Z}, quadratic entropy is found
-#' as \code{1 - rowSums(Z^2)}, and Rao distances can be found via
-#' Euclidean distances of \code{Z}. The standardized data allows
-#' calculating any generic community dissimilarity, and using \code{Z}
-#' in \code{\link[vegan]{rda}} allows performing phylogenitically
-#' constrained RDA. The standardization does not preserve absences,
-#' but zero abundances will be boosted to positive values when the
-#' sampling unit has related species.  More details can be found in
-#' vignette.
+#' done in \code{qrao} and \code{raodist}. Function \code{qrao} always
+#' standardizes rows to unit sum, but this is optional in
+#' \code{raodist} and \code{raostand}. For standardized data \code{Z},
+#' quadratic entropy is found as \code{1 - rowSums(Z^2)}, and Rao
+#' distances can be found via Euclidean distances of \code{Z}. The
+#' standardized data allows calculating any generic community
+#' dissimilarity, and using \code{Z} in \code{\link[vegan]{rda}}
+#' allows performing phylogenitically constrained RDA. The
+#' standardization does not preserve absences, but zero abundances
+#' will be boosted to positive values when the sampling unit has
+#' related species.  More details can be found in vignette.
 #'
 #' @examples
 #' ## Rao standardization
