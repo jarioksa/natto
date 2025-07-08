@@ -25,7 +25,7 @@
 #' of the dissimilarities, and its analysis does not suffer from the
 #' imaginary distances, but these can ruin the analysis of
 #' dissimilarities returned from this function.
-#' 
+#'
 #' @references McArdle, B.H. & Anderson, M.J. (2001). Fitting
 #'   multivariate models to community data: a comment on distance-based
 #'   redundancy analysis. \emph{Ecology} 82, 290--297.
@@ -44,13 +44,13 @@
 #'    non-negative. Alternatives are \code{"lingoes"} (default, also
 #'    used with \code{TRUE}) and \code{"cailliez"} (which is the only
 #'    alternative in \code{\link{cmdscale}}).
-#' 
+#'
 #' @param residuals Return residuals after constraints.
 #'
 #' @param squared Return squared dissimilarities instead of
 #' dissimilarities. This allows handling negative squared distances by
 #' the user instead of setting them \code{NaN}.
-#' 
+#'
 #' @export
 `distconstrain` <-
     function(formula, data, add = FALSE, residuals = FALSE,
@@ -108,5 +108,6 @@
         warning("some dissimilarities were negative")
     if (!squared)
         dis <- sqrt(dis)
+    attr(dis, "call") <- match.call()
     dis
 }
