@@ -4,7 +4,7 @@
 \alias{cNMDS}
 \title{Constrained Nonmetric Multidimensional Scaling}
 \usage{
-cNMDS(formula, data, k = 2)
+cNMDS(formula, data, k = 2, add = FALSE)
 }
 \arguments{
 \item{formula}{Model formula where the left-hand side must be
@@ -14,6 +14,10 @@ dissimilarities, and right-hand side the constraints.}
 the formula.}
 
 \item{k}{Number of dimensions in NMDS.}
+
+\item{add}{Type of additive constant used to avoid negative squared
+distances in \code{\link{distconstrain}}. Either
+\code{"lingoes"} or \code{"cailliez"} or \code{FALSE}.}
 }
 \description{
 Adds points based on community dissimilarities on the NMDS
