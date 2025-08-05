@@ -17,9 +17,11 @@
     cdis <- distconstrain(formula, data)
     ## step 2: NMDS of constrained dissimilarities
     m0 <- cmdscale(cdis, k = k)
+    cdis[] <- rank(cdis, ties = "min")
     sol <- monoMDS(cdis, m0, k = k)
     ## step 3: Constrained ommunity ordination
     dis <- eval(formula[[2]])
+    dis[] <- rank(dis, ties = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
     ## construct result object
     sol$constraints <- sol$points
