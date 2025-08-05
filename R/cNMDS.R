@@ -1,5 +1,19 @@
 #' Constrained Nonmetric Multidimensional Scaling
 #'
+#' Adds points based on community dissimilarities on the NMDS
+#' based on constrained dissimilarities.
+#'
+#' The steps of algorithm are:
+#' \enumerate{
+#'   \item Find constrained dissimilarities for given constraints
+#'     with \code{\link{distconstrain}}.
+#'   \item Find NMDS of constrained dissimilarities with
+#'     \code{\link[vegan]{monoMDS}} using metric scaling as initial
+#'     configuration.
+#'   \item Add points to constrained ordination using unconstrained
+#'     community dissimilarities with \code{\link[vegan]{MDSaddpoints}}.
+#' } % end enumerate
+#'
 #' @param formula Model formula where the left-hand side must be
 #'     dissimilarities, and right-hand side the constraints.
 #' @param data Data frame to find the terms on the right-hand side of
