@@ -105,7 +105,7 @@
     ## zap & check negative distances
     dis[abs(dis) < ZAP] <- 0
     if (squared && any(dis < 0))
-        warning("some dissimilarities were negative")
+        message("some squared dissimilarities were negative")
     if (!squared)
         dis <- sqrt(dis)
     attr(dis, "call") <- match.call()
