@@ -45,6 +45,12 @@
 #' industrialization and the distribution and growth of epiphytic
 #' lichens and mosses in Montreal. \emph{Can. J. Bot.} 48, 1485--1496.
 #'
+#' @examples
+#' data(spurn)
+#' iq <- iapq(spurn)
+#' plot(iq, type="t", optimize = T, bg = "white")
+#' iap(spurn, iq)
+#'
 #' @param comm The community data frame.
 #' @param freq.min Minimum number of occurrences for analysed species.
 #' @param permutations Number of permutations to assess the randomized
@@ -95,17 +101,45 @@
     drop(comm %*% iapq[, 2, drop=FALSE])
 }
 
-#' @importFrom graphics matlines plot.default
+#' @importFrom graphics matlines plot.default points text
+#' @importFrom vegan ordilabel ordipointlabel
+#'
 #' @param x \code{iapq} result object.
+#' @param type Plot \code{"p"}oints or \code{"t"}ext.
+#' @param optimize Optimize location of points to minimize overplotting.
+#' @param bg Background colour of labels for text.
+#' @param labels Text labels to replace original species names.
+#' @param cex Character expansion for text and points.
 #' @param \dots Other arguments to the function.
+#'
 #' @rdname iap
 #' @export
 `plot.iapq` <-
-    function (x, ...)
+    function (x, type = c("p", "t"), optimize = FALSE, bg, labels, cex=0.7,
+              ...)
 {
-    plot.default(x, ...)
-    i <- order(x[,1])
+    type <- match.arg(type)
+    plot.default(x, ..., type = "n")
+    i <- order(x[,"Freq"], -x[,"E(Q)"])
     matlines(x[i,1], x[i,4:6], lty=c(1,2,2), ...)
+    if (type == "p")
+        points(x, cex = cex, ...)
+    else if (type == "t") {
+        if (missing(labels))
+            labels <- rownames(x)
+        if (!missing(bg)) {
+            i <- order(abs(x[, "SES"]))
+            x <- x[i,]
+            labels <- labels[i]
+        }
+        if (optimize) {
+            ordipointlabel(x, display = "sites", add = TRUE, bg = bg,
+                           labels = labels, xpd = TRUE, cex = cex, ...)
+        } else if (missing(bg))
+            text(x, labels = labels, cex = cex, ...)
+        else
+            ordilabel(x, labels = labels, cex = cex, fill = bg, ...)
+    }
 }
 
 #' @importFrom stats printCoefmat
