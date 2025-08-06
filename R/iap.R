@@ -48,7 +48,7 @@
 #' @examples
 #' data(spurn)
 #' iq <- iapq(spurn)
-#' plot(iq, type="t", optimize = T, bg = "white")
+#' plot(iq, type="t", optimize = TRUE, bg = "white")
 #' iap(spurn, iq)
 #'
 #' @param comm The community data frame.
