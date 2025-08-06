@@ -11,7 +11,7 @@ iapq(comm, freq.min = 5, permutations = 999)
 
 iap(comm, iapq)
 
-\method{plot}{iapq}(x, ...)
+\method{plot}{iapq}(x, type = c("p", "t"), optimize = FALSE, bg, labels, cex = 0.7, ...)
 
 \method{summary}{iapq}(object, ...)
 }
@@ -26,6 +26,16 @@ number of companion species.}
 \item{iapq}{Result of \code{iapq}.}
 
 \item{x}{\code{iapq} result object.}
+
+\item{type}{Plot \code{"p"}oints or \code{"t"}ext.}
+
+\item{optimize}{Optimize location of points to minimize overplotting.}
+
+\item{bg}{Background colour of labels for text.}
+
+\item{labels}{Text labels to replace original species names.}
+
+\item{cex}{Character expansion for text and points.}
 
 \item{\dots}{Other arguments to the function.}
 
@@ -73,6 +83,13 @@ and the number of greater or less random values is multiplied with
 two. The observed value of \eqn{Q} is included in the random sample
 of species richness values both in assessing the \eqn{p}-value and
 in estimating the quantiles.
+}
+\examples{
+data(spurn)
+iq <- iapq(spurn)
+plot(iq, type="t", optimize = T, bg = "white")
+iap(spurn, iq)
+
 }
 \references{
 LeBlanc, S.C. & De Sloover, J. (1970) Relation between
