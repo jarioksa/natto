@@ -2,9 +2,15 @@
 % Please edit documentation in R/cNMDS.R
 \name{cNMDS}
 \alias{cNMDS}
+\alias{scores.cNMDS}
+\alias{plot.cNMDS}
 \title{Constrained Nonmetric Multidimensional Scaling}
 \usage{
 cNMDS(formula, data, k = 2, add = FALSE)
+
+\method{scores}{cNMDS}(x, display = "sites", ...)
+
+\method{plot}{cNMDS}(x, display = "sites", type = "p", ...)
 }
 \arguments{
 \item{formula}{Model formula where the left-hand side must be
@@ -18,6 +24,12 @@ the formula.}
 \item{add}{Type of additive constant used to avoid negative squared
 distances in \code{\link{distconstrain}}. Either
 \code{"lingoes"} or \code{"cailliez"} or \code{FALSE}.}
+
+\item{display}{Kind of scores to display. Can be one or several of
+\code{"sites"}, \code{"constraints"}, \code{"biplot"},
+\code{"centroids"}, or alternative \code{"all"} for all these.}
+
+\item{type}{Either \code{"t"}ext, \code{"p"}oints or \code{"n"}one.}
 }
 \description{
 Adds points based on community dissimilarities on the NMDS

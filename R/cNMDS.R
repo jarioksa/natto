@@ -48,13 +48,15 @@
     terms <- delete.response(terms(formula, data = data))
     mf <- model.frame(terms, data = data)
     ef <- envfit(m2, mf)
-    if (!is.null(ef$vectors))
+    if (!is.null(ef$vectors)) {
         sol$biplot <- scores(ef, "vectors")
+        attr(sol$biplot, "score") <- "biplot"
+    }
     if (!is.null(ef$factors))
         sol$centroids <- scores(ef, "factors")
     ## construct result object: inherits from vegan::monoMDS
     sol$constraints <- sol$points
-    sol$points <- m2$points
+    sol$sites <- m2$points
     sol$stress <- sol$stress + m2$deltastress
     attr(sol$points, "pc") <- FALSE
     sol$call <- match.call()
@@ -66,4 +68,41 @@
     sol$iscal <- FALSE
     class(sol) <- c("cNMDS", class(sol))
     sol
+}
+
+#' @rdname cNMDS
+#' @param display Kind of scores to display. Can be one or several of
+#'     \code{"sites"}, \code{"constraints"}, \code{"biplot"},
+#'     \code{"centroids"}, or alternative \code{"all"} for all these.
+#' @export
+`scores.cNMDS` <-
+    function(x, display = "sites", ...)
+{
+    scores <- c("sites", "constraints", "biplot", "centroids")
+    display <- match.arg(display, c("all", scores), several.ok = TRUE)
+    if ("all" %in% display)
+        display <- scores
+    keep <- display %in% names(x)
+    display <- display[keep]
+    out <- x[display]
+    if (is.list(out) && length(out) == 1)
+        out <- out[[1]]
+    out
+}
+
+#' @rdname cNMDS
+#' @param type Either \code{"t"}ext, \code{"p"}oints or \code{"n"}one.
+#' @export
+`plot.cNMDS` <-
+    function(x, display = "sites", type = "p", ...)
+{
+    if (length(display) > 1)
+        stop("only one item can be used in plot: use text(), points() in pipe for others")
+    out <- scores(x, display = "all")
+    xlim <- range(sapply(out, function(z) z[,1]))
+    ylim <- range(sapply(out, function(z) z[,2]))
+    plt <- scores(x, display = display)
+    suppressMessages(ordiplot(plt, type = type, xlim = xlim, ylim = ylim, ...))
+    class(out) <- c("cNMDS", "ordiplot")
+    invisible(out)
 }
