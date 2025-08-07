@@ -23,8 +23,8 @@
 #'     distances in \code{\link{distconstrain}}. Either
 #'     \code{"lingoes"} or \code{"cailliez"} or \code{FALSE}.
 #'
-#' @importFrom stats cmdscale
-#' @importFrom vegan monoMDS, MDSaddpoints
+#' @importFrom stats cmdscale delete.response terms model.frame
+#' @importFrom vegan monoMDS MDSaddpoints envfit scores
 #'
 #' @export
 `cNMDS` <-
@@ -44,6 +44,14 @@
     dis <- eval(formula[[2]])
     dis[] <- rank(dis, ties.method = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
+    ## This was the last step: the rest is janitorial and adding candies
+    terms <- delete.response(terms(formula, data = data))
+    mf <- model.frame(terms, data = data)
+    ef <- envfit(m2, mf)
+    if (!is.null(ef$vectors))
+        sol$biplot <- scores(ef, "vectors")
+    if (!is.null(ef$factors))
+        sol$centroids <- scores(ef, "factors")
     ## construct result object: inherits from vegan::monoMDS
     sol$constraints <- sol$points
     sol$points <- m2$points
