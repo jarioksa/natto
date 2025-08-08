@@ -13,6 +13,60 @@
 #'     community dissimilarities with \code{\link[vegan]{MDSaddpoints}}.
 #' } % end enumerate
 #'
+#' The algorithms creates analogous result to constrained eigenvector
+#' ordination such as distance-based RDA (\code{\link[vegan]{dbrda}}).
+#' The constrained NMDS is similar to linear combination (LC) scores
+#' and the site NMDS analogous to to weighted averages (WA) scores of
+#' db-RDA. The \code{cNMDS} site scores are found by adding the sites
+#' with their community dissimilarities as new points to constrained
+#' ordination. Instead of raw dissimilarities, both the constrained
+#' ordination and the site ordination ("new points") are based on
+#' ranks of dissimilarities (with ties). The ranks give the same
+#' result as raw dissimilarities within one set of dissimilarities
+#' (constrained, community), but with them these constrained and
+#' community ordination are rank-order similar.
+#'
+#' Although the idea of the algorithm is simple and obvious, the
+#' results are often far from satisfactory. Quite often the community
+#' dissimilarities and constrained dissimilarities differ from each
+#' other so strongly that the new added points (community) are
+#' expelled from the constrained configuration and are located at the
+#' outskirts of the ordination instead of being mixed with the
+#' constrained points.
+#'
+#' @return Function returns an object of class \code{"cNMDS"} that
+#'     inherits from \pkg{vegan} functions
+#'     \code{\link[vegan]{metaMDS}} and
+#'     \code{\link[vegan]{monoMDS}}. but it has rudimentary
+#'     \code{scores} and \code{plot} methods. The \code{plot} only
+#'     shows one set of scores, and it is best to build graphics with
+#'     pipes (see Examples). The result object also contains biplot
+#'     arrows for econtinuous constraints and centroids for factor
+#'     constraints. These are based on community ordination (sites)
+#'     instead of constraints, and they are added with
+#'     \code{\link[vegan]{envfit}}.
+#'
+#' @seealso \code{\link{distconstrain}}, \code{\link[vegan]{dbrda}},
+#'     \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{metaMDS}}.
+#'
+#' @section Warning:
+#'
+#' The function is provided as an example of the
+#' algorithm. The results are often poor, and the function should not
+#' be used for any other purposes than inspecting the method.
+#'
+#' @examples
+#' if (require(vegan)) {
+#' data(mite, mite.env)
+#' dis <- canneddist(mite, "chord")
+#' mod <- cNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
+#' mod
+#' plot(mod, type = "p") |>
+#'    points("constraints", pch = 16, col = 2) |>
+#'    text("biplot", col = 4) |>
+#'    text("centroids", col = 4)
+#' }
+#'
 #' @param formula Model formula where the left-hand side must be
 #'     dissimilarities, and right-hand side the constraints.
 #' @param data Data frame to find the terms on the right-hand side of
@@ -70,6 +124,7 @@
 }
 
 #' @rdname cNMDS
+#' @param x \code{cNMDS} result object.
 #' @param display Kind of scores to display. Can be one or several of
 #'     \code{"sites"}, \code{"constraints"}, \code{"biplot"},
 #'     \code{"centroids"}, or alternative \code{"all"} for all these.
@@ -91,6 +146,8 @@
 
 #' @rdname cNMDS
 #' @param type Either \code{"t"}ext, \code{"p"}oints or \code{"n"}one.
+#' @param \dots Other arguments passed to graphics functions.
+#'
 #' @export
 `plot.cNMDS` <-
     function(x, display = "sites", type = "p", ...)
