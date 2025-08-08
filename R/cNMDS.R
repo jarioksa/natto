@@ -119,7 +119,7 @@
     sol$iters <- m2$iters
     sol$icause <- m2$cause
     sol$iscal <- FALSE
-    class(sol) <- c("cNMDS", class(sol))
+    class(sol) <- c("cNMDS", "monoMDS")
     sol
 }
 
