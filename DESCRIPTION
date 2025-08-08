@@ -7,7 +7,8 @@ Authors@R: person(given = "Jari", family = "Oksanen",
 Description: Random code that is too experimental or
     too weird to be included in the vegan package.
 License: MIT + file LICENCE
-Imports: vegan (>= 2.6.10), cluster
+Depends: R (>= 4.1.0)
+Imports: vegan (>= 2.7.2), cluster
 Suggests: knitr, dendextend, MASS
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
