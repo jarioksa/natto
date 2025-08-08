@@ -8,8 +8,7 @@
 #'   \item Find constrained dissimilarities for given constraints
 #'     with \code{\link{distconstrain}}.
 #'   \item Find NMDS of constrained dissimilarities with
-#'     \code{\link[vegan]{monoMDS}} using metric scaling as initial
-#'     configuration.
+#'     \code{\link[vegan]{metaMDS}}.
 #'   \item Add points to constrained ordination using unconstrained
 #'     community dissimilarities with \code{\link[vegan]{MDSaddpoints}}.
 #' } % end enumerate
@@ -24,7 +23,7 @@
 #'     \code{"lingoes"} or \code{"cailliez"} or \code{FALSE}.
 #'
 #' @importFrom stats cmdscale delete.response terms model.frame
-#' @importFrom vegan monoMDS MDSaddpoints envfit scores
+#' @importFrom vegan metaMDS MDSaddpoints envfit scores
 #'
 #' @export
 `cNMDS` <-
@@ -38,11 +37,11 @@
     }
     ## step 2: NMDS of constrained dissimilarities
     m0 <- cmdscale(sqrt(cdis), k = k)
-    cdis[] <- rank(cdis, ties.method = "min")
-    sol <- monoMDS(cdis, m0, k = k)
+    cdis[] <- rank(round(cdis, 12), ties.method = "min")
+    sol <- metaMDS(cdis, m0, k = k, trace = FALSE)
     ## step 3: Constrained community ordination
     dis <- eval(formula[[2]])
-    dis[] <- rank(dis, ties.method = "min")
+    dis[] <- rank(round(dis, 12), ties.method = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
     ## This was the last step: the rest is janitorial and adding candies
     terms <- delete.response(terms(formula, data = data))
