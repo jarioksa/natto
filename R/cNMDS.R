@@ -1,9 +1,15 @@
 #' Constrained Nonmetric Multidimensional Scaling
 #'
-#' Adds points based on community dissimilarities on the NMDS
-#' based on constrained dissimilarities.
+#' Constraints are estimated as non-metric MDS of constrained
+#' distances (\code{\link{distconstrain}}). These are similar as the
+#' constraints (LC) scores of distance-based RDA
+#' (\code{\link[vegan]{dbrda}}), but with non-metric mapping. Site
+#' ordination is rank-order similar to the constraints and community
+#' points are added to the constraints using \pkg{vegan} function
+#' \code{\link[vegan]{MDSaddpoints}} with original unconstrained
+#' community dissimilarities.
 #'
-#' The steps of algorithm are:
+#' The steps of the algorithm are:
 #' \enumerate{
 #'   \item Find constrained dissimilarities for given constraints
 #'     with \code{\link{distconstrain}}.
@@ -14,49 +20,51 @@
 #' } % end enumerate
 #'
 #' The algorithms creates analogous result to constrained eigenvector
-#' ordination such as distance-based RDA (\code{\link[vegan]{dbrda}}).
-#' The constrained NMDS is similar to linear combination (LC) scores
-#' and the site NMDS analogous to to weighted averages (WA) scores of
-#' db-RDA. The \code{cNMDS} site scores are found by adding the sites
-#' with their community dissimilarities as new points to constrained
-#' ordination. Instead of raw dissimilarities, both the constrained
-#' ordination and the site ordination ("new points") are based on
-#' ranks of dissimilarities (with ties). The ranks give the same
-#' result as raw dissimilarities within one set of dissimilarities
-#' (constrained, community), but with them these constrained and
-#' community ordination are rank-order similar.
+#' ordination distance-based RDA (db-RDA, \code{\link[vegan]{dbrda}}).
+#' The constrained component is similar to linear combination (LC)
+#' scores and the site NMDS analogous to to weighted average (WA) or
+#' site scores of db-RDA. The \code{cNMDS} site scores are found by
+#' adding the sites with their community dissimilarities as new points
+#' to the ordination of constraints.  Instead of raw dissimilarities,
+#' both the constrained ordination and the site ordination
+#' ("new points") are based on ranks of dissimilarities (with
+#' ties). The ranks give the same result as raw dissimilarities within
+#' one set of dissimilarities (constrained, community), but with them
+#' constrained and community components are rank-order similar.
 #'
 #' Although the idea of the algorithm is simple and obvious, the
 #' results are often far from satisfactory. Quite often the community
 #' dissimilarities and constrained dissimilarities differ from each
-#' other so strongly that the new added points (community) are
+#' other so strongly that the site points (community) are
 #' expelled from the constrained configuration and are located at the
 #' outskirts of the ordination instead of being mixed with the
-#' constrained points.
+#' constrained points. The community (site) points and constraints mix
+#' well only when the constraints describe the community
+#' dissimilarities sufficiently well.
 #'
 #' @return Function returns an object of class \code{"cNMDS"} that
-#'     inherits from \pkg{vegan} functions
-#'     \code{\link[vegan]{metaMDS}} and
+#'     inherits from \pkg{vegan} function
 #'     \code{\link[vegan]{monoMDS}}. but it has rudimentary
 #'     \code{scores} and \code{plot} methods. The \code{plot} only
 #'     shows one set of scores, and it is best to build graphics with
 #'     pipes (see Examples). The result object also contains biplot
-#'     arrows for econtinuous constraints and centroids for factor
+#'     arrows for continuous constraints and centroids for factor
 #'     constraints. These are based on community ordination (sites)
 #'     instead of constraints, and they are added with
-#'     \code{\link[vegan]{envfit}}.
+#'     \code{\link[vegan]{envfit}}. Species scores are not available.
 #'
 #' @seealso \code{\link{distconstrain}}, \code{\link[vegan]{dbrda}},
-#'     \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{metaMDS}}.
+#'     \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{MDSaddpoints}}.
 #'
 #' @section Warning:
 #'
-#' The function is provided as an example of the
-#' algorithm. The results are often poor, and the function should not
-#' be used for any other purposes than inspecting the method.
+#' The function is provided as an exhibit of the algorithm. The
+#' results are often poor, and the function should not be used for any
+#' other purposes than inspecting the method and as an inspiration for
+#' alternative implementations.
 #'
 #' @examples
-#' if (require(vegan)) {
+#' if (require(vegan)) { # vegan needed for data
 #' data(mite, mite.env)
 #' dis <- canneddist(mite, "chord")
 #' mod <- cNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
@@ -125,9 +133,11 @@
 
 #' @rdname cNMDS
 #' @param x \code{cNMDS} result object.
-#' @param display Kind of scores to display. Can be one or several of
-#'     \code{"sites"}, \code{"constraints"}, \code{"biplot"},
-#'     \code{"centroids"}, or alternative \code{"all"} for all these.
+#' @param display Kind of scores to display. In \code{scores} this can
+#'     be one or several of \code{"sites"}, \code{"constraints"},
+#'     \code{"biplot"}, \code{"centroids"}, or alternative
+#'     \code{"all"} for all these. \code{plot} accepts only one
+#'     alternative (and no \code{"all"}.
 #' @export
 `scores.cNMDS` <-
     function(x, display = "sites", ...)
