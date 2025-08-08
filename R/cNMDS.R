@@ -60,7 +60,7 @@
 #' data(mite, mite.env)
 #' dis <- canneddist(mite, "chord")
 #' mod <- cNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
-#' mod
+#' print(mod)
 #' plot(mod, type = "p") |>
 #'    points("constraints", pch = 16, col = 2) |>
 #'    text("biplot", col = 4) |>
