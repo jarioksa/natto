@@ -8,8 +8,13 @@
 \usage{
 qrao(x, d, na.rm = FALSE, dmax)
 
-distrao(x, d, method = c("jensen", "euclidean", "standardized"),
-  propx = TRUE, dmax)
+distrao(
+  x,
+  d,
+  method = c("jensen", "euclidean", "standardized"),
+  propx = TRUE,
+  dmax
+)
 
 raostand(x, d, propx = TRUE, dmax)
 }
@@ -116,12 +121,12 @@ tabasco(Z, hclust(dist(Z)), hclust(dune.phylodis))
 ## phylogenetic polar ordination
 pol <- polarord(vegdist(Z))
 sppscores(pol) <- Z
-plot(pol)
+plot(pol, optimize = TRUE)
 ## Phylogenetically constrainted RDA
 mod <- rda(raostand(dune, dune.phylodis, propx = FALSE) ~ Management + Moisture,
     dune.env)
 anova(mod, by = "margin")
-plot(mod, scaling = "sites")
+plot(mod, scaling = "sites", spe.par = list(optimize = TRUE, xpd = TRUE))
 
 }
 \references{

@@ -61,10 +61,12 @@ see by using \code{\link[vegan]{decorana}} without rescaling.
 
 data(spurn)
 mod <- sdca(spurn)
-plot(mod, display="species")
+plot(mod, display = "sites")
+plot(mod, display = "species", optimize = TRUE)
+## compare against rdecorana without rescaling
+mod0 <- rdecorana(spurn, iresc = 0)
+mod0
 if (require(vegan)) {
-## compare against original decorana without rescaling
-mod0 <- decorana(spurn, iresc = 0)
 plot(procrustes(mod0, mod, choices=1:2))
 }
 }

@@ -36,14 +36,16 @@ calculating residual distances.}
 
 \item{choices}{Axes shown.}
 
-\item{type}{Type of graph which may be \code{"t"} for text, \code{"p"}
-for points or \code{"n"} for none (an empty plot).}
+\item{type}{Type of graph which may be \code{"t"} for text,
+\code{"p"} for points or \code{"n"} for none (an empty plot).}
 
-\item{display}{Items displayed: \code{"sites"} are always available,
-but \code{"species"} only if they were added with sppscores.}
+\item{display}{Items displayed: \code{"sites"} are always
+available, but \code{"species"} only if they were added with
+sppscores.}
 
 \item{\dots}{Other arguments to the function (passed to
-\code{\link[vegan]{ordiplot}}).}
+\code{\link[vegan]{ordiplot}}; these include \code{optimize}
+and \code{bg}).}
 
 \item{object}{\code{polarord} result.}
 
@@ -143,7 +145,7 @@ ord
 summary(eigenvals(ord))
 ## add species scores
 sppscores(ord) <- spurn
-plot(ord)
+plot(ord, optimize = TRUE)
 ## Two-dimensional configuration recovered with Euclidean metric
 if (require(vegan)) { ## Procrustes analysis
 set.seed(1009)
