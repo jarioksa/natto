@@ -8,7 +8,7 @@ Description: Random code that is too experimental or
     too weird to be included in the vegan package.
 License: MIT + file LICENCE
 Depends: R (>= 4.4.0)
-Imports: vegan (>= 2.7.2), cluster
+Imports: vegan (>= 2.7.1), cluster
 Suggests: knitr, dendextend
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
