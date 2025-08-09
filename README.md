@@ -9,7 +9,7 @@ the package is not a code kindergarten with guaranteed tenure track to
 
 ### natto on CRAN?
 
-I consider having a subset of **natto** function on CRAN. Read and
+I consider having a subset of **natto** on CRAN. Read and
 comment on issue [#2](https://github.com/jarioksa/natto/issues/2).
 
 ### What is in natto?
