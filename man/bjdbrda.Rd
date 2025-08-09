@@ -91,7 +91,7 @@ eigenvalue boxplot.}
 \item{xlab, ylab}{Change labelling of axes in boxplot.}
 }
 \value{
-Function returns \code{\link{dbrda}} result object amended
+Function returns \code{\link[vegan]{dbrda}} result object amended
     with item \code{BayesJaccard} that is a list of randomized
     results with following items for each random sample:
 \itemize{

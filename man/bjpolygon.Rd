@@ -76,7 +76,7 @@ Function \code{bjpolygon} uses \code{\link{peelhull}} or
 (\code{\link[cluster]{ellipsoidhull}}) containing \code{keep}
 proportion of points. The reference coordinates can also be added
 to the plot, either as point or a text label
-(\code{\link{ordiellipse}}) and optionally connected to the shape
+(\code{\link[vegan]{ordiellipse}}) and optionally connected to the shape
 centre (not to the centre of points). With argument \code{observed}
 the convex hull can be extended to include the reference point when
 that is outside the hull; this is used to draw wedges for arrows
