@@ -37,12 +37,12 @@
 #' ## phylogenetic polar ordination
 #' pol <- polarord(vegdist(Z))
 #' sppscores(pol) <- Z
-#' plot(pol)
+#' plot(pol, optimize = TRUE)
 #' ## Phylogenetically constrainted RDA
 #' mod <- rda(raostand(dune, dune.phylodis, propx = FALSE) ~ Management + Moisture,
 #'     dune.env)
 #' anova(mod, by = "margin")
-#' plot(mod, scaling = "sites")
+#' plot(mod, scaling = "sites", spe.par = list(optimize = TRUE, xpd = TRUE))
 #'
 #' @importFrom vegan decostand
 #'
