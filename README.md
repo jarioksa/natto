@@ -7,6 +7,13 @@ package. Some of these functions may be merged to **vegan** later, but
 the package is not a code kindergarten with guaranteed tenure track to
 **vegan**.
 
+### natto on CRAN?
+
+I consider having a subset of **natto** function on CRAN. Read and
+comment on issue [#2](https://github.com/jarioksa/natto/issues/2).
+
+### What is in natto?
+
 Currently **natto** contains
 
  * Rao's quadratic entropy, phylogenetic dissimilarities and
