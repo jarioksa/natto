@@ -1,21 +1,21 @@
 #' Smoothly Detrended Correspondence Analysis
 #'
-#' Function \code{sdca} is similar to \code{\link[vegan]{decorana}},
-#' but instead of detrending by segments it uses \code{\link{loess}}
-#' for smooth non-linear detrending.
+#' Function \code{sdca} is similar to \code{\link[vegan]{decorana}}
+#' and \code{\link{rdecorana}}, but instead of detrending by segments
+#' it uses \code{\link{loess}} for smooth non-linear detrending.
 #'
 #' Detrended correspondence analysis (DCA) as implemented in
-#' \code{\link[vegan]{decorana}} tries to remove all systematic biases
-#' between ordination axes by detrending later axes against previous
-#' ones (Hill & Gauch 1980). DCA uses an ingenious method of
-#' detrending by axis segments to allow removing non-linear
-#' dependencies. Detrending means taking residuals against smoothed
-#' segment means as the new ordination scores for the current axis. It
-#' has been suggested that abrupt changes at segment borders can
-#' cause some problems in DCA. The current function replaces segmented
-#' detrending with detrending against smooth \code{\link{loess}}
-#' functions. However, in many cases this changes the results little
-#' from the original detrending by segments.
+#' \code{\link[vegan]{decorana}} and \code{\link{rdecorana}} tries to
+#' remove all systematic biases between ordination axes by detrending
+#' later axes against previous ones (Hill & Gauch 1980). DCA uses an
+#' ingenious method of detrending by axis segments to allow removing
+#' non-linear dependencies. Detrending means taking residuals against
+#' smoothed segment means as the new ordination scores for the current
+#' axis. It has been suggested that abrupt changes at segment borders
+#' can cause some problems in DCA. The current function replaces
+#' segmented detrending with detrending against smooth
+#' \code{\link{loess}} functions. However, in many cases this changes
+#' the results little from the original detrending by segments.
 #'
 #' The detrending for axes 3 and 4 is perfomed either using all
 #' previous axes simultaneously in \code{\link{loess}} (default) or if
@@ -26,9 +26,11 @@
 #' 1, 2, 1 and for axis 4 against axes 1, 2, 3, 2, 1.
 #'
 #' The \code{\link[vegan]{decorana}} software made several other
-#' innovations than detrending. Rescaling of axes is often more
-#' influential in application than the actual detrending, like you can
-#' see by using \code{\link[vegan]{decorana}} without rescaling.
+#' innovations than detrending (it may be easier to inspect the code
+#' in \code{\link{rdecorana}} written in \R). Rescaling of axes is
+#' often more influential in application than the actual detrending,
+#' like you can see by using \code{\link[vegan]{decorana}} without
+#' rescaling.
 #'
 #' @param Y Input data.
 #' @param iweigh Downweight rare species.
