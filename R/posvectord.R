@@ -102,6 +102,7 @@
 `posvectord` <-
     function(x, scale = FALSE)
 {
+    EPS <- sqrt(.Machine$double.eps)
     ## centre by species, crossproduct for sites
     x <- scale(x, scale = scale)
     ## variance if unscaled
@@ -114,14 +115,17 @@
     xx <- tcrossprod(x)
     totvar <- sum(diag(xx))
     for (i in 1:ncol(u)) {
-        a <- xx/sqrt(pmax(diag(xx), .Machine$double.eps))
+        a <- xx/sqrt(pmax(diag(xx), EPS))
         crit <- rowSums(a^2)
-        if (max(crit, na.rm = TRUE) < sqrt(.Machine$double.eps))
+        if (max(crit, na.rm = TRUE) < EPS)
             break
         take <- which.max(crit)
         u[,i] <- xx[take,]/sqrt(xx[take, take])
         eig[i] <- crit[take]
         xx <- xx - tcrossprod(u[,i])
+        ## xx[take,] and xx[,take] should be zero, but may be, say, -2.2e-16
+        xx[take,] <- 0
+        xx[,take] <- 0
     }
     nit <- !is.na(colSums(u))
     out <- list("points" = u[, nit, drop=FALSE],
@@ -184,7 +188,7 @@
     cat("Vector Ordination\n\n")
     cat("Total Inertia ", round(x$totvar, digits), "\n\n")
     cat("Eigenvalues of Vectors:\n")
-    print(x$eig, digits=digits)
+    print(zapsmall(x$eig), digits=digits)
     invisible(x)
 }
 
