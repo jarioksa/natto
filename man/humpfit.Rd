@@ -107,7 +107,7 @@ and species richness will decrease. At biomasses below the hump,
 plant number and biomass are linearly related, and above the hump,
 plant number is proportional to inverse squared biomass. The number
 of plants is related to the number of species by the relationship
-(\code{link} afunction) from Fisher's log-series (Fisher et
+(\code{link} function) from Fisher's log-series (Fisher et
 al. 1943).
 
  The parameters of the model are:
@@ -128,8 +128,7 @@ local solutions, or fails with non-Poisson families, and function
 \code{profile} should be used to inspect the fitted models. You can
 use \code{plot.profile}, \code{pairs.profile} for graphical
 inspection of the profiles, and \code{confint} for the profile
-based confidence intervals. (With \R{} prior to 4.4-0 you must use
-\code{library(MASS)} to access these functions.)
+based confidence intervals.
 
 The original model intended to show that there is no need to
 speculate about \dQuote{competition} and \dQuote{stress} (Al-Mufti
@@ -161,15 +160,14 @@ approach are:
 }
 \examples{
 
+## Data of Al-Mufti et al. (1977)
 mass <- c(140,230,310,310,400,510,610,670,860,900,1050,1160,1900,2480)
 spno <- c(1,  4,  3,  9, 18, 30, 20, 14,  3,  2,  3,  2,  5,  2)
 sol <- humpfit(mass, spno)
 summary(sol) # Almost infinite alpha...
 plot(sol)
-## confint is in MASS, and impicitly calls profile.humpfit.
 ## Parameter 3 (alpha) is too extreme for profile and confint, and we
 ## must use only "hump" and "scale".
-library(MASS)
 plot(profile(sol, parm=1:2))
 confint(sol, parm=c(1,2))
 
@@ -190,6 +188,6 @@ richness and biomass an artefact due to plot size? \emph{Journal of
 Ecology} 84, 293--295.
 }
 \seealso{
-\code{\link{fisherfit}}, \code{\link[MASS]{profile.glm}},
-    \code{\link[MASS]{confint.glm}}.
+\code{\link[vegan]{fisherfit}}, \code{\link[stats]{profile.glm}},
+    \code{\link[stats]{confint.glm}}.
 }
