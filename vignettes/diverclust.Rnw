@@ -55,10 +55,11 @@ The main steps are:
 \item Initially estimate diversity of all sampling units
   (\S\ref{sec:diversity}).
 \item First evaluate the \emph{increase} in diversity when you
-  pool together two sampling units (optionally with equalization,
+  pool together a pair of sampling units (optionally with equalization,
   \S\ref{sec:equalize}). The increase in diversity in pooling is
-  conventionally called as beta diversity.
-\item Select the smallest of pooled beta diversity values and make it a cluster.
+  conventionally called \emph{beta diversity}.
+\item Select the smallest of pooled beta diversity values and make the
+  pair a cluster.
 \item Pool the sampling units of the new merged cluster by summing up
   abundance values (optionally with equalization
   \S\ref{sec:equalize}), and re-evaluate its beta diversities with
@@ -105,7 +106,7 @@ equation implies additive partitioning of diversity. However, Rényi
 diversities are on $\log$ scale which translates a multiplicative
 model into an additive model. If you use Hill numbers in
 eq.~\ref{eq:partition}, the model is truly additive
-(cf. eqs.~\ref{eq:dN0} and \ref{eq:dN0m}).
+(see the two forms in eq.~\ref{eq:dN0}).
 
 \subsection{Equalizing Observations}
 \label{sec:equalize}
@@ -156,6 +157,7 @@ The following example performs diversity clustering with defaults: it
 uses beta diversity based on Rényi index $H_1$ (Shannon diversity) and
 equalizes sample plots, and displays the dendrogram
 (Fig.~\ref{fig:renyi1}).
+
 <<renyi1,fig.cap="Diversity clustering of Barro Colorado Island forests based on $H_1$. The sampling units are named by their most abundant tree species.">>=
 data(BCI)
 ## row names by most abundant species
@@ -164,7 +166,7 @@ dom <- colnames(BCI)[apply(BCI, 1, which.max)]
 rownames(BCI) <- paste0(dom, 1:50)
 ## diversity clustering
 cl <- diverclust(BCI, trace=FALSE)
-plot(cl,hang = -1, cex=0.8)
+plot(cl, hang = -1, cex=0.8)
 @
 
 \section{Other Methods}
@@ -173,7 +175,7 @@ One reason for writing this vignette was to find out if the
 \code{diverclust} function re-invents an existing method. Information
 Analysis is based on very similar reasoning as the diversity
 clustering \cite{WilliamsEa66, LanceWilliams66}. To compare it against
-\code{diverclust}, it was implemented as function \code{infodist} in
+\code{diverclust}, it was implemented as function \code{infoclust} in
 the \pkg{natto} package.
 
 \subsection{Clustering Based on Information Analysis}
@@ -212,6 +214,7 @@ to correspond to the merge heights.
 \citet{WilliamsEa66} and \citet{LanceWilliams66} describe their method
 very briefly, and the current implementation is \pkg{natto} is based
 on the worked example of \citet{Legendres}. The use is similar as for
+
 \code{diverclust}:
 <<infoclust,fig.cap="Information Analysis Clustering of the Barro Colorado Island forests.">>=
 cli <- infoclust(BCI)
@@ -224,6 +227,7 @@ was based on quantitative data, but clusterings are often very
 different with binary data as well. In this case, diversity clustering
 of binary data with Simpson index ($N_2$) and equalization gave most
 similar results to information clustering (Fig.~\ref{fig:tanglegram}).
+
 <<tanglegram,fig.cap="Information analysis (Fig.~\\ref{fig:infoclust}) against diversity clustering of Simpson Index (Hill number $N_2$) of binary data with equalization of sample plots. The dendrograms were rearranged to minimize entanglement.",out.width="\\linewidth",message=FALSE>>=
 library(dendextend) # tanglegram
 cl2 <- diverclust(decostand(BCI, "pa"),
@@ -290,7 +294,7 @@ Some special cases simplify into more compact forms:
   d(N_0) &= \tfrac{1}{2}(S_1 + S_2 - 2 S_{1 \cap 2}) \nonumber \\
            &= \bar \alpha_N - S_{1 \cap 2} \\
   \label{eq:dH1}
-  d(H_1) &= \log(S_1 + S_2) - \frac{J \log 4}{S_1+S_2} - \bar \alpha_H\\
+  d(H_1) &= \log(S_1 + S_2) - \frac{S_{1 \cap 2} \log 4}{S_1+S_2} - \bar \alpha_H\\
   d(H_2) &= 2 \log (S_1+S_2) \nonumber \\
          & - \log(S_1 + S_2 + 2 S_{1 \cap 2}) - \bar \alpha_H\\
   d(N_2) &= \frac{(S_1 + S_2)^2}{S_1 + S_2 + 2 S_{1 \cap 2}}  - \bar \alpha_N\\
