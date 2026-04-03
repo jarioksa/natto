@@ -44,7 +44,7 @@ data(dune, dune.env, dune.phylodis)
 
 \citet{Rao86} introduced perhaps the most often used measure of
 functional or phylogenetic diversity, Rao quadratic entropy. The
-quadratic entropy is a generalization of Simpson or Gini-Simpson index
+quadratic entropy is a generalization of Simpson index
 of diversity that takes into account the non-independence of
 species. If species are all functionally (in traits) or
 phylogenetically related, the community is less diverse than a
@@ -62,7 +62,7 @@ Pavoine). I have also implemented them as \code{qrao} and
 perform exactly this task. This documents inspects the possibility of
 implementing Rao's measures as a general standardization of the
 community data. This would allow implementing Rao's method with
-minimal intrusion in \pkg{vegan} diversity and dissimilarity
+minimal intrusion in diversity and dissimilarity
 functions, and also in general data analysis, such as in redundancy
 analysis.
 
@@ -76,14 +76,13 @@ analysis.
 where $p$ is the proportion of species $j$ and $k$ of the community,
 and $S$ is the number of species, so that $\sum_{i=1}^S p_i = 1$, and
 $d$ is the dissimilarity among species. In this assay we only study
-the case where dissimilarities are bounded in $(0,1)$ where $1$ means
+the case where dissimilarities are bounded in $[0,1]$ where $1$ means
 completely different and independent species, and $0$ means identical
 species. The dissimilarity matrix has zero diagonal: species is always
 identical to itself and does not contribute to the quadratic
 entropy. If all species are completely and equally different, matrix
 $\mathbf{D} = \{d_{jk}\}$ has zero diagonal and the off-diagonal
-elements are ones. In that case Simpson-Gini diversity index is
-$1 - H$.
+elements are ones. In that case Simpson diversity index is $1 - H$.
 
 \citet{Rao86} defined a dissimilarity index that was based on
 eq.~\ref{eq:rao}, but the species indexed there as $j$ and $k$ come
@@ -110,9 +109,9 @@ and $\mathbf{D}$ is the among species dissimilarity matrix. The
 diagonal of $\mathbf{H}$ gives the quadratic entropies $H_i$ and
 $H_j$, and the off-diagonal elements the cross products $H_{ij}$.
 
-\section{Incorporation of Rao's Method in vegan}
+\section{Incorporation of Rao's Method in Vegan}
 
-In this section we study how to implement Rao's method in \pkg{vegan}
+In this section we study how to implement Rao's method
 in a non-intrusive way. We study specifically \pkg{vegan} function
 \code{designdist} that is the most flexible and configurable
 dissimilarity function in \pkg{vegan}. Dissimilarity functions need
@@ -145,7 +144,7 @@ implement dissimilarity measures, we can also implement Rao entropy.
     \toprule
     & Binary terms & Quadratic terms & Minimum terms\\
     \cline{2-4}
-    $A+B-2J$ & No. of different species & Squared Euclidean & Manhattan\\
+    $A+B-2J$ & Symmetric Difference & Squared Euclidean & Manhattan\\
     $\frac{1}{2}(A+B)-J$ & No name & Jensen & No name \\
     $\frac{A+B-2J}{A+B}$ & S{\o}rensen & No name & Bray-Curtis \\
     $\frac{A+B-2J}{A+B-J}$ & Jaccard & Similarity Ratio &Quantitative Jaccard\\
@@ -156,20 +155,22 @@ implement dissimilarity measures, we can also implement Rao entropy.
 
 In \code{designdist} we make a difference between \textit{terms}
 (Table~\ref{tab:terms}) and \textit{formulae}
-(Table~\ref{tab:formulae}) using these terms. Terms can be binary,
-quadratic or first degree terms using minima between variables.  The
+(Table~\ref{tab:formulae}) using terms. Terms can be binary,
+quadratic or first degree terms between variables.  The
 quadratic terms are estimated through matrix multiplication
 $\mathbf{XX'}$. With binary data, the multiplication gives the binary
 parameters of number of species in each community in the diagonal, and
 the numbers of shared species between communities in the off-diagonal
-elements. We can incorporate species dissimilarities in matrix
-multiplication similarly as in eq.~\ref{eq:Hmat}. However, for
-standard dissimilarity measures we must have similarities
-$\mathbf{R} = 1 - \mathbf{D}$ instead of dissimilarities. For
-$\mathbf{D}$ bounded in $(0,1)$, the diagonal elements of $\mathbf{R}$
-are $1$, and off-diagonal elements are complements of dissimilarity
-$\{r_{jk}\} = \{1-d_{jk}\}$, and Rao style quadratic terms will be
-given by
+elements.
+
+For Rao's quadratic methods, we need similarities among species. We
+can incorporate species dissimilarities in matrix multiplication
+similarly as in eq.~\ref{eq:Hmat}. However,
+we must have similarities $\mathbf{R} = 1 - \mathbf{D}$
+instead of dissimilarities. For $\mathbf{D}$ bounded in $[0,1]$, the
+diagonal elements of $\mathbf{R}$ are $1$, and off-diagonal elements
+are complements of dissimilarity $\{r_{jk}\} = \{1-d_{jk}\}$, and Rao
+style quadratic terms will be given by
 \begin{equation}
   \label{eq:raoterms}
   \mathbf{Q} = \mathbf{P R P'}\,,
@@ -241,14 +242,10 @@ and $\mathbf{R}$ positive semidefinite \citep{Pavoine05}.
 plot(hclust(dune.phylodis), hang=-1, ylab = "Time (Myr)", sub="", main="", xlab="")
 @
 
-Function for Rao standardization function is
-
-<<raostand, echo=FALSE, comment=NA, highlight=TRUE>>=
-dump("raostand", file="")
-@
-
-Most of the functions take care that species distances are bounded in
-$(0,1)$, and in diversity calculations, row sums are $1$. However, we
+Function for Rao standardization function is provided in \pkg{natto}
+as \fun{raostand}.
+Most of the function takes care that species distances are bounded in
+$[0,1]$, and in diversity calculations, row sums are $1$. However, we
 are explicit here and take care of this manually:
 
 <<handle>>=
@@ -264,9 +261,8 @@ Standardization was applied to matrix \code{P} where each row sums up
 to unity. The Simpson index can be found directly from
 
 <<simpson>>=
-tol <- sqrt(.Machine$double.eps)
-all(abs(1 - rowSums(P^2) -
-            diversity(dune, "simpson")) < tol)
+all.equal(1 - rowSums(P^2),
+          diversity(dune, "simpson"))
 @
 Rao's quadratic entropy can be found from  $\mathbf{Z}$ similarly as
 the Simpson index:
@@ -274,7 +270,9 @@ the Simpson index:
   1-\sum_{j=1}^S z_i^2 = \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}
 \end{equation}
 <<qrao>>=
-all(abs(1 - rowSums(Z^2) - qrao(dune, D)) < tol)
+all.equal(1 - rowSums(Z^2),
+          qrao(dune, D),
+          check.attributes = FALSE)
 @
 Alternatively, Rao's quadratic entropy can be found from
 the crossproduct of standardized data
@@ -283,8 +281,9 @@ $\mathbf{Z}$:
   1-\mathrm{diag}(\mathbf{ZZ'}) = \sum_{j=1}^S \sum_{k=1}^S p_j p_k d_{jk}
 \end{equation}
 <<crossrao>>=
-all(abs(1 - diag(tcrossprod(Z)) -
-            qrao(dune, D)) < tol)
+all.equal(1 - diag(tcrossprod(Z)),
+          qrao(dune, D),
+          check.attributes=FALSE)
 @
 The Jensen distances $\delta$ (eq.~\ref{eq:jensen}) can be found from the elements
 $\{g_{ij}\} = \mathbf{G} = \mathbf{ZZ'}$ with reversal of signs
@@ -294,7 +293,9 @@ $\{g_{ij}\} = \mathbf{G} = \mathbf{ZZ'}$ with reversal of signs
 and the Eulidean distances of $\mathbf{Z}$ are $(2\delta_{ij})^{1/2}$:
 
 <<dist>>=
-all(abs(distrao(dune, D) - dist(Z)^2/2) < tol)
+all.equal(distrao(dune, D),
+          dist(Z)^2/2,
+          check.attributes=FALSE)
 @
 
 All postulated equalities were true which shows that the suggested
@@ -326,10 +327,9 @@ can be performed with NMDS (Fig.~\ref{fig:nmds}):
 <<nmds,fig.cap="NMDS based on phylogenetic Bray-Curtis dissimilarity", size='footnotesize'>>=
 ord <- metaMDS(Z, trace=FALSE)
 ord
-plot(ord, type="n")
-text(ord, dis="si", cex=0.7)
-ordilabel(ord, dis="sp", priority=colSums(dune),
-          cex=0.8)
+plot(ord, type="n") |>
+    text("sites", cex=0.7) |>
+    text("species", bg="white", optimize=TRUE, cex=0.8)
 @
 The species are strongly clustered by their phylogeny. In particularly
 grasses form a very compact group, and so do major clades in Dicots
@@ -342,8 +342,8 @@ automatic procedure to build a constrained model (Fig.~\ref{fig:rda}):\par
 <<rda, R.options=list(width=62), size='scriptsize', fig.cap="Constrained ordination based on phylogenetic Euclidean distances">>=
 m0 <- rda(Z ~ 1, dune.env)
 m1 <- rda(Z ~ ., dune.env)
-(m <- ordistep(m0, formula(m1)))
-plot(m, scaling="sites")
+(m <- ordistep(m0, formula(m1), permutations=999))
+plot(m, scaling="sites", spe.par=list(optimize=TRUE))
 @
 The corresponding model with non-phylogenetic Euclidean distances has
 somewhat higher total inertia, but quite a large part of variation is
