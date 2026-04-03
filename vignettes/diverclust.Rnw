@@ -1,5 +1,5 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%\VignetteEngine{knitr::knitr} 
+%\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{beta and gamma diversity clustering}
 %\VignettePackage{natto}
 
@@ -55,10 +55,11 @@ The main steps are:
 \item Initially estimate diversity of all sampling units
   (\S\ref{sec:diversity}).
 \item First evaluate the \emph{increase} in diversity when you
-  pool together two sampling units (optionally with equalization,
+  pool together a pair of sampling units (optionally with equalization,
   \S\ref{sec:equalize}). The increase in diversity in pooling is
-  conventionally called as beta diversity.
-\item Select the smallest of pooled beta diversity values and make it a cluster.
+  conventionally called \emph{beta diversity}.
+\item Select the smallest of pooled beta diversity values and make the
+  pair a cluster.
 \item Pool the sampling units of the new merged cluster by summing up
   abundance values (optionally with equalization
   \S\ref{sec:equalize}), and re-evaluate its beta diversities with
@@ -105,7 +106,7 @@ equation implies additive partitioning of diversity. However, Rényi
 diversities are on $\log$ scale which translates a multiplicative
 model into an additive model. If you use Hill numbers in
 eq.~\ref{eq:partition}, the model is truly additive
-(cf. eqs.~\ref{eq:dN0} and \ref{eq:dN0m}).
+(see the two forms in eq.~\ref{eq:dN0}).
 
 \subsection{Equalizing Observations}
 \label{sec:equalize}
@@ -130,7 +131,7 @@ For $a=1$ (Shannon diversity) $w$ scales to unit sum, for $a=2$
 (Simpson diversity) $w$ scales to unit sum of squares (norm), and for
 $a=\infty$ (Berger-Parker diversity) $w$ is the maximum for each
 sampling unit. No equalization is needed for $a=0$ (species
-richness). 
+richness).
 
 \subsection{Clustering Based on gamma Diversity}
 
@@ -138,7 +139,7 @@ If we omit the $\bar \alpha$ term for average alpha diversity in
 eq.~\ref{eq:partition}, we can base the clustering on total or gamma
 diversity. It may be difficult to see what would be the utility of such a
 clustering, but perhaps it could be used to form low-diversity classes
-that differ from each other. 
+that differ from each other.
 
 \subsection{Implementation}
 
@@ -155,7 +156,8 @@ modify its behaviour:
 The following example performs diversity clustering with defaults: it
 uses beta diversity based on Rényi index $H_1$ (Shannon diversity) and
 equalizes sample plots, and displays the dendrogram
-(Fig.~\ref{fig:renyi1}). 
+(Fig.~\ref{fig:renyi1}).
+
 <<renyi1,fig.cap="Diversity clustering of Barro Colorado Island forests based on $H_1$. The sampling units are named by their most abundant tree species.">>=
 data(BCI)
 ## row names by most abundant species
@@ -164,8 +166,8 @@ dom <- colnames(BCI)[apply(BCI, 1, which.max)]
 rownames(BCI) <- paste0(dom, 1:50)
 ## diversity clustering
 cl <- diverclust(BCI, trace=FALSE)
-plot(cl,hang = -1, cex=0.8)
-@ 
+plot(cl, hang = -1, cex=0.8)
+@
 
 \section{Other Methods}
 
@@ -173,7 +175,7 @@ One reason for writing this vignette was to find out if the
 \code{diverclust} function re-invents an existing method. Information
 Analysis is based on very similar reasoning as the diversity
 clustering \cite{WilliamsEa66, LanceWilliams66}. To compare it against
-\code{diverclust}, it was implemented as function \code{infodist} in
+\code{diverclust}, it was implemented as function \code{infoclust} in
 the \pkg{natto} package.
 
 \subsection{Clustering Based on Information Analysis}
@@ -184,7 +186,7 @@ as \cite{WilliamsEa66, LanceWilliams66}:
 \begin{multline}
   \label{eq:information}
   I = S M \log M \\ - \sum_{j=1}^S Mq_j \log Mq_j + M(1-q_j) \log M(1-q_j)\,,
-\end{multline} 
+\end{multline}
 where $q_j$ is the relative frequency of species $j$ in the $M$
 sampling units of the cluster. The contribution to $I$ is 0 for
 species absent from the cluster ($q=0$) and for species present on
@@ -212,11 +214,12 @@ to correspond to the merge heights.
 \citet{WilliamsEa66} and \citet{LanceWilliams66} describe their method
 very briefly, and the current implementation is \pkg{natto} is based
 on the worked example of \citet{Legendres}. The use is similar as for
-\code{diverclust}: 
+
+\code{diverclust}:
 <<infoclust,fig.cap="Information Analysis Clustering of the Barro Colorado Island forests.">>=
 cli <- infoclust(BCI)
 plot(cli, hang=-1, cex=0.8)
-@ 
+@
 
 The clusters are often very compact (Fig.~\ref{fig:infoclust}), and
 results differ from the diversity clustering. Fig.~\ref{fig:renyi1}
@@ -224,6 +227,7 @@ was based on quantitative data, but clusterings are often very
 different with binary data as well. In this case, diversity clustering
 of binary data with Simpson index ($N_2$) and equalization gave most
 similar results to information clustering (Fig.~\ref{fig:tanglegram}).
+
 <<tanglegram,fig.cap="Information analysis (Fig.~\\ref{fig:infoclust}) against diversity clustering of Simpson Index (Hill number $N_2$) of binary data with equalization of sample plots. The dendrograms were rearranged to minimize entanglement.",out.width="\\linewidth",message=FALSE>>=
 library(dendextend) # tanglegram
 cl2 <- diverclust(decostand(BCI, "pa"),
@@ -231,7 +235,7 @@ cl2 <- diverclust(decostand(BCI, "pa"),
 tanglegram(untangle(as.dendrogram(cli),
    as.dendrogram(cl2), method="step2side"),
    main_left="Information", main_right="Rényi 2")
-@ 
+@
 
 \subsection{Dissimilarity Indices}
 
@@ -244,7 +248,7 @@ clusters, and dissimilarites re-evaluated from the updated community
 data. However, it may be instructive to compare these indices with
 common dissimilarity measures. In this chapter we see how the
 diversity measures can be expressed as dissimilarities with binary
-data. 
+data.
 
 The \pkg{natto} package includes function \code{diverdist} that
 evaluates the pairwise diversity dissimilarities, and is used in the
@@ -264,36 +268,36 @@ indices for two sampling units eachs with $S_1$ and $S_2$ species is
   \bar \alpha_N &= \tfrac{1}{2}(S_1 + S_2)\,.
 \end{align}
 
-In two sampling units of $S_1$ and $S_2$ species and $J$ shared
-species, there will be $S_1 + S_2 - 2J$ species that occur only one of
-the units and each at proportion $p = \frac{1}{S_1 + S_2}$ and $J$
-species that occur in both sampling units at proportion
+In two sampling units of $S_1$ and $S_2$ species and $S_{1 \cap 2}$ shared
+species, there will be $S_1 + S_2 - 2S_{1 \cap 2}$ species that occur only one of
+the units and each at proportion $p = \frac{1}{S_1 + S_2}$ and
+$S_{1 \cap 2}$ species that occur in both sampling units at proportion
 $p = \frac{2}{S_1 + S_2}$.  The general equation (\ref{eq:partition})
 of distance based on Rényi beta diversity between two binary sampling
-units is: 
+units is:
 \begin{multline}
-  d(H_a) = \frac{1}{1-a} [\log(S_1+S_2 + (2^a - 2) J) \\ 
-            - a \log (S_1+S_2)] - \bar \alpha_H 
+  d(H_a) = \frac{1}{1-a} [\log(S_1+S_2 + (2^a - 2) S_{1 \cap 2}) \\
+            - a \log (S_1+S_2)] - \bar \alpha_H
 \end{multline}
 and the corresponding formula for Hill numbers is:
 \begin{equation}
-d(N_a) = \left[\frac{S_1 + S_2 + (2^a-2)J}{(S_1 + S_2)^a} \right]^\frac{1}{1-a} 
+d(N_a) = \left[\frac{S_1 + S_2 + (2^a-2) S_{1 \cap 2}}{(S_1 + S_2)^a} \right]^\frac{1}{1-a}
 - \bar \alpha_N \,.
 \end{equation}
 
 Some special cases simplify into more compact forms:
 
 \begin{align}
-  d(H_0) &= \log(S_1 + S_2 -J) - \bar \alpha_H\\ 
-         &= \log \left(\frac{A+B-J}{\sqrt{S_1 S_2}} \right) \\
-  \label{eq:dN0} 
-  d(N_0) &= \tfrac{1}{2}(S_1 + S_2 - 2J)\\
-           \label{eq:dN0m}
-           &= \bar \alpha_N - J \\
+  d(H_0) &= \log(S_1 + S_2 - S_{1 \cap 2}) - \bar \alpha_H \nonumber\\
+         &= \log \left(\frac{S_1+S_2- S_{1 \cap 2}}{\sqrt{S_1 S_2}} \right) \\
+  \label{eq:dN0}
+  d(N_0) &= \tfrac{1}{2}(S_1 + S_2 - 2 S_{1 \cap 2}) \nonumber \\
+           &= \bar \alpha_N - S_{1 \cap 2} \\
   \label{eq:dH1}
-  d(H_1) &= \log(S_1 + S_2) - \frac{J \log 4}{S_1+S_2} - \bar \alpha_H\\
-  d(H_2) &= 2 \log (S_1+S_2) - \log(S_1 + S_2 + 2J) - \bar \alpha_H\\
-  d(N_2) &= \frac{(S_1 + S_2)^2}{S_1 + S_2 + 2J}  - \bar \alpha_N\\
+  d(H_1) &= \log(S_1 + S_2) - \frac{S_{1 \cap 2} \log 4}{S_1+S_2} - \bar \alpha_H\\
+  d(H_2) &= 2 \log (S_1+S_2) \nonumber \\
+         & - \log(S_1 + S_2 + 2 S_{1 \cap 2}) - \bar \alpha_H\\
+  d(N_2) &= \frac{(S_1 + S_2)^2}{S_1 + S_2 + 2 S_{1 \cap 2}}  - \bar \alpha_N\\
   d(H_\infty) &= \log(S_1 + S_2) - \log 2 - \bar \alpha_H\\
   d(N_\infty) &= 0 \,.
 \end{align}
@@ -312,7 +316,7 @@ clusters.
 The implicit dissimilarity measure in information analysis is
 \citep{WilliamsEa66,LanceWilliams66}:
 \begin{equation}
-  d(I) = (S_1 + S_2 - 2J) \log(4) \,.
+  d(I) = (S_1 + S_2 - 2 S_{1 \cap 2}) \log(4) \,.
 \end{equation}
 This is $d(N_0)$ with different multiplier. However, the similarity to
 $d(N_0)$ disappears when more than two sampling units are compared.
@@ -322,7 +326,7 @@ suggested. \citet{KoleffEa03} suggest the following that they ascribe
 to \citet{Routledge84}:
 \begin{multline}
   \label{eq:routledge}
-  d(I) = \log(S_1 + S_2) - \frac{J \log 4}{S_1 + S_2} \\ 
+  d(I) = \log(S_1 + S_2) - \frac{S_{1 \cap 2} \log 4}{S_1 + S_2} \\
   - \frac{S_1}{S_1 + S_2} \log S_1 - \frac{S_2}{S_1+S_2} \log S_2\,.
 \end{multline}
 The formulation was based on \citet{KoleffEa03} who adapted it to
