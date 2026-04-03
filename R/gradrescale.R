@@ -14,6 +14,13 @@
 #'
 #' @importFrom vegan wascores
 #'
+#' @examples
+#' if(require(vegan, quietly=TRUE)) {
+#' data(mite, mite.env)
+#' WatrCont.rescaled <- with(mite.env, gradrescale(WatrCont, mite))
+#' plot(WatrCont.rescaled ~ WatrCont, data=mite.env)
+#' }
+#'
 #' @export
 `gradrescale` <-
     function(grad, comm)

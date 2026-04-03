@@ -44,7 +44,7 @@ number of species for each row, \code{A, B}.). Number of columns
 is \code{N}.
 
 There is a huge number of indices, and the current selection is far
-from comprehensive (but it can easily expanded). See References for
+from complete (but it can easily expanded). See References for
 sources. Many sources use different notation, but they were changed
 to the notation described above. For instance, in popular (but
 strange) 2x2 contingency table notation for binary data \code{a =
@@ -55,8 +55,9 @@ and once you see how it is derived, try Chord distance.
 }
 \examples{
 data(spurn)
+canneddist(help = TRUE)
 ## Ochiai dissimilarity
-canneddist(spurn, "ochiai")
+d <- canneddist(spurn, "ochiai")
 
 }
 \references{

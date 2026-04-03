@@ -6,11 +6,11 @@
 #'
 #' This function duplicates \CRANpkg{vegan} function
 #' \code{\link[vegan]{decorana}}, but is written in \R{}. It is
-#' slower, and does not have all features and support of tye
+#' slower, and does not have all features and support of the
 #' \pkg{vegan} function, and there is no need to use this function for
-#' data analysis. The function serves two purposes. Firstly, as an
-#' \R{} functin it is easier to inspect the algorithm than from C or
-#' Fortran code. Secondly, it is more hackable, and it is easier to
+#' data analysis. The function serves two purposes. First, as an
+#' \R{} function it is easier to inspect the algorithm than from C or
+#' Fortran code. Second, it is more hackable, and it is easier to
 #' develop new features, change code or replace functionality than in
 #' the compiled code. For instance, it would be trivial to add
 #' Detrended Constrained Correspondence Analysis, but this would be
@@ -33,7 +33,7 @@
 #' and then going again down to the first. For axis 4 the order of
 #' detrendings is 1, 2, 3, 2, 1. The criterion value is the one that
 #' \pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
-#' values}: for orthogonal CA is the eigenvalue, but for detrended CA
+#' values}: for orthogonal CA it is the eigenvalue, but for detrended CA
 #' it is a combination of eigenvalues and strength of detrending.
 #'
 #' Non-linear rescaling is performed by function \code{stretch} that
@@ -44,7 +44,7 @@
 #' species and site scores \eqn{v, u} are based on
 #' \eqn{x_ij(u_i-v_j)^2}{x[ij] * (u[i]-v[j])^2} summarized over sites
 #' \eqn{i}. Site scores \eqn{u} are weighted averages of species
-#' scores \eqn{v}, and therefore species scores should be
+#' scores \eqn{v}, and therefore species scores should be dispersed
 #' symmetrically around corresponding site scores and the statistic
 #' describes their weighted dispersion. The purpose of rescaling is to
 #' make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
@@ -52,6 +52,10 @@
 #' @return Currently returns a list of elements \code{evals} of
 #'     Decorana values, with \code{rproj} and \code{cproj} of scaled
 #'     row and column scores.
+#'
+#' @seealso For serious purposes, use \code{\link[vegan]{decorana}} in
+#'     \pkg{vegan}. Function \code{\link{gradrescale}} rescales
+#'     observed gradients similarly as \code{decorana} rescales axes.
 #'
 #' @examples
 #' data(spurn)
@@ -85,7 +89,7 @@
 #' @param x input data matrix.
 #' @param iweigh Downweighting of rare species (0: no).
 #' @param iresc Number of rescaling cycles (0: no rescaling).
-#' @param ira Type of analyis (0: detrended, 1: orthogonal).
+#' @param ira Type of analysis (0: detrended, 1: orthogonal).
 #' @param mk Number of segments in detrending.
 #' @param short Shortest gradient to be rescaled.
 #' @param before,after Definition of Hill's piecewise transformation.
@@ -289,7 +293,7 @@
 ##    for the blocks of 3.
 
 ## NB: smoothing is done twice, and for equal weights zn effectively
-## performs c(1,2,3,2,1)/3 smoothing, and defines smoothing window of
+## performs c(1,2,3,2,1)/9 smoothing, and defines smoothing window of
 ## 5 blocks.
 
 ## Detrending
@@ -314,7 +318,7 @@
     z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
     zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
     ## mean z with weights zn by blocks of three. filter c(1,1,1)
-    ## defines running sum, but we average after getting thses sums.
+    ## defines running sum, but we average after getting these sums.
     z <- filter(z, c(1,1,1), sides=2)
     zn <- filter(zn, c(1,1,1), sides=2)
     z <- z / pmax(zn, .Machine$double.eps)
@@ -391,7 +395,7 @@
     sqcorr <- rowSums(xorig^2)
     ## the turn-over statistic based on x[i,j]*(rproj[i]-cproj[j])^2,
     ## and when summarized for rows i, dispersion of species scores
-    ## cproj[j] over site scores rproj[
+    ## cproj[j] over site scores rproj
     sumsq <- rowSums(xorig * outer(drop(rproj), drop(cproj), "-")^2)
     sqcorr <- sqcorr/aidot^2
     sqcorr <- pmin(sqcorr, 0.9999) # 0.9999 as in decorana.f
@@ -485,7 +489,7 @@
 
 #' @param x \code{rdecorana} result object.
 #' @param display Scores for \code{"sites"} or \code{"species"}.
-#' @param choices Axes to returned.
+#' @param choices Axes to be returned.
 #' @param origin Return centred scores.
 #' @param ... Other arguments passed to functions.
 #'

@@ -34,11 +34,18 @@
 #' diversity. The Hill numbers may not be strictly additive, and beta
 #' diversities may be negative (except with \code{renyi = 0}).
 #'
+#' @details For details, see vignette \code{"diverclust"}.
+#'
 #' @return A dissimilarity object inheriting from \code{\link{dist}}.
 #' @author Jari Oksanen
 #'
 #' @importFrom vegan decostand renyi
 #' @importFrom stats as.dist
+#'
+#' @examples
+#' data(spurn)
+#' ## increase in species richness when pooling two sites
+#' d <- diverdist(spurn, renyi=0, hill=TRUE)
 #' 
 #' @export
 `diverdist` <-

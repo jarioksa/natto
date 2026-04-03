@@ -95,7 +95,8 @@ m <- posvectord(spurn)
 m
 plot(m)
 if (require(vegan, quietly = TRUE)) {
-plot(procrustes(rda(spurn), m, choices=1:2))
+## similar to PCA
+plot(procrustes(pca(spurn), m, choices=1:2))
 }
 }
 \references{

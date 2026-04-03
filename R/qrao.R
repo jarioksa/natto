@@ -1,10 +1,10 @@
 #' Rao's Quadratic Entropy and Dissimilarity
 #'
 #' Rao's quadratic entropy (Rao 1982) is a generalization of Simpson
-#' (or Gini-Simpson) diversity index to a situation where species are
-#' non-independent. The species dependences are expressed as
-#' dissimilarities, where 1 means independent species, and 0 a
-#' completely aliased species. Rao's distance (1982) is a similar
+#' diversity index to a situation where species are
+#' non-independent. The species dependences are expressed as pairwise
+#' dissimilarities, where 1 means independent species pair, and 0 a
+#' completely aliased species pair. Rao's distance (1982) is a similar
 #' generalization for distances between sampling units with
 #' non-independent species. Typically species distances are based on
 #' phylogenetics, taxonomy or species traits, and these measures are
@@ -18,7 +18,7 @@
 #' species. The distances should be scaled to range \eqn{0...1}, and
 #' they are divided by the observed maximum if this exceeds
 #' 1. Alternatively, the distances are divided by argument \code{dmax}
-#' instead of data maximum. Distances that are shorter than
+#' instead of data maximum. Distances that are longer than
 #' \code{dmax} are truncated to the maximum value. The square roots of
 #' distances should be Euclidean, but this is not verified. They are
 #' Euclidean if there are no negative eigenvalues in the principal

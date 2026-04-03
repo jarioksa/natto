@@ -39,13 +39,17 @@ give standardization that is compatible with \code{qrao} and
 \value{
 \code{qrao} returns a vector of Rao's quadratic entropy
     values and \code{distrao} distances of class \code{"dist"}.
+
+\code{raostand} returns data standardized so that it is
+    equivalent to the internal form used in \code{qrao} or
+    \code{distrao}, but can be used in any analysis.
 }
 \description{
 Rao's quadratic entropy (Rao 1982) is a generalization of Simpson
-(or Gini-Simpson) diversity index to a situation where species are
-non-independent. The species dependences are expressed as
-dissimilarities, where 1 means independent species, and 0 a
-completely aliased species. Rao's distance (1982) is a similar
+diversity index to a situation where species are
+non-independent. The species dependences are expressed as pairwise
+dissimilarities, where 1 means independent species pair, and 0 a
+completely aliased species pair. Rao's distance (1982) is a similar
 generalization for distances between sampling units with
 non-independent species. Typically species distances are based on
 phylogenetics, taxonomy or species traits, and these measures are
@@ -64,7 +68,7 @@ species in the sampling unit, and \eqn{d} are distances among
 species. The distances should be scaled to range \eqn{0...1}, and
 they are divided by the observed maximum if this exceeds
 1. Alternatively, the distances are divided by argument \code{dmax}
-instead of data maximum. Distances that are shorter than
+instead of data maximum. Distances that are longer than
 \code{dmax} are truncated to the maximum value. The square roots of
 distances should be Euclidean, but this is not verified. They are
 Euclidean if there are no negative eigenvalues in the principal
@@ -85,18 +89,19 @@ Euclidean distance can also be requested. In addition, Rao (1982)
 suggested a standardized distance that is based on logarithms of
 elements \eqn{H}.
 
-Function \code{raostand} standardizes data similarlty as implicitly
-done in \code{qrao} and \code{raodist}. Function \code{qrao} always
-standardizes rows to unit sum, but this is optional in
-\code{raodist} and \code{raostand}. For standardized data \code{Z},
-quadratic entropy is found as \code{1 - rowSums(Z^2)}, and Rao
-distances can be found via Euclidean distances of \code{Z}. The
-standardized data allows calculating any generic community
-dissimilarity, and using \code{Z} in \code{\link[vegan]{rda}}
-allows performing phylogenitically constrained RDA. The
-standardization does not preserve absences, but zero abundances
-will be boosted to positive values when the sampling unit has
-related species.  More details can be found in vignette.
+Function \code{raostand} standardizes data similarly as is
+implicitely done in \code{qrao} and \code{raodist}. Function
+\code{qrao} always standardizes rows to unit sum, but this is
+optional in \code{raodist} and \code{raostand}. For standardized
+data \code{Z}, quadratic entropy is found as \code{1 -
+rowSums(Z^2)}, and Rao distances can be found via Euclidean
+distances of \code{Z}. The standardized data allows calculating any
+generic community dissimilarity, and using \code{Z} in
+\code{\link[vegan]{rda}} allows performing phylogenitically
+constrained RDA. The standardization does not preserve absences,
+but zero abundances will be boosted to positive values when the
+sampling unit has related species.  More details can be found in
+vignette \code{"raostand"}.
 }
 \examples{
 if (require(vegan)) {

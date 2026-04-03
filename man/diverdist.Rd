@@ -49,6 +49,15 @@ between two SUs. Alternatively, the function can find the total
 diversity or distance from the origin which is known as gamma
 diversity for two SUs. Any Renyi diversity can be used.
 }
+\details{
+For details, see vignette \code{"diverclust"}.
+}
+\examples{
+data(spurn)
+## increase in species richness when pooling two sites
+d <- diverdist(spurn, renyi=0, hill=TRUE)
+
+}
 \author{
 Jari Oksanen
 }

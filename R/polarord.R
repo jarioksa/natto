@@ -6,11 +6,12 @@
 #'
 #' Polar or Bray-Curtis ordination is a historic ordination method
 #' that could be performed without computers with simple hand
-#' calculations (Bray & Curtis 1957). Ordination axis is found by
-#' selecting two extreme points and projecting all points between
-#' these end points. The current function follows Beals (1984) in
-#' selecting the endpoints, projection of points on axis, and defining
-#' the residual distances for later axes.
+#' calculations or even with ruler and compass (Bray & Curtis
+#' 1957). Ordination axis is found by selecting two extreme points and
+#' projecting all points between these end points. The current
+#' function follows Beals (1984) in selecting the endpoints,
+#' projection of points on axis, and defining the residual distances
+#' for later axes.
 
 #' @param d Dissimilarities or distances: a \code{\link{dist}} object.
 #' @param k Number of dimensions.
@@ -63,7 +64,7 @@
 #' It is possible to use predefined endpoints instead of automatic
 #' selection. This can be useful for confirmatory analysis (McCune &
 #' Grace 2002). If only one endpoint is given, the others are selected
-#' automatically. 
+#' automatically.
 #'
 #' McCune & Grace (2002) suggest that Polar Ordination can be
 #' alternatively performed with Manhattan or City-Block methods for
@@ -127,6 +128,7 @@
 #' x <- matrix(runif(50), 25, 2) # 2-dim matrix
 #' plot(procrustes(x, polarord(dist(x)))) # Euclidean: exact
 #' plot(procrustes(x, polarord(dist(x, "man"), metric="man"))) # diverges
+#' rm(.Random.seed) # reset
 #' }
 #'
 #' @importFrom stats var cov dist
