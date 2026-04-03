@@ -25,6 +25,9 @@ alternative in \code{\link{cmdscale}}).}
 dissimilarities. This allows handling negative squared distances by
 the user instead of setting them \code{NaN}.}
 }
+\value{
+A \code{"dist"} object of constrained or residual distances.
+}
 \description{
 Function constrains dissimilarities by external variables, or
 alternatively removes effects of constraining variables and returns

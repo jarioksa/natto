@@ -5,7 +5,8 @@
 #'
 #' @param x An unconstrained \code{\link[vegan]{rda}} result object.
 #'
-#' 
+#' @return A \code{\link{prcomp}} result object.
+#'
 #' @rdname as.prcomp
 #' @export
 `as.prcomp` <-

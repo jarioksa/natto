@@ -1,7 +1,9 @@
 #' Extract Subdiagonal from Dissimilarities or from a Square Matrix
 #'
 #' @param x Square matrix or a \code{\link{dist}} object.
-#' 
+#'
+#' @return vector of subdiagonal values.
+#'
 #' @export
 `subdiag` <-
     function(x)

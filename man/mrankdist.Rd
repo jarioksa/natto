@@ -15,6 +15,9 @@ compared for species that occur in both compared SUs. If
 \code{FALSE}, the missing species are given tied rank as last
 species.}
 }
+\value{
+Function returns a \code{"dist"} object of mean rank shifts.
+}
 \description{
 Function calculates the mean rank shift between decreasing rank
 orders of species (columns). The averaging is done by the number of

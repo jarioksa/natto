@@ -12,6 +12,9 @@
 #'          distance matrix should be printed by \code{\link{print.dist}}.
 #' @importFrom stats as.dist
 #'
+#' @return A \code{"dist"} object with numeric value for distances
+#'     between neighbours and \code{NA} for other distances.
+#' 
 #' @export
 `as.dist.deldir` <-
     function(m, diag = FALSE, upper = FALSE)

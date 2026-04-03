@@ -33,6 +33,10 @@ slopediff2(ydist, xdist, block, nperm = 999)
 
 \item{object}{Result object from \code{slopediff} or \code{slopediff2}.}
 }
+\value{
+Functions return the differences of regression coefficients
+    (slopes).y
+}
 \description{
 Functions fit linear regression on distances within blocks and
 across blocks and compere their slopes using permutation tests.

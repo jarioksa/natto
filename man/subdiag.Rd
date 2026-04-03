@@ -9,6 +9,9 @@ subdiag(x)
 \arguments{
 \item{x}{Square matrix or a \code{\link{dist}} object.}
 }
+\value{
+vector of subdiagonal values.
+}
 \description{
 Extract Subdiagonal from Dissimilarities or from a Square Matrix
 }

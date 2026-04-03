@@ -26,6 +26,8 @@
 #' imaginary distances, but these can ruin the analysis of
 #' dissimilarities returned from this function.
 #'
+#' @return A \code{"dist"} object of constrained or residual distances.
+#'
 #' @references McArdle, B.H. & Anderson, M.J. (2001). Fitting
 #'   multivariate models to community data: a comment on distance-based
 #'   redundancy analysis. \emph{Ecology} 82, 290--297.

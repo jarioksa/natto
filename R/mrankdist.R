@@ -13,6 +13,8 @@
 #' \code{FALSE}, the missing species are given tied rank as last
 #' species.
 #'
+#' @return Function returns a \code{"dist"} object of mean rank shifts.
+#'
 #' @references Collins, S.L, Suding, K.N., Cleland, E.E., Batty, M.,
 #' Pennings, S.C., Gross, K.L., Grace, J.B., Gough, L., Fargione,
 #' J.E. & Clark, C.M. (2008). Rank clocks and plant community

@@ -12,6 +12,9 @@ as.prcomp(x)
 \arguments{
 \item{x}{An unconstrained \code{\link[vegan]{rda}} result object.}
 }
+\value{
+A \code{\link{prcomp}} result object.
+}
 \description{
 Function casts a result object of unconstrained
 \code{\link[vegan]{rda}} to a \code{\link{prcomp}} result object.
