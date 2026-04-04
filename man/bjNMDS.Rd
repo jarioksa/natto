@@ -89,3 +89,6 @@ data(spurn)
 m <- bjNMDS(spurn)
 plot(m, keep = 0.607, col = "skyblue")
 }
+\author{
+Jari Oksanen
+}

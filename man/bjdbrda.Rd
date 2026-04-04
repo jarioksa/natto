@@ -146,3 +146,6 @@ plot(m, cn = "star", wa = "ellipse", cn.par = list(col=gl(2,4)),
 }
 
 }
+\author{
+Jari Oksanen
+}
