@@ -29,7 +29,7 @@ number of companion species.}
 
 \item{type}{Plot \code{"p"}oints or \code{"t"}ext.}
 
-\item{optimize}{Optimize location of points to minimize overplotting.}
+\item{optimize}{Optimize location of text labels to minimize overplotting.}
 
 \item{bg}{Background colour of labels for text.}
 
@@ -40,6 +40,14 @@ number of companion species.}
 \item{\dots}{Other arguments to the function.}
 
 \item{object}{\code{iapq} result object.}
+}
+\value{
+\code{iapq} returns a matrix with columns of species
+    frequency, estimated quality \eqn{Q} and based on randomization
+    its standardized effect size (\code{SES}), expected value
+    (\code{E(Q)}), 2.5\% and 97.5\% quantiles and
+    \dQuote{significance}. \code{iap} returns a vector of estimated
+    IAP values for each site.
 }
 \description{
 Function finds the number of companion species or the average
@@ -73,7 +81,7 @@ itself from the richness. For rare species, \eqn{Q} is based on
 small sample size, and is therefore more variable than for common
 species. The \code{iapq} function assesses the non-randomness
 (\sQuote{significance}) of \eqn{Q} by taking random samples of the
-same size as the frequency (number of occurrence) of the focal
+same size as the frequency (number of occurrences) of the focal
 species and finding the average richness (without the focal
 species) in these samples. Because species are more likely to be
 present in species-rich sampling units than in species-poor, the
@@ -83,6 +91,12 @@ and the number of greater or less random values is multiplied with
 two. The observed value of \eqn{Q} is included in the random sample
 of species richness values both in assessing the \eqn{p}-value and
 in estimating the quantiles.
+
+The \code{summary} for the results of \code{iapq} shows only the
+most \dQuote{significant} species, and \code{plot} shows species
+\eqn{Q} values against species frequencies with lines for expected
+\eqn{Q} and its 2.5\% and 97.5\% quantiles as estimated from
+randomization.
 }
 \examples{
 data(spurn)
@@ -95,4 +109,7 @@ iap(spurn, iq)
 LeBlanc, S.C. & De Sloover, J. (1970) Relation between
 industrialization and the distribution and growth of epiphytic
 lichens and mosses in Montreal. \emph{Can. J. Bot.} 48, 1485--1496.
+}
+\author{
+Jari Oksanen
 }

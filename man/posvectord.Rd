@@ -95,7 +95,8 @@ m <- posvectord(spurn)
 m
 plot(m)
 if (require(vegan, quietly = TRUE)) {
-plot(procrustes(rda(spurn), m, choices=1:2))
+## similar to PCA
+plot(procrustes(pca(spurn), m, choices=1:2))
 }
 }
 \references{
@@ -113,4 +114,7 @@ criterion. \emph{Nature} 244: 371--373.
 \code{\link{polarord}} (Polar Ordination) is a similar
     educational tool to approximate Principal Coordinates Analysis
     (PCoA).
+}
+\author{
+Jari Oksanen
 }

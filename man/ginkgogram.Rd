@@ -48,6 +48,9 @@ height as the maximum height of each leaf.}
 
 \item{\dots}{Further graphical arguments}
 }
+\value{
+Function is used to modify a plot of \code{\link{hclust}} tree.
+}
 \description{
 Function is similar to standard \code{\link{hclust}}, but the
 leaves are drawn as fans with base proportional to weights (or
@@ -71,4 +74,7 @@ ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder))
 ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder),
     leaf = 65)
 }
+}
+\author{
+Jari Oksanen
 }

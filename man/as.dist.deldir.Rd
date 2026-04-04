@@ -15,9 +15,16 @@ matrix should be printed by \code{\link{print.dist}}.}
 \item{upper}{logical value indicating whether the upper triangle of the
 distance matrix should be printed by \code{\link{print.dist}}.}
 }
+\value{
+A \code{"dist"} object with numeric value for distances
+    between neighbours and \code{NA} for other distances.
+}
 \description{
 Function casts a Delaunay triangulation from
 \code{\link[deldir]{deldir}} (\pkg{deldir} package) to a
 \code{\link{dist}} object, with numeric values for distances
 between neighbours and \code{NA} for other distances.
+}
+\author{
+Jari Oksanen
 }

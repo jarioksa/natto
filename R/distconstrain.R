@@ -3,9 +3,9 @@
 #' Function constrains dissimilarities by external variables, or
 #' alternatively removes effects of constraining variables and returns
 #' residual dissimilarities. The analysis is based on McArdle &
-#' Anderson (2001), and the analysis of constrained dissimilarities is
-#' equal to distance-based Redundancy Analysis
-#' (\code{\link[vegan]{dbrda}}).
+#' Anderson (2001), and the metric multidimensional scaling of
+#' constrained dissimilarities is equal to distance-based Redundancy
+#' Analysis (\code{\link[vegan]{dbrda}}).
 #'
 #' @details Function uses the method of McArdle & Anderson (2001) to
 #' constrain dissimilarities by external variables, or alternatively,
@@ -26,6 +26,10 @@
 #' imaginary distances, but these can ruin the analysis of
 #' dissimilarities returned from this function.
 #'
+#' @return A \code{"dist"} object of constrained or residual distances.
+
+#' @author Jari Oksanen
+#'
 #' @references McArdle, B.H. & Anderson, M.J. (2001). Fitting
 #'   multivariate models to community data: a comment on distance-based
 #'   redundancy analysis. \emph{Ecology} 82, 290--297.
@@ -40,16 +44,25 @@
 #' the \code{formula}.
 #'
 #' @param add an additive constant is added to the non-diagonal
-#'    dissimilarities such that all \eqn{n-1} eigenvalues are
-#'    non-negative. Alternatives are \code{"lingoes"} (default, also
-#'    used with \code{TRUE}) and \code{"cailliez"} (which is the only
-#'    alternative in \code{\link{cmdscale}}).
+#'     dissimilarities such that all \eqn{n-1} eigenvalues are
+#'     non-negative. Alternatives are \code{"lingoes"} (also used with
+#'     \code{TRUE}) and \code{"cailliez"} (which is the only
+#'     alternative in \code{\link{cmdscale}}).
 #'
 #' @param residuals Return residuals after constraints.
 #'
 #' @param squared Return squared dissimilarities instead of
 #' dissimilarities. This allows handling negative squared distances by
 #' the user instead of setting them \code{NaN}.
+#'
+#' @examples
+#' if(require(vegan, quietly=TRUE)) {
+#' data(dune, dune.env)
+#' d <- canneddist(dune, "chord")
+#' dcon <- distconstrain(d ~ Management + Moisture, dune.env)
+#' pco(dcon) # constrained component of dbrda
+#' dbrda(d ~ Management + Moisture, dune.env)
+#' }
 #'
 #' @export
 `distconstrain` <-

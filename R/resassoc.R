@@ -53,6 +53,7 @@
 #' should be cautious in interpreting the results (and the same
 #' applies also to the analogous Bayesian model).
 #'
+#' @author Jari Oksanen
 #'
 #' @references
 #'

@@ -25,7 +25,7 @@ rdecorana(
 
 \item{iresc}{Number of rescaling cycles (0: no rescaling).}
 
-\item{ira}{Type of analyis (0: detrended, 1: orthogonal).}
+\item{ira}{Type of analysis (0: detrended, 1: orthogonal).}
 
 \item{mk}{Number of segments in detrending.}
 
@@ -35,7 +35,7 @@ rdecorana(
 
 \item{display}{Scores for \code{"sites"} or \code{"species"}.}
 
-\item{choices}{Axes to returned.}
+\item{choices}{Axes to be returned.}
 
 \item{origin}{Return centred scores.}
 
@@ -55,11 +55,11 @@ Similar to Fortran implementation in vegan, but all in R.
 \details{
 This function duplicates \CRANpkg{vegan} function
 \code{\link[vegan]{decorana}}, but is written in \R{}. It is
-slower, and does not have all features and support of tye
+slower, and does not have all features and support of the
 \pkg{vegan} function, and there is no need to use this function for
-data analysis. The function serves two purposes. Firstly, as an
-\R{} functin it is easier to inspect the algorithm than from C or
-Fortran code. Secondly, it is more hackable, and it is easier to
+data analysis. The function serves two purposes. First, as an
+\R{} function it is easier to inspect the algorithm than from C or
+Fortran code. Second, it is more hackable, and it is easier to
 develop new features, change code or replace functionality than in
 the compiled code. For instance, it would be trivial to add
 Detrended Constrained Correspondence Analysis, but this would be
@@ -82,7 +82,7 @@ against previous axis is done one axis by time starting from first,
 and then going again down to the first. For axis 4 the order of
 detrendings is 1, 2, 3, 2, 1. The criterion value is the one that
 \pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
-values}: for orthogonal CA is the eigenvalue, but for detrended CA
+values}: for orthogonal CA it is the eigenvalue, but for detrended CA
 it is a combination of eigenvalues and strength of detrending.
 
 Non-linear rescaling is performed by function \code{stretch} that
@@ -93,7 +93,7 @@ no influence. The criterion values for community data \eqn{x} with
 species and site scores \eqn{v, u} are based on
 \eqn{x_ij(u_i-v_j)^2}{x[ij] * (u[i]-v[j])^2} summarized over sites
 \eqn{i}. Site scores \eqn{u} are weighted averages of species
-scores \eqn{v}, and therefore species scores should be
+scores \eqn{v}, and therefore species scores should be dispersed
 symmetrically around corresponding site scores and the statistic
 describes their weighted dispersion. The purpose of rescaling is to
 make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
@@ -127,4 +127,12 @@ ordiplot(mod, display="sites")
 ## All these could handle all previous axes simultaneosly, but this
 ## requires editing transvu call.
 
+}
+\seealso{
+For serious purposes, use \code{\link[vegan]{decorana}} in
+    \pkg{vegan}. Function \code{\link{gradrescale}} rescales
+    observed gradients similarly as \code{decorana} rescales axes.
+}
+\author{
+Jari Oksanen
 }

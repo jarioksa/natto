@@ -54,7 +54,7 @@ Function returns an \code{\link{hclust}} object.
 }
 \description{
 Function forms hierarchic clustering so that each fusion minimizes
-beta deiversity or gamma diversity.
+beta diversity or gamma diversity.
 }
 \details{
 The function forms clusters so that pooled diversity or
@@ -63,6 +63,16 @@ level of clustering. The change of pooled diversity with respect to
 the baseline alpha diversity is called beta diversity, and the
 overall diversity is called gamma diversity. For beta diversity,
 the clustering implies an additive partitioning.
+
+For more detailed description, see vignette \code{"diverclust"}.
+}
+\examples{
+data(spurn)
+(cl <- diverclust(spurn))
+plot(cl) # beta diversity based on Shannon diversity
+(cl <- diverclust(spurn, renyi=0, hill=TRUE))
+plot(cl) # increase in species richness when pooling sites
+
 }
 \seealso{
 \code{\link{hclust}} for cluster analysis and its support

@@ -71,3 +71,6 @@ accurraccy of species distribution models: prevelance, kappa and
 the true skill statistic (TSS). \emph{Journal of Applied Ecology}
 43, 1223--1232.
 }
+\author{
+Jari Oksanen
+}

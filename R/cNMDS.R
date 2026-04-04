@@ -63,6 +63,8 @@
 #' other purposes than inspecting the method and as an inspiration for
 #' alternative implementations.
 #'
+#' @author Jari Oksanen
+
 #' @examples
 #' if (require(vegan)) { # vegan needed for data
 #' data(mite, mite.env)

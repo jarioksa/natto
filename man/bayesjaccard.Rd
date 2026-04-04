@@ -70,3 +70,6 @@ abline(0, 1, col=2)
 \seealso{
 Function is a wrapper to \code{\link[vegan]{designdist}}.
 }
+\author{
+Jari Oksanen
+}

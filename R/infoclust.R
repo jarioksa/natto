@@ -31,6 +31,8 @@
 #' species with 0.5 relative frequency, so that the analysis tries to
 #' build clusters where species is either always present or always
 #' absent. This often gives easily interpretable clusters.
+
+#' @author Jari Oksanen
 #'
 #' @references Williams, W.T., Lambert, J.M. & Lance,
 #' G.N. (1966). Multivariate methods in plant ecology. V. Similarity
@@ -74,7 +76,6 @@
 `infoclust` <-
     function(x, delta = TRUE)
 {
-    requireNamespace("vegan") || stop("requires vegan package")
     x <- ifelse(x > 0, 1, 0)
     N <- nrow(x)
     ## shortcut to pairwise 'infodist'

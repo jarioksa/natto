@@ -1,7 +1,7 @@
 #' beta and gamma Diversity Clustering
 #'
 #' Function forms hierarchic clustering so that each fusion minimizes
-#' beta deiversity or gamma diversity.
+#' beta diversity or gamma diversity.
 #'
 #' @inheritParams diverdist
 #' @param trace Trace calculations. Either logical or an integer:
@@ -14,12 +14,21 @@
 #' overall diversity is called gamma diversity. For beta diversity,
 #' the clustering implies an additive partitioning.
 #'
+#' For more detailed description, see vignette \code{"diverclust"}.
+#'
 #' @return Function returns an \code{\link{hclust}} object.
 #' @author Jari Oksanen.
 #' @seealso \code{\link{hclust}} for cluster analysis and its support
 #' methods, \code{\link[vegan]{renyi}} for estimating Renyi
 #' diversities and Hill numbers, and \code{\link[vegan]{adipart}} for
 #' related additive partitioning of beta diversity.
+#'
+#' @examples
+#' data(spurn)
+#' (cl <- diverclust(spurn))
+#' plot(cl) # beta diversity based on Shannon diversity
+#' (cl <- diverclust(spurn, renyi=0, hill=TRUE))
+#' plot(cl) # increase in species richness when pooling sites
 #'
 #' @export
 `diverclust` <-

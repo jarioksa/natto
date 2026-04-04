@@ -15,6 +15,9 @@ compared for species that occur in both compared SUs. If
 \code{FALSE}, the missing species are given tied rank as last
 species.}
 }
+\value{
+Function returns a \code{"dist"} object of mean rank shifts.
+}
 \description{
 Function calculates the mean rank shift between decreasing rank
 orders of species (columns). The averaging is done by the number of
@@ -26,4 +29,7 @@ Collins, S.L, Suding, K.N., Cleland, E.E., Batty, M.,
 Pennings, S.C., Gross, K.L., Grace, J.B., Gough, L., Fargione,
 J.E. & Clark, C.M. (2008). Rank clocks and plant community
 dynamics. \emph{Ecology} 89, 3534--3541.
+}
+\author{
+Jari Oksanen
 }

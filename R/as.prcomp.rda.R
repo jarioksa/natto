@@ -5,7 +5,10 @@
 #'
 #' @param x An unconstrained \code{\link[vegan]{rda}} result object.
 #'
-#' 
+#' @return A \code{\link{prcomp}} result object.
+#'
+#' @author Jari Oksanen
+
 #' @rdname as.prcomp
 #' @export
 `as.prcomp` <-

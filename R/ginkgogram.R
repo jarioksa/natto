@@ -49,6 +49,10 @@
 #'     non-negative, and zero weight guarantees that the leaf is drawn
 #'     as a simple line similarly as in \code{\link{hclust}}.
 #'
+#' @return Function is used to modify a plot of \code{\link{hclust}} tree.
+#'
+#' @author Jari Oksanen
+
 #' @examples
 #' ## need vegan data sets
 #' if (require(vegan)) {

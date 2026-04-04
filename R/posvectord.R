@@ -53,6 +53,8 @@
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
 #' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}).
+
+#' @author Jari Oksanen
 #'
 #' @return \code{posvectord} returns an object of class
 #'     \code{"posvectord"}, and \code{spvectord} returns an object of
@@ -94,7 +96,8 @@
 #' m
 #' plot(m)
 #' if (require(vegan, quietly = TRUE)) {
-#' plot(procrustes(rda(spurn), m, choices=1:2))
+#' ## similar to PCA
+#' plot(procrustes(pca(spurn), m, choices=1:2))
 #' }
 
 #' @rdname posvectord

@@ -91,3 +91,6 @@ summary(mod)
 McCullagh, P & Nelder, J.A. (1989) \emph{Generalized Linear Models}, 2nd ed.
    Chapman & Hall.
 }
+\author{
+Jari Oksanen
+}
