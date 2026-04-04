@@ -71,3 +71,6 @@ McArdle, B.H. & Anderson, M.J. (2001). Fitting
   multivariate models to community data: a comment on distance-based
   redundancy analysis. \emph{Ecology} 82, 290--297.
 }
+\author{
+Jari Oksanen
+}

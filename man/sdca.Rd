@@ -77,3 +77,6 @@ Hill, M.O. and Gauch, H.G. (1980). Detrended correspondence
   analysis: an improved ordination technique. \emph{Vegetatio}
   \strong{42}, 47--58.
 }
+\author{
+Jari Oksanen
+}

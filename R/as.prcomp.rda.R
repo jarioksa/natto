@@ -7,6 +7,8 @@
 #'
 #' @return A \code{\link{prcomp}} result object.
 #'
+#' @author Jari Oksanen
+
 #' @rdname as.prcomp
 #' @export
 `as.prcomp` <-

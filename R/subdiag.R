@@ -4,6 +4,8 @@
 #'
 #' @return vector of subdiagonal values.
 #'
+#' @author Jari Oksanen
+
 #' @export
 `subdiag` <-
     function(x)

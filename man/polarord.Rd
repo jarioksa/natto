@@ -169,3 +169,6 @@ Monographs} 27, 325--349.
 McCune, B. & Grace, J. B. (2002) \emph{Analysis of Ecological
 Communities.} MjM Software Design.
 }
+\author{
+Jari Oksanen
+}

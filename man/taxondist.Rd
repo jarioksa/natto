@@ -87,3 +87,6 @@ Clarke, K.R., Somerfield, P.J. & Chapman,
     \code{\link[vegan]{taxa2dist}} can be used to find taxonomic
     dissimilarities from classification table.
 }
+\author{
+Jari Oksanen
+}

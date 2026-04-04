@@ -115,3 +115,6 @@ criterion. \emph{Nature} 244: 371--373.
     educational tool to approximate Principal Coordinates Analysis
     (PCoA).
 }
+\author{
+Jari Oksanen
+}

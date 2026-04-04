@@ -119,3 +119,6 @@ plot(mod, type = "p") |>
 \code{\link{distconstrain}}, \code{\link[vegan]{dbrda}},
     \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{MDSaddpoints}}.
 }
+\author{
+Jari Oksanen
+}

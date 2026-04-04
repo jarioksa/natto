@@ -46,6 +46,8 @@
 #' \eqn{Q} values against species frequencies with lines for expected
 #' \eqn{Q} and its 2.5\% and 97.5\% quantiles as estimated from
 #' randomization.
+
+#' @author Jari Oksanen
 #'
 #' @references LeBlanc, S.C. & De Sloover, J. (1970) Relation between
 #' industrialization and the distribution and growth of epiphytic

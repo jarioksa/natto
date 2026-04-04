@@ -37,6 +37,8 @@
 #'     Function \code{\link{distrao}} provides an alternative index
 #'     that can handle quantitative data and produce indices related
 #'     to Euclidean distance.
+
+#' @author Jari Oksanen
 #'
 #' @seealso \code{\link{distrao}} is an alternative taxonomic distance
 #'     measure. The index is closely related to Clarke's taxonomic

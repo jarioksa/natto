@@ -44,6 +44,8 @@
 #'     responses fitted with \code{\link[stats]{binomial}} error
 #'     distribution, but it may process other types of models with
 #'     unspecified and untested results: proceed at your own risk.
+
+#' @author Jari Oksanen
 #'
 #' @return
 #'

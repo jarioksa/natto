@@ -147,3 +147,6 @@ There are other implementations of this function in
     on options.  Function \code{\link{taxondist}} provides Clarke's
     taxonomic dissimilarity.
 }
+\author{
+Jari Oksanen
+}

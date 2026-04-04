@@ -51,6 +51,8 @@
 #'
 #' @return Function is used to modify a plot of \code{\link{hclust}} tree.
 #'
+#' @author Jari Oksanen
+
 #' @examples
 #' ## need vegan data sets
 #' if (require(vegan)) {

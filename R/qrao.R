@@ -53,6 +53,8 @@
 #' @return \code{qrao} returns a vector of Rao's quadratic entropy
 #'     values and \code{distrao} distances of class \code{"dist"}.
 #'
+#' @author Jari Oksanen
+
 #' @references Rao, C.R. (1982) Diversity and dissimilarity
 #' coefficients: a unified approach. \emph{Theoretical Population
 #' Biology} 21, 24--43.

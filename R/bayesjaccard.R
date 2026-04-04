@@ -44,6 +44,8 @@
 #'
 #' @return Dissimilarity object inheriting from classes \code{"dist"}
 #'     and \code{"designdist"}.
+
+#' @author Jari Oksanen
 #'
 #' @examples
 #'

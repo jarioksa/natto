@@ -49,6 +49,8 @@
 #' describes their weighted dispersion. The purpose of rescaling is to
 #' make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
 #'
+#' @author Jari Oksanen
+
 #' @return Currently returns a list of elements \code{evals} of
 #'     Decorana values, with \code{rproj} and \code{cproj} of scaled
 #'     row and column scores.

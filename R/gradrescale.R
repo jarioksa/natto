@@ -12,6 +12,8 @@
 #'
 #' @return Rescaled gradient scaled in units of heterogeneity.
 #'
+#' @author Jari Oksanen
+
 #' @importFrom vegan wascores
 #'
 #' @examples

@@ -31,3 +31,6 @@ plot(WatrCont.rescaled ~ WatrCont, data=mite.env)
 }
 
 }
+\author{
+Jari Oksanen
+}

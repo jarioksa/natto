@@ -19,3 +19,6 @@ A \code{\link{prcomp}} result object.
 Function casts a result object of unconstrained
 \code{\link[vegan]{rda}} to a \code{\link{prcomp}} result object.
 }
+\author{
+Jari Oksanen
+}

@@ -53,6 +53,8 @@
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
 #' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}).
+
+#' @author Jari Oksanen
 #'
 #' @return \code{posvectord} returns an object of class
 #'     \code{"posvectord"}, and \code{spvectord} returns an object of

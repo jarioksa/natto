@@ -27,6 +27,8 @@
 #' dissimilarities returned from this function.
 #'
 #' @return A \code{"dist"} object of constrained or residual distances.
+
+#' @author Jari Oksanen
 #'
 #' @references McArdle, B.H. & Anderson, M.J. (2001). Fitting
 #'   multivariate models to community data: a comment on distance-based

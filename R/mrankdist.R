@@ -14,6 +14,8 @@
 #' species.
 #'
 #' @return Function returns a \code{"dist"} object of mean rank shifts.
+
+#' @author Jari Oksanen
 #'
 #' @references Collins, S.L, Suding, K.N., Cleland, E.E., Batty, M.,
 #' Pennings, S.C., Gross, K.L., Grace, J.B., Gough, L., Fargione,

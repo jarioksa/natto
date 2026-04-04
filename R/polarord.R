@@ -99,6 +99,8 @@
 #'   \item \code{call}: Function call.
 #' }
 #'
+#' @author Jari Oksanen
+
 #' @references
 #'
 #' Beals, E. W. (1984) Bray-Curtis ordination: an effective strategy

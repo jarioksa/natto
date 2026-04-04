@@ -15,3 +15,6 @@ vector of subdiagonal values.
 \description{
 Extract Subdiagonal from Dissimilarities or from a Square Matrix
 }
+\author{
+Jari Oksanen
+}

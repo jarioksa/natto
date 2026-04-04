@@ -133,3 +133,6 @@ For serious purposes, use \code{\link[vegan]{decorana}} in
     \pkg{vegan}. Function \code{\link{gradrescale}} rescales
     observed gradients similarly as \code{decorana} rescales axes.
 }
+\author{
+Jari Oksanen
+}

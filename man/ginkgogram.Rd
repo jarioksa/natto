@@ -75,3 +75,6 @@ ginkgogram(cl, w = colMeans(dune), col = factor(dune.taxon$Superorder),
     leaf = 65)
 }
 }
+\author{
+Jari Oksanen
+}

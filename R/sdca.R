@@ -43,6 +43,8 @@
 
 #' @importFrom stats loess residuals runif weighted.mean
 #' @importFrom vegan downweight eigengrad wascores
+
+#' @author Jari Oksanen
 #'
 #' @return Function returns a subset of \code{\link[vegan]{decorana}}
 #'     result object and can use many \code{decorana} methods (such as

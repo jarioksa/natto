@@ -110,3 +110,6 @@ LeBlanc, S.C. & De Sloover, J. (1970) Relation between
 industrialization and the distribution and growth of epiphytic
 lichens and mosses in Montreal. \emph{Can. J. Bot.} 48, 1485--1496.
 }
+\author{
+Jari Oksanen
+}

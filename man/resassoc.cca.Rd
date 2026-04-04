@@ -102,3 +102,6 @@ the R-package Hmsc. \emph{Methods in Ecology and Evolution}
     essential natural component of the analysis whereas here we
     apply post-analysis tricks to extract something similar.
 }
+\author{
+Jari Oksanen
+}

@@ -14,6 +14,8 @@
 #'
 #' @return A \code{"dist"} object with numeric value for distances
 #'     between neighbours and \code{NA} for other distances.
+
+#' @author Jari Oksanen
 #' 
 #' @export
 `as.dist.deldir` <-

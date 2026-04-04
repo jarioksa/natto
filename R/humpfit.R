@@ -66,6 +66,8 @@
 #' for pairs of parameters, if the normal assumptions look
 #' appropriate.
 #'
+#' @author Jari Oksanen
+
 #' @references
 #'
 #' Al-Mufti, M.M., Sykes, C.L, Furness, S.B., Grime, J.P &

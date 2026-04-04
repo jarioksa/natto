@@ -210,3 +210,6 @@ Ecology} 84, 293--295.
 \code{\link[vegan]{fisherfit}}, \code{\link[stats]{profile.glm}},
     \code{\link[stats]{confint.glm}}.
 }
+\author{
+Jari Oksanen
+}
