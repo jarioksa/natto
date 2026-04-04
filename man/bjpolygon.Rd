@@ -92,3 +92,6 @@ specified, the centre of points prior to selection will be used.
     \code{\link{plot.bjnmds}} and \code{\link{plot.bjnmds}} and
     \code{\link{plot.bjdbrda}} for programmatic interface.
 }
+\author{
+Jari Oksanen
+}

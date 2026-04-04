@@ -132,6 +132,7 @@
 #' @importFrom stats hclust rbeta
 #' @importFrom vegan designdist ordilabel
 #' @rdname clsupport
+#' @author Jari Oksanen
 #' @export
 `clsupport` <-
     function (x, n=1000, method="average", softmatch = FALSE, plot = TRUE, ...)
@@ -245,6 +246,7 @@
 #' @importFrom stats fitted
 #' @importFrom vegan metaMDS monoMDS procrustes
 #' @rdname bjNMDS
+#' @author Jari Oksanen
 #' @export
 `bjNMDS` <-
     function(x, n = 100, trymax = 500, maxit = 1000, smin = 1e-4,
@@ -377,6 +379,7 @@
 #' @importFrom graphics polygon
 #' @importFrom grDevices adjustcolor
 #' @rdname bjpolygon
+#' @author Jari Oksanen
 #' @export
 `bjpolygon` <-
     function(xarr, x0, keep = 0.9, kind = c("hull", "ellipse"),
@@ -529,6 +532,7 @@
 #'
 #' @importFrom vegan dbrda eigenvals
 #' @rdname bjdbrda
+#' @author Jari Oksanen
 #' @export
 `bjdbrda` <-
     function(formula, data, n=100, ...)

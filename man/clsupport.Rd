@@ -68,3 +68,6 @@ clsupport(spurn, softmatch = TRUE)
 \seealso{
 \code{\link{hclust}}, \code{\link{bayesjaccard}}.
 }
+\author{
+Jari Oksanen
+}
