@@ -10,7 +10,7 @@ diverclust(
   equalize = TRUE,
   beta = TRUE,
   hill = FALSE,
-  trace = TRUE
+  trace = FALSE
 )
 }
 \arguments{

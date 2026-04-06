@@ -33,7 +33,7 @@
 #' @export
 `diverclust` <-
     function (x, renyi = 1, equalize = TRUE, beta = TRUE, hill = FALSE,
-          trace = TRUE)
+          trace = FALSE)
 {
     x <- as.matrix(x) ## huge speed-up over data frame
     ## equalize here, but no more in diverdist
@@ -84,11 +84,11 @@
            if(is.na(cli[i]) || i == g1) next
            w <- c(cnt[g1], cnt[i])/(cnt[g1] + cnt[i])
            tmp <- renyi(w[1]*x[g1,] + w[2]*x[i,], scales = renyi, hill=hill)
-           dh[max(g1,i), min(g1,i)] <- tmp - w[1]*base[g1] - w[2]*base[i] 
+           dh[max(g1,i), min(g1,i)] <- tmp - w[1]*base[g1] - w[2]*base[i]
         }
     }
 
-    out <- list(merge = merge, 
+    out <- list(merge = merge,
                 height = height,
                 order = vegan:::hclustMergeOrder(merge),
                 labels = rownames(x),
