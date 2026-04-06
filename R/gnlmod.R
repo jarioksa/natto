@@ -68,9 +68,9 @@
     function(formula, data, family = gaussian, wts, ...)
 {
     if (missing(data))
-        data <- NULL
+        data <- parent.frame()
     ## extract dependent data and selfStart model
-    y <- eval(formula[[2]], data)
+    y <- eval(formula[[2]], data, environment(formula))
     x <- formula[[3]][[2]]
     assign(as.character(x), eval(x, data))
     SSmodel <- formula[[3]]
