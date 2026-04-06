@@ -9,7 +9,7 @@ Description: Random code that is too experimental or
 License: MIT + file LICENCE
 Depends: R (>= 4.4.0)
 Imports: vegan (>= 2.7.1), cluster
-Suggests: knitr, dendextend
+Suggests: knitr, dendextend, tinytest
 VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
