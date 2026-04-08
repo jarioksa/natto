@@ -76,7 +76,7 @@
 `respthresh` <-
     function(object)
 {
-    if (object$family != "binomial" || length(unique(object$y)) > 2)
+    if (object$family$family != "binomial" || length(unique(object$y)) > 2)
         warning("developed for binomial binary models: proceed at your own risk")
     fv <- fitted(object)
     fvuniq <- sort(unique(fv))
