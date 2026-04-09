@@ -71,6 +71,21 @@
 #' the true skill statistic (TSS). \emph{Journal of Applied Ecology}
 #' 43, 1223--1232.
 #'
+#' @examples
+#' ## Gaussian response of Bauera rubioides on Mt Field
+#' data(mtfield5)
+#' mod <- glm(Bauerubi ~ poly(Altitude, 2), data=mtfield5, family=binomial)
+#' thr <- respthresh(mod)
+#' thr
+#' summary(thr)
+#' plot(Bauerubi ~ Altitude, mtfield5)
+#' lines(fitted(mod) ~ Altitude, mtfield5, lwd=2) # data ordered by Altitude
+#' lines(fitted(thr) ~ Altitude, mtfield5, type="s", col=2)
+#' abline(h = coef(thr), lty=2, col=2)
+#' legend("right", c("Gaussian Response", "Threshold model", "Threshold level"),
+#'    lty=c(1,1,2), col=c(1,2,2), lwd=c(2,1,1))
+#' plot(thr)
+#'
 #' @importFrom stats fitted
 #' @export
 `respthresh` <-

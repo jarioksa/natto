@@ -65,6 +65,22 @@ accessed with \code{\link{coef}} that returns the threshold,
 \code{\link{fitted}} that returns the fitted two values for each
 original observation.
 }
+\examples{
+## Gaussian response of Bauera rubioides on Mt Field
+data(mtfield5)
+mod <- glm(Bauerubi ~ poly(Altitude, 2), data=mtfield5, family=binomial)
+thr <- respthresh(mod)
+thr
+summary(thr)
+plot(Bauerubi ~ Altitude, mtfield5)
+lines(fitted(mod) ~ Altitude, mtfield5, lwd=2) # data ordered by Altitude
+lines(fitted(thr) ~ Altitude, mtfield5, type="s", col=2)
+abline(h = coef(thr), lty=2, col=2)
+legend("right", c("Gaussian Response", "Threshold model", "Threshold level"),
+   lty=c(1,1,2), col=c(1,2,2), lwd=c(2,1,1))
+plot(thr)
+
+}
 \references{
 Allouche, O., Tsoar, A. & Kadmon, R. (2006) Assessing the
 accurraccy of species distribution models: prevelance, kappa and
