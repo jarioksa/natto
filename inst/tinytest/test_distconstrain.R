@@ -4,11 +4,11 @@ require(vegan, quietly=TRUE)
 data(dune, dune.env)
 d <- canneddist(dune, "chord")
 mod <- dbrda(d ~ Management + Moisture, dune.env)
-dcon <- distconstrain(d ~ Management + Moisture,
-                      dune.env)
+expect_silent(dcon <- distconstrain(d ~ Management + Moisture,
+                      dune.env))
 expect_equivalent(eigenvals(pco(dcon)),
                   eigenvals(mod, "constrained"))
-dres <- distconstrain(d ~ Management + Moisture,
-                      dune.env, residuals = TRUE)
+expect_silent(dres <- distconstrain(d ~ Management + Moisture,
+                      dune.env, residuals = TRUE))
 expect_equivalent(eigenvals(pco(dres)),
                   eigenvals(mod, "unconstrained"))

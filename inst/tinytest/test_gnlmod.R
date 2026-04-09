@@ -3,8 +3,9 @@ require(vegan, quietly=TRUE) # data, SSarrhenius
 data(sipoo, sipoo.map)
 S <- specnumber(sipoo)
 
-mod <- gnlmod(S ~ SSarrhenius(area, k, z), data=cbind("S" = S, sipoo.map),
-              family=poisson)
+expect_silent(mod <- gnlmod(S ~ SSarrhenius(area, k, z),
+                            data=cbind("S" = S, sipoo.map),
+                            family=poisson))
 mod0 <- glm(S ~ log(area), sipoo.map, family=poisson)
 
 expect_equal(deviance(mod0), deviance(mod))

@@ -23,6 +23,6 @@ taxdis<- as.matrix(taxa2dist(dat.taxon, varstep=FALSE))
 ## Reference values were given in three digits and multiplied by 100
 ## (but we use max 1 for dissimilarities).
 expect_equivalent(as.numeric(taxondist(dat, taxdis, "gamma")),
-                  0.2, tol=0.0005)
+                  0.200, tol=0.0005)
 expect_equivalent(as.numeric(taxondist(dat, taxdis, "theta")),
                   0.198, tol=0.0005)

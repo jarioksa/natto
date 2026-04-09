@@ -17,7 +17,7 @@ data(BCI.taxon)
 d <- taxa2dist(BCI.taxon, varstep = TRUE)
 
 ## Rao standardization
-Z <- raostand(BCI, d)
+expect_silent(Z <- raostand(BCI, d))
 expect_equivalent(1 - rowSums(decostand(BCI, "tot")^2),
                   diversity(BCI, "simpson")) # simple Simpson
 expect_equivalent(1 - rowSums(Z^2),
