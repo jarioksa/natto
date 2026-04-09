@@ -8,42 +8,45 @@
 #' occurrence. Some users want to find a threshold that splits these
 #' continuous responses to binary outcomes of presence and absence
 #' (Allouche, Tsoar & Cadmon 2006). This function finds a threshold
-#' that maximizes the explained deviance and gives as true
+#' cutoff that maximizes the explained deviance and gives as true
 #' approximation of the original continuous response as possible.
 #'
 #' @details
 #'
 #' The function evaluates the deviance of the original continuous
-#' model by setting a threshold at each fitted value and evaluating
+#' model by setting a cutoff at each fitted value and evaluating
 #' the deviance explained with this threshold. The threshold is
 #' inclusive: values at or above the threshold are regarded as being
 #' hits. The deviance profile is usually jagged, and the method is
 #' sensitive to single data points, and can give disjunct regions of
-#' nearly equally good threshold points. Function \code{plot} will
+#' nearly equally good response cutoffs. Function \code{plot} will
 #' display the deviance profile, and \code{summary} lists all
-#' threshold that are nearly as good as the best point using
+#' thresholds that are nearly as good as the best cutoff using
 #' Chi-square distribution with 1 degree of freedom at \eqn{p=0.95} as
 #' the criterion.
 #'
-#' The binary model has two values or average responses below and at
-#' or above the threshold, but these values are not usually 0 and
-#' 1. However, they are the values that maximize the explained
-#' deviance of a two-value model.
+#' The threshold model has two values or average responses below and
+#' at or above the cutoff, but these fitted threshold responses are
+#' not usually 0 and 1. However, they are the values that maximize the
+#' explained deviance of a two-value model.
 #'
 #' The \code{summary} also gives a Deviance table showing the original
 #' Null deviance, the original model deviance, and between these the
 #' residual deviance with the binary threshold, and the differences of
 #' these deviances in the second model. The result object can also be
-#' accessed with \code{\link{coef}} that returns the threshold,
-#' \code{\link{deviance}} that returns the residual deviance, and
-#' \code{\link{fitted}} that returns the fitted two values for each
-#' original observation.
+#' accessed with \code{\link{coef}} that returns the cutoff value of
+#' fitted response, \code{\link{deviance}} that returns the residual
+#' deviance, and \code{\link{fitted}} that returns the fitted two
+#' values for each original observation.
 #'
 #' @param object Fitted \code{\link{glm}} or \code{\link[mgcv]{gam}}
 #'     object. The function was developed for binary observations
 #'     responses fitted with \code{\link[stats]{binomial}} error
 #'     distribution, but it may process other types of models with
 #'     unspecified and untested results: proceed at your own risk.
+#'     There are no restrictions on the number and types of
+#'     independent variables: the estimation is only based on fitted
+#'     values and observed response.
 
 #' @author Jari Oksanen
 #'
@@ -82,7 +85,7 @@
 #' lines(fitted(mod) ~ Altitude, mtfield5, lwd=2) # data ordered by Altitude
 #' lines(fitted(thr) ~ Altitude, mtfield5, type="s", col=2)
 #' abline(h = coef(thr), lty=2, col=2)
-#' legend("right", c("Gaussian Response", "Threshold model", "Threshold level"),
+#' legend("topright", c("Gaussian model", "Threshold model", "Cutoff level"),
 #'    lty=c(1,1,2), col=c(1,2,2), lwd=c(2,1,1))
 #' plot(thr)
 #'
