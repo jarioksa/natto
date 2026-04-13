@@ -315,7 +315,7 @@
 `detrend` <-
     function(x, aidot, x1, mk)
 {
-    x1 <- cut(x1, mk)
+    x1 <- cut(x1, mk, right = FALSE)
     ## pad segments with zeros to buffer ends
     z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
     zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
@@ -402,7 +402,7 @@
     sqcorr <- sqcorr/aidot^2
     sqcorr <- pmin(sqcorr, 0.9999) # 0.9999 as in decorana.f
     sumsq <- sumsq/aidot
-    axbit <- cut(rproj, mk)
+    axbit <- cut(rproj, mk, right = FALSE)
     zv <- tapply(sumsq, axbit, sum, default = 0)
     zn <- tapply(1-sqcorr, axbit, sum, default = 0)
     list(zv = zv, zn = zn)
