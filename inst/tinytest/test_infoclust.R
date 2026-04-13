@@ -1,7 +1,7 @@
 ### infoclust: replicate numerical example in Legendre & Legendre
 ### (2012) Numerical Ecology, p. 372-376.
 data(pond)
-cl <- infoclust(pond)
+expect_silent(cl <- infoclust(pond))
 ## pairwise information distances in three decimals (p. 374 top)
 expect_equal(as.numeric(canneddist(pond, "information")),
              c(2.773, 8.318, 9.704, 9.704,
