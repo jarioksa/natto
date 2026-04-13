@@ -52,7 +52,7 @@
 #'
 #' @return
 #'
-#' The function returns an object of class \code{"respthresh"} with
+#' The function returns an object of class \code{"responsecut"} with
 #' following elements:
 #' \itemize{
 #'   \item \code{coefficients}: optimal splitting threshold of fitted values.
@@ -78,7 +78,7 @@
 #' ## Gaussian response of Bauera rubioides on Mt Field
 #' data(mtfield5)
 #' mod <- glm(Bauerubi ~ poly(Altitude, 2), data=mtfield5, family=binomial)
-#' thr <- respthresh(mod)
+#' thr <- responsecut(mod)
 #' thr
 #' summary(thr)
 #' plot(Bauerubi ~ Altitude, mtfield5)
@@ -91,7 +91,7 @@
 #'
 #' @importFrom stats fitted
 #' @export
-`respthresh` <-
+`responsecut` <-
     function(object)
 {
     if (object$family$family != "binomial" || length(unique(object$y)) > 2)
@@ -118,7 +118,7 @@
                 orig.deviance = deviance(object), formula = formula(object),
                 cutoff = fvuniq, devprofile = dev, values = vals,
                 fitted = fit)
-    class(out) <- "respthresh"
+    class(out) <- "responsecut"
     out
 }
 
@@ -126,7 +126,7 @@
 
 #' @importFrom stats formula
 #' @export
-`print.respthresh` <-
+`print.responsecut` <-
     function(x, ...)
 {
     cat("Binary threshold for model\n")
@@ -138,7 +138,7 @@
 }
 
 #' @export
-`plot.respthresh` <-
+`plot.responsecut` <-
     function(x, ...)
 {
     plot(x$cutoff, x$devprofile, xlab = "Response Cutoff",
@@ -148,7 +148,7 @@
 
 #' @importFrom stats deviance qchisq formula
 #' @export
-`summary.respthresh` <-
+`summary.responsecut` <-
     function(object, ...)
 {
     tmp <- c(object$null.deviance, deviance(object), object$orig.deviance)
@@ -162,13 +162,13 @@
     rownames(oktable) <- which(ok)
     out <- list(devtable = devtable, oktable = oktable,
                 formula = formula(object))
-    class(out) <- "summary.respthresh"
+    class(out) <- "summary.responsecut"
     out
 }
 
 #' @importFrom stats printCoefmat
 #' @export
-`print.summary.respthresh` <-
+`print.summary.responsecut` <-
     function(x, ...)
 {
     cat("Binary threshold for model\n")
