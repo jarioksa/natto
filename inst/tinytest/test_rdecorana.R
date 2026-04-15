@@ -33,3 +33,5 @@ expect_silent(uscaled <- gradrescale(u, dune))
 ## one rescaling of transposed data to get rescaled "species" score
 mtrans <- vegan::decorana(t(dune), iresc = 1)
 expect_equal(cor(mtrans$cproj[,1], uscaled), 1)
+## uscaled should be of the same length as rproj
+expect_equal(max(mtrans$rproj[,1]), max(uscaled))
