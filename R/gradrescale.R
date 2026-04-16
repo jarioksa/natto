@@ -38,6 +38,9 @@
 #' data(mite, mite.env)
 #' WatrCont.rescaled <- with(mite.env, gradrescale(WatrCont, mite))
 #' plot(WatrCont.rescaled ~ WatrCont, data=mite.env)
+#' abline(lm(WatrCont.rescaled ~ WatrCont, data=mite.env), col=4)
+#' legend("topleft", c("Nonlinear rescaling", "Linear scaling"),
+#'     lty=c(NA,1), pch=c(1,NA), col=c(1,4))
 #' }
 #'
 #' @export
