@@ -27,11 +27,13 @@ expect_equivalent(abs(diag(cor(m0$rproj, m$rproj))), c(1,1,1,1), tol=1e-7)
 expect_equivalent(abs(diag(cor(m0$cproj, m$cproj))), c(1,1,1,1), tol=1e-7)
 
 ## gradrescale: should be equal to decorana(t(x), iresc=1) column score 1
+## works also as a test for rescaling stage in decorana
 m0 <- vegan::decorana(dune, iresc = 0)
 u <- m0$rproj[,1]
 expect_silent(uscaled <- gradrescale(u, dune))
 ## one rescaling of transposed data to get rescaled "species" score
 mtrans <- vegan::decorana(t(dune), iresc = 1)
 expect_equal(cor(mtrans$cproj[,1], uscaled), 1)
-## uscaled should be of the same length as rproj
-expect_equal(max(mtrans$rproj[,1]), max(uscaled))
+expect_equal(order(u), order(uscaled), info="rescaling is monotonous")
+expect_equal(range(mtrans$rproj[,1]), range(uscaled),
+             info="gradient length matches transposed rproj")
