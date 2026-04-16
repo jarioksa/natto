@@ -157,25 +157,24 @@
         }
         evals[axis] <- sol$d[1]^2
         ## u is computed from v and includes eigenvalue
-        v <- sol$v
-        if (-min(v) > max(v))
-            v <- -v
         ## NB. In all analyses site scores u are found from species
         ## scores v. Species scores were detrended, but site scores
         ## are their weighted averages and relaxed from detrending.
+        v <- sol$v
         u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
+        ## revert axes?
+        if (-min(vdeco) > max(vdeco)) {
+            vdeco <- -vdeco
+            udeco <- -udeco
+        }
         ## rescaling
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
                 vdeco <- z$cproj
-                if (-min(vdeco) > max(vdeco)) {
-                    udeco <- -udeco
-                    vdeco <- -vdeco
-                }
                 vdeco <- vdeco - min(udeco)
                 udeco <- udeco - min(udeco)
             }

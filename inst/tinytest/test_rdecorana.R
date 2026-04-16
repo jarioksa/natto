@@ -9,20 +9,21 @@ data(dune)
 m0 <- vegan::decorana(dune)
 expect_silent(m <- rdecorana(dune))
 expect_equivalent(m0$evals.decorana, m$evals, tol=1e-7)
-expect_equivalent(abs(diag(cor(m0$rproj, m$rproj))), c(1,1,1,1), tol=1e-5)
-expect_equivalent(abs(diag(cor(m0$cproj, m$cproj))), c(1,1,1,1), tol=1e-5)
+expect_equivalent(diag(cor(m0$rproj, m$rproj)), c(1,1,1,1), tol=1e-5)
+expect_equivalent(diag(cor(m0$cproj, m$cproj)), c(1,1,1,1), tol=1e-5)
 
 ## 2. no rescaling, only detrending
 m0 <- vegan::decorana(dune, iresc = 0)
 expect_silent(m <- rdecorana(dune, iresc = 0))
 expect_equivalent(m0$evals.decorana, m$evals, tol=1e-7)
-expect_equivalent(abs(diag(cor(m0$rproj, m$rproj))), c(1,1,1,1), tol=1e-5)
-expect_equivalent(abs(diag(cor(m0$cproj, m$cproj))), c(1,1,1,1), tol=1e-5)
+expect_equivalent(diag(cor(m0$rproj, m$rproj)), c(1,1,1,1), tol=1e-5)
+expect_equivalent(diag(cor(m0$cproj, m$cproj)), c(1,1,1,1), tol=1e-5)
 
 ## 3. Orthogonal CA
 m0 <- vegan::decorana(dune, ira=1)
 expect_silent(m <- rdecorana(dune, ira=1))
 expect_equivalent(m0$evals, m$evals, tol=1e-8)
+## rdecorana still used svd() instead of decorana code: axis reversals
 expect_equivalent(abs(diag(cor(m0$rproj, m$rproj))), c(1,1,1,1), tol=1e-7)
 expect_equivalent(abs(diag(cor(m0$cproj, m$cproj))), c(1,1,1,1), tol=1e-7)
 
