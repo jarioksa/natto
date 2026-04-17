@@ -120,11 +120,6 @@
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
-    ## orthogonal CA: just do it and return
-    if (ira == 1)
-        return(orthoCA(x, aidot = aidot, adotj = adotj, naxes = NAXES))
-    ## ira == 0 and we go for detrended CA. First axis can be found
-    ## directly via svd.
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
     colnames(rproj) <- colnames(cproj) <- paste0("DCA", seq_len(NAXES))
@@ -145,7 +140,7 @@
             cycles <- 0
             ## Reciprocal averaging starting from eigenvector v
             repeat {
-                sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk)
+                sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk, ira)
                 if (abs(eig2 - sol$d) < EPS)
                     break
                 eig2 <- sol$d
@@ -169,8 +164,8 @@
             vdeco <- -vdeco
             udeco <- -udeco
         }
-        ## rescaling
-        if (iresc > 0) {
+        ## rescaling with detrending
+        if (ira == 0 && iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
@@ -216,35 +211,6 @@
     x
 }
 
-## Orthogonal Correspondence Analysis
-##
-## Orthogonal correspondence analysis is performed via svd of
-## CA-initialized data.
-##
-## @param x initCA-initialized data.
-## @param aidot,adotj Row and column weights summing up to 1.
-## @param naxes Number of axes.
-##
-## @return Orthogonal CA scaled like in Decorana.
-##
-## not exported
-`orthoCA` <-
-    function(x, aidot, adotj, naxes)
-{
-    m <- svd(x, nu = naxes, nv = naxes)
-    lambda <- m$d[seq_len(naxes)]^2
-    rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
-    cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
-    colnames(cproj) <- colnames(rproj) <- paste0("RA", seq_len(naxes))
-    rownames(rproj) <- rownames(x)
-    rownames(cproj) <- colnames(x)
-    structure(list(evals = lambda, rproj = rproj, cproj = cproj, aidot = aidot,
-                   adotj = adotj,
-                   call = match.call(sys.function(sys.parent()),
-                                     sys.call(sys.parent()))),
-              class = "rdecorana")
-}
-
 ## transvu is modelled after trans subroutine in decorana.f. The
 ## decorana original is longer because it also implements
 ## orthogonalization which we do not need. Essentially the function
@@ -266,7 +232,7 @@
 ##
 ## not exported
 `transvu` <-
-    function(v, rproj, x, axis, aidot, adotj, mk)
+    function(v, rproj, x, axis, aidot, adotj, mk, ira)
 {
     ## v should be centred and normalized: play safe
     cnt <- mean(sqrt(adotj) * v)
@@ -279,7 +245,7 @@
     ## axis 4 against axes 1, 2, 3, 2, 1 in this order.
     if (axis > 1)
         for(k in c(seq_len(axis-1), rev(seq_len(axis-2))))
-            u <- detrend(u, aidot, rproj[,k], mk)
+            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
     ## get back v
     v <- t(sqrt(aidot) * x) %*% u
     eig <- sqrt(sum(v^2))
@@ -327,6 +293,21 @@
     ## mean.
     z <- filter(z, c(1,1,1)/3, sides=2)
     x - z[as.numeric(x1)+2]
+}
+
+#' @importFrom stats lm.wfit loess poly residuals
+`detrend0` <-
+    function(x, aidot, x1, mk, ira=ira)
+{
+    ## switch between Hill's segmentwise detrending, orthogonal CA,
+    ## quadratic polynomial detrending or loess detrending
+    switch(as.character(ira),
+           "0" = detrend(x, aidot, x1, mk),
+           "1" = x - sum(x * aidot * x1) * x,
+           "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
+           "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
+           stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
+           )
 }
 
 ## The original comments of Decorana smooth:
