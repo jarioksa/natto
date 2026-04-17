@@ -13,7 +13,7 @@ iap(comm, iapq)
 
 \method{plot}{iapq}(x, type = c("p", "t"), optimize = FALSE, bg, labels, cex = 0.7, ...)
 
-\method{summary}{iapq}(object, ...)
+\method{summary}{iapq}(object, plimit = 0.1, ...)
 }
 \arguments{
 \item{comm}{The community data frame.}
@@ -40,6 +40,8 @@ number of companion species.}
 \item{\dots}{Other arguments to the function.}
 
 \item{object}{\code{iapq} result object.}
+
+\item{plimit}{Show species at or below \eqn{P}-level.}
 }
 \value{
 \code{iapq} returns a matrix with columns of species
@@ -101,6 +103,7 @@ randomization.
 \examples{
 data(spurn)
 iq <- iapq(spurn)
+summary(iq)
 plot(iq, type="t", optimize = TRUE, bg = "white")
 iap(spurn, iq)
 

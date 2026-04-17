@@ -59,10 +59,11 @@
 #'     (\code{E(Q)}), 2.5\% and 97.5\% quantiles and
 #'     \dQuote{significance}. \code{iap} returns a vector of estimated
 #'     IAP values for each site.
-#' 
+#'
 #' @examples
 #' data(spurn)
 #' iq <- iapq(spurn)
+#' summary(iq)
 #' plot(iq, type="t", optimize = TRUE, bg = "white")
 #' iap(spurn, iq)
 #'
@@ -167,13 +168,14 @@
 }
 
 #' @param object \code{iapq} result object.
+#' @param plimit Show species at or below \eqn{P}-level.
 #' @rdname iap
 #' @export
 `summary.iapq` <-
-    function (object, ...)
+    function (object, plimit = 0.1, ...)
 {
-    x <- object[object[,7] <= 0.1,]
-    i <- order(x[,2])
+    x <- object[object[,7] <= plimit,, drop=FALSE]
+    i <- order(x[,2], x[,3]) # order by Q, split ties by SES
     x <- x[i,]
     class(x) <- "iapq"
     x
