@@ -122,7 +122,13 @@
     adotj <- attr(x, "CW")
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
-    colnames(rproj) <- colnames(cproj) <- paste0("DCA", seq_len(NAXES))
+    colnames(rproj) <- colnames(cproj) <-
+        paste0(switch(as.character(ira),
+                      "0" = "DCA",
+                      "1" = "RA",
+                      "2" = "QDCA",
+                      "3" = "SDCA"),
+               seq_len(NAXES))
     rownames(rproj) <- rownames(x)
     rownames(cproj) <- colnames(x)
     evals <- numeric(NAXES)
