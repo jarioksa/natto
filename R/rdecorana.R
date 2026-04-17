@@ -157,25 +157,24 @@
         }
         evals[axis] <- sol$d[1]^2
         ## u is computed from v and includes eigenvalue
-        v <- sol$v
-        if (-min(v) > max(v))
-            v <- -v
         ## NB. In all analyses site scores u are found from species
         ## scores v. Species scores were detrended, but site scores
         ## are their weighted averages and relaxed from detrending.
+        v <- sol$v
         u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
+        ## revert axes?
+        if (-min(vdeco) > max(vdeco)) {
+            vdeco <- -vdeco
+            udeco <- -udeco
+        }
         ## rescaling
         if (iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
                 vdeco <- z$cproj
-                if (-min(vdeco) > max(vdeco)) {
-                    udeco <- -udeco
-                    vdeco <- -vdeco
-                }
                 vdeco <- vdeco - min(udeco)
                 udeco <- udeco - min(udeco)
             }
@@ -315,7 +314,7 @@
 `detrend` <-
     function(x, aidot, x1, mk)
 {
-    x1 <- cut(x1, mk)
+    x1 <- cut(x1, mk, right = FALSE)
     ## pad segments with zeros to buffer ends
     z <- c(0, 0, tapply(aidot*x, x1, sum, default = 0), 0, 0)
     zn <- c(0, 0, tapply(aidot, x1, sum, default = 0), 0, 0)
@@ -402,7 +401,7 @@
     sqcorr <- sqcorr/aidot^2
     sqcorr <- pmin(sqcorr, 0.9999) # 0.9999 as in decorana.f
     sumsq <- sumsq/aidot
-    axbit <- cut(rproj, mk)
+    axbit <- cut(rproj, mk, right = FALSE)
     zv <- tapply(sumsq, axbit, sum, default = 0)
     zn <- tapply(1-sqcorr, axbit, sum, default = 0)
     list(zv = zv, zn = zn)
