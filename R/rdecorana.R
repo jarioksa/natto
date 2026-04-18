@@ -309,7 +309,7 @@
     ## quadratic polynomial detrending or loess detrending
     switch(as.character(ira),
            "0" = detrend(x, aidot, x1, mk),
-           "1" = x - sum(x * aidot * x1) * x,
+           "1" = x - sum(x * aidot * x1) * x1,
            "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
            stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
