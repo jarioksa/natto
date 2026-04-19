@@ -4,50 +4,57 @@
 #'
 #' Similar to Fortran implementation in vegan, but all in R.
 #'
-#' This function duplicates \CRANpkg{vegan} function
+#' This function mimics \CRANpkg{vegan} function
 #' \code{\link[vegan]{decorana}}, but is written in \R{}. It is
 #' slower, and does not have all features and support of the
-#' \pkg{vegan} function, and there is no need to use this function for
-#' data analysis. The function serves two purposes. First, as an
-#' \R{} function it is easier to inspect the algorithm than from C or
-#' Fortran code. Second, it is more hackable, and it is easier to
-#' develop new features, change code or replace functionality than in
-#' the compiled code. For instance, it would be trivial to add
-#' Detrended Constrained Correspondence Analysis, but this would be
-#' impossible without extensive changes in Fortran in the \pkg{vegan}
-#' function.
+#' \pkg{vegan} function, and there usually is no need to use this
+#' function for data analysis. The function serves two
+#' purposes. First, as an \R{} function it is easier to inspect the
+#' algorithm than from C or Fortran code. Second, it is more hackable,
+#' and it is easier to develop new features, change code or replace
+#' functionality than in the compiled code. For instance, it would be
+#' trivial to add Detrended Constrained Correspondence Analysis, but
+#' this would be impossible without extensive changes in Fortran in
+#' the \pkg{vegan} function.
 #'
 #' The main function \code{rdecorana} performs janitorial tasks, and
 #' for detrended CA it has basically only two loops. The first loop
 #' finds the next correspondence analysis axis for species and sites,
-#' and the second loop performs optional (if \code{iresc > 0})
-#' nonlinear rescaling of that axis.
+#' and the second loop performs optional (if \code{iresc > 0} and
+#' \code{ira != 1}) nonlinear rescaling of that axis.
 #'
 #' Two non-exported functions are used for finding the correspondence
 #' analysis axis: \code{transvu} runs one step of reciprocal averaging
 #' and the step is repeated so many times that the criterion value
 #' converges. Function \code{transvu} calls \code{detrend} that
-#' performs Hill's non-linear rescaling on \code{mk} segments. See
-#' Examples on alternative detrending methods. In all cases detrending
-#' against previous axis is done one axis by time starting from first,
-#' and then going again down to the first. For axis 4 the order of
-#' detrendings is 1, 2, 3, 2, 1. The criterion value is the one that
+#' performs detrending. The default is to use Hill's non-linear
+#' rescaling on \code{mk} segments, but \code{rdecorana} adds two
+#' alternatives unavailable in \code{\link[vegan]{decorana}}:
+#' quadratic detrending by second degree polynomials, and smooth
+#' detrending using locally polynomial surfaces of degree 1 with
+#' function \code{\link{loess}}. Detrending against previous axis is
+#' done one axis by time starting from first, and then going again
+#' down to the first. For axis 4 the order of detrendings is 1, 2, 3,
+#' 2, 1 (in orthogonal correspondence analysis with \code{ira=1} the
+#' going down is skipped). The criterion value is the one that
 #' \pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
-#' values}: for orthogonal CA it is the eigenvalue, but for detrended CA
-#' it is a combination of eigenvalues and strength of detrending.
+#' values}: for orthogonal CA it is the eigenvalue, but for detrended
+#' CA it is a combination of eigenvalues and strength of detrending.
 #'
 #' Non-linear rescaling is performed by function \code{stretch} that
 #' calls two functions: \code{segment} to estimate the dispersion of
 #' species, and \code{smooth121} to smooth those estimates on segments
 #' (that number of segments is selected internally and \code{mk} has
-#' no influence. The criterion values for community data \eqn{x} with
+#' no influence). The criterion values for community data \eqn{x} with
 #' species and site scores \eqn{v, u} are based on
 #' \eqn{x_ij(u_i-v_j)^2}{x[ij] * (u[i]-v[j])^2} summarized over sites
 #' \eqn{i}. Site scores \eqn{u} are weighted averages of species
 #' scores \eqn{v}, and therefore species scores should be dispersed
 #' symmetrically around corresponding site scores and the statistic
 #' describes their weighted dispersion. The purpose of rescaling is to
-#' make this dispersion 1 all over the axis. The procedure is complicated, and is best inspected from the code (which is commented).
+#' make this dispersion 1 all over the axis. The procedure is
+#' complicated, and it is best inspected from the code (which is
+#' commented).
 #'
 #' @author Jari Oksanen
 
@@ -65,34 +72,24 @@
 #' if (require(vegan)) {
 #' ## compare to decorana
 #' decorana(spurn)
-#' ## ordiplot works
-#' ordiplot(mod, display="sites")
+#' ## Comparison of detrending choices
+#' op <- par(mfrow=c(2,2), mar=c(4,4,1,1))
+#' ordiplot(rdecorana(spurn)) # default: DCA
+#' ordiplot(rdecorana(spurn, ira=1)) # orthognal CA
+#' ordiplot(rdecorana(spurn, ira=2)) # quadratic DCA
+#' ordiplot(rdecorana(spurn, ira=3)) # smooth DCA
+#' par(op)
 #' }
-#' ## Examples on replacing the detrend() function with other
-#' ## alternatives. These need to use the same call as detrend() if we
-#' ## do not change the call in transvu.
-#' ##
-#' ## --- Smooth detrending
-#' ## detrend <- function(x, aidot, x1, mk)
-#' ##      residuals(loess(x ~ x1, weights=aidot))
-#' ## If you have this in the natto Namespace, you must use
-#' ## environment(detrend) <- environment(qrao) # any natto function
-#' ## assignInNamespace("detrend", detrend, "natto")
-#' ## ... but if you source() rdecorana.R, just do it!
-#' ## --- Quadratic polynomial detrending
-#' ## detrend <- function(x, aidot, x1, mk)
-#' ##       residuals(lm.wfit(poly(x1, 2), x, w = aidot))
-#' ## --- Orthogonal CA
-#' ## detrend <- function(x, aidot, x1, mk)
-#' ##       residuals(lm(x ~ x1, w = aidot))
-#' ## All these could handle all previous axes simultaneosly, but this
-#' ## requires editing transvu call.
 #'
 #' @param x input data matrix.
 #' @param iweigh Downweighting of rare species (0: no).
 #' @param iresc Number of rescaling cycles (0: no rescaling).
-#' @param ira Type of analysis (0: detrended, 1: orthogonal).
-#' @param mk Number of segments in detrending.
+#' @param ira Type of analysis with numeric values \code{0} classic
+#'     detrending by segments, \code{1} orthogonal for standard
+#'     correspondence analysis a.k.a. reciprocal averaging, \code{2}
+#'     quadratic detrending by second degree polynomials, \code{3}
+#'     smooth detrending using \code{\link{loess}}.
+#' @param mk Number of segments in classic detrending.
 #' @param short Shortest gradient to be rescaled.
 #' @param before,after Definition of Hill's piecewise transformation.
 #'
@@ -120,14 +117,15 @@
     x <- vegan:::initCA(x)
     aidot <- attr(x, "RW")
     adotj <- attr(x, "CW")
-    ## orthogonal CA: just do it and return
-    if (ira == 1)
-        return(orthoCA(x, aidot = aidot, adotj = adotj, naxes = NAXES))
-    ## ira == 0 and we go for detrended CA. First axis can be found
-    ## directly via svd.
     rproj <- matrix(0, nrow(x), NAXES)
     cproj <- matrix(0, ncol(x), NAXES)
-    colnames(rproj) <- colnames(cproj) <- paste0("DCA", seq_len(NAXES))
+    colnames(rproj) <- colnames(cproj) <-
+        paste0(switch(as.character(ira),
+                      "0" = "DCA",
+                      "1" = "RA",
+                      "2" = "QDCA",
+                      "3" = "SDCA"),
+               seq_len(NAXES))
     rownames(rproj) <- rownames(x)
     rownames(cproj) <- colnames(x)
     evals <- numeric(NAXES)
@@ -145,7 +143,7 @@
             cycles <- 0
             ## Reciprocal averaging starting from eigenvector v
             repeat {
-                sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk)
+                sol <- transvu(sol$v[,1], rproj, x0, axis, aidot, adotj, mk, ira)
                 if (abs(eig2 - sol$d) < EPS)
                     break
                 eig2 <- sol$d
@@ -164,13 +162,13 @@
         u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
-        ## revert axes?
+        ## reverse axes?
         if (-min(vdeco) > max(vdeco)) {
             vdeco <- -vdeco
             udeco <- -udeco
         }
-        ## rescaling
-        if (iresc > 0) {
+        ## rescaling with detrending
+        if (ira != 1 && iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
@@ -216,35 +214,6 @@
     x
 }
 
-## Orthogonal Correspondence Analysis
-##
-## Orthogonal correspondence analysis is performed via svd of
-## CA-initialized data.
-##
-## @param x initCA-initialized data.
-## @param aidot,adotj Row and column weights summing up to 1.
-## @param naxes Number of axes.
-##
-## @return Orthogonal CA scaled like in Decorana.
-##
-## not exported
-`orthoCA` <-
-    function(x, aidot, adotj, naxes)
-{
-    m <- svd(x, nu = naxes, nv = naxes)
-    lambda <- m$d[seq_len(naxes)]^2
-    rproj <- (m$u / sqrt(aidot)) %*% diag(sqrt(lambda/(1-lambda)), nrow = naxes)
-    cproj <- (m$v / sqrt(adotj)) %*% diag(sqrt(1/(1-lambda)), nrow = naxes)
-    colnames(cproj) <- colnames(rproj) <- paste0("RA", seq_len(naxes))
-    rownames(rproj) <- rownames(x)
-    rownames(cproj) <- colnames(x)
-    structure(list(evals = lambda, rproj = rproj, cproj = cproj, aidot = aidot,
-                   adotj = adotj,
-                   call = match.call(sys.function(sys.parent()),
-                                     sys.call(sys.parent()))),
-              class = "rdecorana")
-}
-
 ## transvu is modelled after trans subroutine in decorana.f. The
 ## decorana original is longer because it also implements
 ## orthogonalization which we do not need. Essentially the function
@@ -266,7 +235,7 @@
 ##
 ## not exported
 `transvu` <-
-    function(v, rproj, x, axis, aidot, adotj, mk)
+    function(v, rproj, x, axis, aidot, adotj, mk, ira)
 {
     ## v should be centred and normalized: play safe
     cnt <- mean(sqrt(adotj) * v)
@@ -278,8 +247,11 @@
     ## detrend against previous axes going scales up and down: for
     ## axis 4 against axes 1, 2, 3, 2, 1 in this order.
     if (axis > 1)
-        for(k in c(seq_len(axis-1), rev(seq_len(axis-2))))
-            u <- detrend(u, aidot, rproj[,k], mk)
+        for(k in seq_len(axis-1))
+            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
+    if (axis > 2 && ira != 1) # not for orthogonalization
+        for (k in rev(seq_len(axis-2)))
+            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
     ## get back v
     v <- t(sqrt(aidot) * x) %*% u
     eig <- sqrt(sum(v^2))
@@ -327,6 +299,21 @@
     ## mean.
     z <- filter(z, c(1,1,1)/3, sides=2)
     x - z[as.numeric(x1)+2]
+}
+
+#' @importFrom stats lm.wfit loess poly residuals
+`detrend0` <-
+    function(x, aidot, x1, mk, ira=ira)
+{
+    ## switch between Hill's segmentwise detrending, orthogonal CA,
+    ## quadratic polynomial detrending or loess detrending
+    switch(as.character(ira),
+           "0" = detrend(x, aidot, x1, mk),
+           "1" = { x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1 },
+           "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
+           "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
+           stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
+           )
 }
 
 ## The original comments of Decorana smooth:
