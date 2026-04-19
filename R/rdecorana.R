@@ -165,13 +165,13 @@
         u <- x0 %*% v
         udeco <- u / sqrt(aidot) * sqrt(1/(1-evals[axis]))
         vdeco <- v / sqrt(adotj) * sqrt(1/(1-evals[axis]))
-        ## revert axes?
+        ## reverse axes?
         if (-min(vdeco) > max(vdeco)) {
             vdeco <- -vdeco
             udeco <- -udeco
         }
         ## rescaling with detrending
-        if (ira == 0 && iresc > 0) {
+        if (ira != 1 && iresc > 0) {
             for(i in seq_len(iresc)) {
                 z <- stretch(xorig, udeco, vdeco, aidot, short = short)
                 udeco <- z$rproj
