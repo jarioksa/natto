@@ -250,7 +250,10 @@
     ## detrend against previous axes going scales up and down: for
     ## axis 4 against axes 1, 2, 3, 2, 1 in this order.
     if (axis > 1)
-        for(k in c(seq_len(axis-1), rev(seq_len(axis-2))))
+        for(k in seq_len(axis-1))
+            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
+    if (axis > 2 && ira != 1) # not for orthogonalization
+        for (k in rev(seq_len(axis-2)))
             u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
     ## get back v
     v <- t(sqrt(aidot) * x) %*% u
@@ -309,7 +312,7 @@
     ## quadratic polynomial detrending or loess detrending
     switch(as.character(ira),
            "0" = detrend(x, aidot, x1, mk),
-           "1" = x - sum(x * aidot * x1) * x1,
+           "1" = { x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1 },
            "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
            stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
