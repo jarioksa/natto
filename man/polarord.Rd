@@ -147,6 +147,10 @@ summary(eigenvals(ord))
 ## add species scores
 sppscores(ord) <- spurn
 plot(ord, optimize = TRUE)
+## Focus on plot X14: select it as a one endpoint
+ord14 <- polarord(dis, endpoints = 14)
+ord14
+plot(ord14)
 ## Two-dimensional configuration recovered with Euclidean metric
 if (require(vegan)) { ## Procrustes analysis
 set.seed(1009)
