@@ -43,3 +43,9 @@ expect_equal(order(u), order(uscaled), tol=1e-5,
              info="rescaling is monotonous")
 expect_equal(range(mtrans$rproj[,1]), range(uscaled), tol=1e-5,
              info="gradient length matches transposed rproj")
+
+## test unexported beforeafter(): approximate sqrt
+## greatest difference below should be sqrt(2) estimated as 4/3
+x <- seq_len(60)
+expect_silent(z <- drop(natto:::beforeafter(x, before=(1:8)^2, after=1:8)))
+expect_equal(max(abs(sqrt(x) - z)), sqrt(2) - 4/3)
