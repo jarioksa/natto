@@ -31,7 +31,7 @@ distances in \code{\link{distconstrain}}. Either
 be one or several of \code{"sites"}, \code{"constraints"},
 \code{"biplot"}, \code{"centroids"}, or alternative
 \code{"all"} for all these. \code{plot} accepts only one
-alternative (and no \code{"all"}.}
+alternative (and no \code{"all"}).}
 
 \item{\dots}{Other arguments passed to graphics functions.}
 
@@ -112,6 +112,8 @@ plot(mod, type = "p") |>
    points("constraints", pch = 16, col = 2) |>
    text("biplot", col = 4) |>
    text("centroids", col = 4)
+legend("topleft", c("LC Scores", "NMDS Scores", "Constraints"),
+   col = c(2,1,NA), pch = c(16,1,NA), text.col = c(1,1,4))
 }
 
 }
