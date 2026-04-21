@@ -5,3 +5,5 @@ expect_equal(subdiag(x),
              c(2.1, 3.2, 4.3, 5.4))
 expect_equal(subdiag(x),
              subdiag(as.dist(x)))
+data(spurn)
+expect_error(subdiag(spurn)) # not a square matrix

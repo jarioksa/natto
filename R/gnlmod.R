@@ -46,7 +46,7 @@
 #' fitted(mod)
 #' predict(mod)
 #' predict(mod, newdata = list(area = seq(1, 250, len=31)))
-#' summary(mod)
+#' summary(mod, correlation = TRUE)
 #'
 #' @param formula Model formula for a \code{\link{selfStart}}
 #' \code{\link{nls}} model.

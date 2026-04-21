@@ -12,3 +12,11 @@ expect_silent(dres <- distconstrain(d ~ Management + Moisture,
                       dune.env, residuals = TRUE))
 expect_equivalent(eigenvals(pco(dres)),
                   eigenvals(mod, "unconstrained"))
+## additive constant should work similarly as in dbrda/pco
+d <- canneddist(dune, "bray")
+expect_silent(dcon <- distconstrain(d ~ Management + Moisture,
+                                    dune.env, add = "cailliez"))
+expect_equivalent(eigenvals(pco(dcon)),
+                 eigenvals(dbrda(d ~ Management + Moisture,
+                                 dune.env, add = "cailliez"),
+                           "constrained"))

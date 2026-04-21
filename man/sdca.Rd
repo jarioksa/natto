@@ -63,6 +63,7 @@ rescaling.
 
 data(spurn)
 mod <- sdca(spurn)
+mod
 plot(mod, display = "sites")
 plot(mod, display = "species", optimize = TRUE)
 ## compare against rdecorana without rescaling
