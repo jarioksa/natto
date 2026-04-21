@@ -17,9 +17,6 @@ expect_equal(distMeans(dist(dune) ~ Management, dune.env),
              sqrt(rowSums(fcentred^2)))
 ## formula with constant gives the same distances as the default
 ## method
-## THIS TEST FAILS FOR BAD SCOPING:
-## Error: eval(formula[[2]]) : object 'd' not found
-
-#d <- canneddist(dune, "kulczynski")
-#expect_equal(distMeans(d),
-#             distMeans(d ~ 1, parent.frame()))
+d <- canneddist(dune, "kulczynski")
+expect_equal(distMeans(d),
+             distMeans(d ~ 1, parent.frame()))
