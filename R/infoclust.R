@@ -76,6 +76,7 @@
 `infoclust` <-
     function(x, delta = TRUE)
 {
+    EPS <- sqrt(.Machine$double.eps)
     x <- ifelse(x > 0, 1, 0)
     N <- nrow(x)
     ## shortcut to pairwise 'infodist'
@@ -110,6 +111,7 @@
             if (is.na(dis[max(g1,j), min(g1,j)]) || g1 == j)
                 next
             d <- infodist(x[g1,] + x[j,], w[g1] + w[j])
+            if (abs(d) < EPS) d <- 0
             dis[max(g1,j), min(g1,j)] <- d
         }
     }
