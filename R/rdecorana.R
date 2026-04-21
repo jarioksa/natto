@@ -207,6 +207,8 @@
         stop("'before' must be sorted", call. = FALSE)
     if (length(before) != length(after))
         stop("'before' and 'after' must have same lengths", call. = FALSE)
+    ## input should be a matrix
+    x <- as.matrix(x)
     for(i in seq_len(nrow(x))) {
         k <- x[i,] > 0
         x[i, k] <- approx(before, after, x[i, k], rule = 2)$y

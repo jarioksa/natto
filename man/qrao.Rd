@@ -128,8 +128,8 @@ pol <- polarord(vegdist(Z))
 sppscores(pol) <- Z
 plot(pol, optimize = TRUE)
 ## Phylogenetically constrainted RDA
-mod <- rda(raostand(dune, dune.phylodis, propx = FALSE) ~ Management + Moisture,
-    dune.env)
+mod <- rda(raostand(dune, dune.phylodis, propx = FALSE, dmax = 65.2)
+   ~ Management + Moisture, dune.env)
 anova(mod, by = "margin")
 plot(mod, scaling = "sites", spe.par = list(optimize = TRUE, xpd = TRUE))
 

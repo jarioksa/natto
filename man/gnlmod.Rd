@@ -84,7 +84,7 @@ glm(S ~ log(area), sipoo.map, family=poisson) # (Intercept) = log(k)
 fitted(mod)
 predict(mod)
 predict(mod, newdata = list(area = seq(1, 250, len=31)))
-summary(mod)
+summary(mod, correlation = TRUE)
 
 }
 \references{

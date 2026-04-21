@@ -39,7 +39,13 @@ expect_silent(uscaled <- gradrescale(u, dune))
 ## one rescaling of transposed data to get rescaled "species" score
 mtrans <- vegan::decorana(t(dune), iresc = 1)
 expect_equal(cor(mtrans$cproj[,1], uscaled), 1, tol=1e-5)
-expect_equal(order(u), order(uscaled), tol=1e-5,
+expect_equal(order(u), order(uscaled),
              info="rescaling is monotonous")
 expect_equal(range(mtrans$rproj[,1]), range(uscaled), tol=1e-5,
              info="gradient length matches transposed rproj")
+
+## test unexported beforeafter(): approximate sqrt
+## greatest difference below should be sqrt(2) interpolated as 4/3
+x <- seq_len(60)
+expect_silent(z <- drop(natto:::beforeafter(x, before=(1:8)^2, after=1:8)))
+expect_equal(max(abs(sqrt(x) - z)), sqrt(2) - 4/3)
