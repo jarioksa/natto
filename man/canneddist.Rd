@@ -61,11 +61,18 @@ d <- canneddist(spurn, "ochiai")
 
 }
 \references{
+Barkman, J.J. (1958). Phytosociology and ecology of cryptogamic
+epiphytes, including taxonomic surfvey and description of
+vegetation units in Europe. Van Gorcum.
+
 Clarke, K.R., Somerfield, P.J. & Chapman, M.G. (2006).
 On resemblance measures for ecological studies,
 including taxonomic dissimilarities and a zero-adjusted
 Bray-Curtis coefficient for denuded assemblages.
 \emph{J. Exp. Marine Biol. & Ecol.} 330, 55-80. (\code{bray0}).
+
+Goodall, D.W. (1973). Sample similarity and species
+correlation. Handbook of Vegetaion Science 5, 99-149.
 
 \enc{Hubálek}{Hubalek}, Z. (1982). Coefficients of association and
 similarity, based on binary (presence-absence) data: an
