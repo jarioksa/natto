@@ -38,11 +38,18 @@
 #' @encoding UTF-8
 #' @references
 #'
+#' Barkman, J.J. (1958). Phytosociology and ecology of cryptogamic
+#' epiphytes, including taxonomic survey and description of vegetation
+#' units in Europe. Van Gorcum.
+#'
 #' Clarke, K.R., Somerfield, P.J. & Chapman, M.G. (2006).
 #' On resemblance measures for ecological studies,
 #' including taxonomic dissimilarities and a zero-adjusted
 #' Bray-Curtis coefficient for denuded assemblages.
 #' \emph{J. Exp. Marine Biol. & Ecol.} 330, 55-80. (\code{bray0}).
+#'
+#' Goodall, D.W. (1973). Sample similarity and species
+#' correlation. Handbook of Vegetaion Science 5, 99-149.
 #'
 #' \enc{Hubálek}{Hubalek}, Z. (1982). Coefficients of association and
 #' similarity, based on binary (presence-absence) data: an
@@ -121,6 +128,11 @@
                         maxdist = 1),
         "cosine" = list(method = "1-J/sqrt(A*B)", terms = "quadratic",
                         maxdist = 1),
+        ## Originally Barkman (1958) Cryptogamic epiphytes, but picked
+        ## up from Goodall, Handbook of Vegetation Science 5, 99-149
+        ## (1973), eq. (64) on p.133
+        "barkman" = list(method = "1-J/sqrt(A*B)", terms = "minimum",
+                         maxdist = 1),
         "manhattan" = list(method = "A+B-2*J", terms = "minimum",
                            maxdist = NA),
         "information" = list(method = "log(4)*(A+B-2*J)", terms = "binary",
