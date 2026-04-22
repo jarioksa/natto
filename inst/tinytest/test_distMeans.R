@@ -19,4 +19,4 @@ expect_equal(distMeans(dist(dune) ~ Management, dune.env),
 ## method
 d <- canneddist(dune, "kulczynski")
 expect_equal(distMeans(d),
-             distMeans(d ~ 1, parent.frame()))
+             distMeans(d ~ 1))

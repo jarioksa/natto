@@ -114,6 +114,7 @@
 `distMeans.formula` <-
     function(formula, data, ...)
 {
+    if (missing(data)) data  <- parent.frame()
     x <- vegan:::initDBRDA(eval.parent(formula[[2]]))
     mm <- model.matrix(delete.response(terms(formula)), data)
     sqrt(diag(vegan:::ordPartial(x, mm)$Y))
