@@ -39,8 +39,8 @@
 #' @references
 #'
 #' Barkman, J.J. (1958). Phytosociology and ecology of cryptogamic
-#' epiphytes, including taxonomic surfvey and description of
-#' vegetation units in Europe. Van Gorcum.
+#' epiphytes, including taxonomic survey and description of vegetation
+#' units in Europe. Van Gorcum.
 #'
 #' Clarke, K.R., Somerfield, P.J. & Chapman, M.G. (2006).
 #' On resemblance measures for ecological studies,
