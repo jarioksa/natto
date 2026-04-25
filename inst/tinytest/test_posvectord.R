@@ -4,7 +4,7 @@
 ## Vegetation Science 5, 249-286 (1973).
 
 ## Orloci's input matrix X is transposed to vegan standard: 4 columns
-## for quadrats, 5 rows for species (p. 257).
+## for quadrats, 5 rows for species (p. 267).
 X <- matrix(c(1,3,4,4,
               3,3,1,1,
               5,3,5,3,
@@ -14,7 +14,7 @@ X <- matrix(c(1,3,4,4,
 ## Numerical results are based on cross-products instead of variances
 ## natto uses: we need to adjust by degrees of freedom n-1 (or 4-1=3)
 ## for eigenvalues, and its sqrt for eigenvectors. Results are given
-## in 3 decimals on p. 262-263. First eigenvalues
+## in 3 decimals on p. 272-273. First eigenvalues
 S <- c(17.818, 5.182, 1.000)
 ## Eigenvectors: first is exact, others in 3 decimals, and the last
 ## one is reversed to natto.
