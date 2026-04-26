@@ -49,7 +49,7 @@
 #' \emph{J. Exp. Marine Biol. & Ecol.} 330, 55-80. (\code{bray0}).
 #'
 #' Goodall, D.W. (1973). Sample similarity and species
-#' correlation. Handbook of Vegetaion Science 5, 105-156.
+#' correlation. Handbook of Vegetation Science 5, 105-156.
 #'
 #' \enc{Hubálek}{Hubalek}, Z. (1982). Coefficients of association and
 #' similarity, based on binary (presence-absence) data: an
