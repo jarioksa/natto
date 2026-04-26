@@ -34,6 +34,41 @@ X <- as.data.frame(matrix(runif(40*4), nrow=40))
 ## posvectord uses Euclidean algebra and recover original coordinates even
 ## when the axis are forced to go through sample points
 expect_equal(procrustes(posvectord(X), X)$ss, 0)
-## spvectord: only test that it runs
-data(spurn)
-expect_silent(spvectord(spurn))
+
+## spvectord: Orlóci 1978 Multivariate analysis in vegetation research
+## (2 ed.), p. 28-31 gives numerical example without specifying the
+## name of the method. Some results are given in 7 digits, but it
+## seems that the calculations were made on single precision and only
+## 5 to 6 digits are exact. The numerical equality in R uses tolerance
+## based on machine epsilon, or in double precision eps = 2^-52 and
+## tol = sqrt(eps) = 1.5e-8. In single precision eps = 2^-23 and
+## tol = sqrt(eps) = 0.00035, and we need to use slacker tol in
+## comparing Orlóci numbers to spvectord results.
+
+## Table 1-1, page 13
+tab11 <- matrix(c(45,18,3,10,9,
+                  2,92,40,61,53,
+                  9,32,5,11,99,
+                  26,48,83,3,21,
+                  3,73,68,32,49,
+                  5,80,27,2,81,
+                  2,95,2,39,72,
+                  90,13,17,2,6,
+                  31,92,1,8,90,
+                  16,78,23,6,62),
+                nrow=5, ncol=10, byrow=FALSE)
+dimnames(tab11) <- list(paste0("spe", 1:5),
+                        paste0("quad", 1:10)) # transposed
+## Orlóci results (p. 28-31), sums of squares (SS) and ranks of species
+SS <- c(1514.55, 17027.20, 9061.53, 2956.14, 6281.31)
+rank <- c(5, 1, 2, 4, 3) # Species 2 is the most important
+SS <- SS[order(rank)] # sort SS in decreasing order
+## natto::spvectord
+TOL <- sqrt(2^-23)/100
+expect_silent(mod <- spvectord(t(tab11)))  # t(tab11)
+expect_equivalent(mod$eig * 9, SS, tol = TOL) # natto uses var, Orlóci SS
+expect_equivalent(mod$totvar * 9, sum(SS), tol = TOL)
+
+## NB, Orlóci 1973 _Nature_ paper has a numerical example, but the
+## data are incorrect for variable 'Style': its mean and variance do
+## not match the observed numbers.
