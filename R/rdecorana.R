@@ -75,9 +75,9 @@
 #' ## Comparison of detrending choices
 #' op <- par(mfrow=c(2,2), mar=c(4,4,1,1))
 #' ordiplot(rdecorana(spurn)) # default: DCA
-#' ordiplot(rdecorana(spurn, ira=1)) # orthognal CA
 #' ordiplot(rdecorana(spurn, ira=2)) # quadratic DCA
 #' ordiplot(rdecorana(spurn, ira=3)) # smooth DCA
+#' ordiplot(rdecorana(spurn, ira=4)) # smoothing spline with CV
 #' par(op)
 #' }
 #'
@@ -88,7 +88,8 @@
 #'     detrending by segments, \code{1} orthogonal for standard
 #'     correspondence analysis a.k.a. reciprocal averaging, \code{2}
 #'     quadratic detrending by second degree polynomials, \code{3}
-#'     smooth detrending using \code{\link{loess}}.
+#'     smooth detrending using \code{\link{loess}}, \code{4}
+#'     \code{\link{smooth.spline}} with \code{cv = TRUE}.
 #' @param mk Number of segments in classic detrending.
 #' @param short Shortest gradient to be rescaled.
 #' @param before,after Definition of Hill's piecewise transformation.
@@ -123,8 +124,9 @@
         paste0(switch(as.character(ira),
                       "0" = "DCA",
                       "1" = "RA",
-                      "2" = "QDCA",
-                      "3" = "SDCA"),
+                      "2" = "qDCA",
+                      "3" = "sDCA",
+                      "4" = "splDCA"),
                seq_len(NAXES))
     rownames(rproj) <- rownames(x)
     rownames(cproj) <- colnames(x)
@@ -303,7 +305,7 @@
     x - z[as.numeric(x1)+2]
 }
 
-#' @importFrom stats lm.wfit loess poly residuals
+#' @importFrom stats lm.wfit loess poly residuals smooth.spline
 `detrend0` <-
     function(x, aidot, x1, mk, ira=ira)
 {
@@ -314,6 +316,7 @@
            "1" = { x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1 },
            "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
+           "4" = residuals(smooth.spline(x1, x, w = aidot, cv = TRUE)),
            stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
            )
 }
