@@ -28,18 +28,19 @@
 #' and the step is repeated so many times that the criterion value
 #' converges. Function \code{transvu} calls \code{detrend} that
 #' performs detrending. The default is to use Hill's non-linear
-#' rescaling on \code{mk} segments, but \code{rdecorana} adds two
-#' alternatives unavailable in \code{\link[vegan]{decorana}}:
-#' quadratic detrending by second degree polynomials, and smooth
-#' detrending using locally polynomial surfaces of degree 1 with
-#' function \code{\link{loess}}. Detrending against previous axis is
-#' done one axis by time starting from first, and then going again
-#' down to the first. For axis 4 the order of detrendings is 1, 2, 3,
-#' 2, 1 (in orthogonal correspondence analysis with \code{ira=1} the
-#' going down is skipped). The criterion value is the one that
-#' \pkg{vegan} \code{\link[vegan]{decorana}} calls \sQuote{Decorana
-#' values}: for orthogonal CA it is the eigenvalue, but for detrended
-#' CA it is a combination of eigenvalues and strength of detrending.
+#' rescaling on \code{mk} segments, but this can be substituted with
+#' orthogonalization for classic correspondence analysis,
+#' a.k.a. reciprocal averaging. It is also easy to add new alternative
+#' detrending methods that are not a part of
+#' \code{\link[vegan]{decorana}} (see function \code{natto:::detrend}
+#' for examples).  Detrending against previous axis is done one axis
+#' by time starting from first, and then going again down to the
+#' first. For axis 4 the order of detrendings is 1, 2, 3, 2, 1 (in
+#' orthogonal correspondence analysis with \code{ira=1} the going down
+#' is skipped). The criterion value is the one that \pkg{vegan}
+#' \code{\link[vegan]{decorana}} calls \sQuote{Decorana values}: for
+#' orthogonal CA it is the eigenvalue, but for detrended CA it is a
+#' combination of eigenvalues and strength of detrending.
 #'
 #' Non-linear rescaling is performed by function \code{stretch} that
 #' calls two functions: \code{segment} to estimate the dispersion of
@@ -124,9 +125,10 @@
         paste0(switch(as.character(ira),
                       "0" = "DCA",
                       "1" = "RA",
-                      "2" = "qDCA",
-                      "3" = "sDCA",
-                      "4" = "splDCA"),
+                      "2" = "qDCA",   # quadratic
+                      "3" = "loDCA",  # loess
+                      "4" = "splDCA", # smoothing spline
+                      "Dim"), # forgot to define axis name to a new method
                seq_len(NAXES))
     rownames(rproj) <- rownames(x)
     rownames(cproj) <- colnames(x)
@@ -252,10 +254,10 @@
     ## axis 4 against axes 1, 2, 3, 2, 1 in this order.
     if (axis > 1)
         for(k in seq_len(axis-1))
-            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
+            u <- detrend(u, aidot, rproj[,k], mk, ira = ira)
     if (axis > 2 && ira != 1) # not for orthogonalization
         for (k in rev(seq_len(axis-2)))
-            u <- detrend0(u, aidot, rproj[,k], mk, ira = ira)
+            u <- detrend(u, aidot, rproj[,k], mk, ira = ira)
     ## get back v
     v <- t(sqrt(aidot) * x) %*% u
     eig <- sqrt(sum(v^2))
@@ -287,7 +289,7 @@
 #' @importFrom stats filter
 ##
 ## Not exported
-`detrend` <-
+`detrend0` <-
     function(x, aidot, x1, mk)
 {
     x1 <- cut(x1, mk, right = FALSE)
@@ -306,13 +308,13 @@
 }
 
 #' @importFrom stats lm.wfit loess poly residuals smooth.spline
-`detrend0` <-
+`detrend` <-
     function(x, aidot, x1, mk, ira=ira)
 {
     ## switch between Hill's segmentwise detrending, orthogonal CA,
-    ## quadratic polynomial detrending or loess detrending
+    ## or alternative detrending schemes
     switch(as.character(ira),
-           "0" = detrend(x, aidot, x1, mk),
+           "0" = detrend0(x, aidot, x1, mk),
            "1" = { x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1 },
            "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
