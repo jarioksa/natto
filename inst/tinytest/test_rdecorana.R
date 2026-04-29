@@ -9,7 +9,7 @@
 ## However, there are numerical differences and usually
 ## tolerance must be relaxed to pass tests.
 require(vegan, quietly=TRUE)
-data(dune)
+data(dune, package = "vegan")
 ## 1. default call implying rescaling with iresc=4
 m0 <- vegan::decorana(dune)
 expect_silent(m <- rdecorana(dune))
@@ -39,7 +39,7 @@ expect_silent(uscaled <- gradrescale(u, dune))
 ## one rescaling of transposed data to get rescaled "species" score
 mtrans <- vegan::decorana(t(dune), iresc = 1)
 expect_equal(cor(mtrans$cproj[,1], uscaled), 1, tol=1e-5)
-expect_equal(order(u), order(uscaled),
+expect_equal(order(uscaled), order(u),
              info="rescaling is monotonous")
 expect_equal(range(mtrans$rproj[,1]), range(uscaled), tol=1e-5,
              info="gradient length matches transposed rproj")
