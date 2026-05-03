@@ -114,6 +114,9 @@ commented).
 \examples{
 data(spurn)
 (mod <- rdecorana(spurn))
+## current detrending methods
+natto:::detrend
+
 if (require(vegan)) {
 ## compare to decorana
 decorana(spurn)

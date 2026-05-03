@@ -70,6 +70,9 @@
 #' @examples
 #' data(spurn)
 #' (mod <- rdecorana(spurn))
+#' ## current detrending methods
+#' natto:::detrend
+#'
 #' if (require(vegan)) {
 #' ## compare to decorana
 #' decorana(spurn)
@@ -315,7 +318,7 @@
     ## or alternative detrending schemes
     switch(as.character(ira),
            "0" = detrend0(x, aidot, x1, mk),
-           "1" = { x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1 },
+           "1" = x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1,
            "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
            "4" = residuals(smooth.spline(x1, x, w = aidot, cv = TRUE)),
