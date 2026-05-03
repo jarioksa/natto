@@ -106,12 +106,12 @@ specifically written for variable or species selection using the
 same algorithm.
 
 Function \code{sppscores} can add species scores to the ordination
-results. The species scores should be regarded as arrow
-heads of vectors. Although the axes of \code{spvectord} are the species, the
-corresponding arrow is not usually parallel to the axis after axis 1. the axis
-shows the residual abundance of the species after previous axes
-whereas the species score shows the correlated response with other
-species.
+results. The species scores should be regarded as arrow heads of
+vectors. Although the axes of \code{spvectord} are the species, the
+corresponding arrow is not usually parallel to the axis after axis
+1. the axis shows the residual abundance of the species after
+previous axes whereas the species score shows the correlated
+response with other species.
 }
 \examples{
 data(spurn)

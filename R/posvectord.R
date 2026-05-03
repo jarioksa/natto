@@ -49,12 +49,12 @@
 #' same algorithm.
 #'
 #' Function \code{sppscores} can add species scores to the ordination
-#' results. The species scores should be regarded as arrow
-#' heads of vectors. Although the axes of \code{spvectord} are the species, the
-#' corresponding arrow is not usually parallel to the axis after axis 1. the axis
-#' shows the residual abundance of the species after previous axes
-#' whereas the species score shows the correlated response with other
-#' species.
+#' results. The species scores should be regarded as arrow heads of
+#' vectors. Although the axes of \code{spvectord} are the species, the
+#' corresponding arrow is not usually parallel to the axis after axis
+#' 1. the axis shows the residual abundance of the species after
+#' previous axes whereas the species score shows the correlated
+#' response with other species.
 #'
 #' @encoding UTF-8
 #'
@@ -235,6 +235,7 @@
 {
     spp <- crossprod(scale(value, scale=FALSE), object$points)
     spp <- decostand(spp, "normalize", MARGIN = 1)
+    spp[abs(spp) < sqrt(.Machine$double.eps)] <- 0
     attr(spp, "data") <- deparse(substitute(value))
     attr(spp, "score") <- "biplot"
     object$species <- spp
