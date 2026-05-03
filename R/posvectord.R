@@ -48,6 +48,14 @@
 #' specifically written for variable or species selection using the
 #' same algorithm.
 #'
+#' Function \code{sppscores} can add species scores to the ordination
+#' results. The species scores should be regarded as arrow
+#' heads of vectors. Although the axes of \code{spvectord} are the species, the
+#' corresponding arrow is not usually parallel to the axis after axis 1. the axis
+#' shows the residual abundance of the species after previous axes
+#' whereas the species score shows the correlated response with other
+#' species.
+#'
 #' @encoding UTF-8
 #'
 #' @param x Input data.
@@ -91,7 +99,9 @@
 #'
 #' @examples
 #' data(spurn)
-#' spvectord(spurn)
+#' m <- spvectord(spurn)
+#' sppscores(m) <- spurn
+#' plot(m)
 #' m <- posvectord(spurn)
 #' m
 #' plot(m)
@@ -197,9 +207,63 @@
 
 #' @importFrom vegan scores ordiplot
 #' @rdname posvectord
+#' @param choices Axes shown.
+#' @param type Type of plot: \code{"t"} for text, \code{"p"} for
+#'     points and \code{"n"} for none.
+#' @param display Scores shown.
 #' @export
 `plot.posvectord` <-
-    function(x, ...)
+    function(x, choices = c(1,2), type = "t", display = c("sites", "species"),
+             ...)
 {
-    ordiplot(x, display = "sites", ...)
+    if (missing(display))
+        if (is.null(x$species))
+            display <- "sites"
+        else
+            display <- c("sites", "species")
+    ordiplot(x, display = display, choices = choices, type = type, ...)
 }
+
+## sppscores<- methods to add species scores
+#' @importFrom vegan decostand "sppscores<-"
+#' @rdname posvectord
+#' @param object Ordination object to which species scores should be added.
+#' @param value Community for which species scores should be added.
+#' @export
+`sppscores<-.posvectord` <-
+    function(object, value)
+{
+    spp <- crossprod(scale(value, scale=FALSE), object$points)
+    spp <- decostand(spp, "normalize", MARGIN = 1)
+    attr(spp, "data") <- deparse(substitute(value))
+    attr(spp, "score") <- "biplot"
+    object$species <- spp
+    object
+}
+
+## scores needed: scores.default strips species attributes, but we
+## want them displayed as arrows
+
+#' @importFrom vegan scores
+#' @rdname posvectord
+#' @export
+`scores.posvectord` <-
+    function(x, display = c("sites", "species"), choices = 1:2, ...)
+{
+    display <- match.arg(display, several.ok = TRUE)
+    if (is.null(x$species))
+        display <- "sites"
+    if (length(display) == 1) {
+        sco <- switch(display,
+                      "sites" = x$points[, choices, drop=FALSE],
+                      "species" = x$species[, choices, drop=FALSE])
+        if (display == "species")
+            attr(sco, "score") <- "biplot"
+    } else{
+        sco <- list("sites" = x$points[, choices, drop=FALSE],
+                    "species" = x$species[, choices, drop=FALSE])
+        attr(sco$species, "score") <- "biplot"
+    }
+    sco
+}
+

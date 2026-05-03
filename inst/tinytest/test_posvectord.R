@@ -33,7 +33,7 @@ set.seed(4711)
 X <- as.data.frame(matrix(runif(40*4), nrow=40))
 ## posvectord uses Euclidean algebra and recover original coordinates even
 ## when the axis are forced to go through sample points
-expect_equal(procrustes(posvectord(X), X)$ss, 0)
+expect_equal(procrustes(posvectord(X)$points, X)$ss, 0)
 
 ## spvectord: Orlóci 1978 Multivariate analysis in vegetation research
 ## (2 ed.), p. 28-31 gives numerical example without specifying the
