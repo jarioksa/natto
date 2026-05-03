@@ -67,7 +67,7 @@
 #' @return \code{posvectord} returns an object of class
 #'     \code{"posvectord"}, and \code{spvectord} returns an object of
 #'     class \code{"spvectord"} that inherits from
-#'     \code{"posvectord"}. Both result objects have the following
+#'     \code{"posvectord"}. Result objects have the following
 #'     elements:
 #'
 #' \itemize{
@@ -79,6 +79,8 @@
 #'     (a low-rank approximation of) covariances.
 #'    \item \code{totvar}: The total variance in the input data.
 #'    \item \code{eig}: Eigenvalues of axes.
+#'    \item \code{posits}: Indices of points used to position axes in
+#'      \code{posvectord}.
 #'}
 #'
 #' @seealso \code{\link{polarord}} (Polar Ordination) is a similar
@@ -123,6 +125,7 @@
         x <- x/sqrt(nrow(x)-1)
     u <- matrix(NA, nrow(x), ncol(x))
     eig <- numeric(ncol(x))
+    ppoints <- numeric(ncol(x))
     names(eig) <- colnames(u) <- paste0("PVO", seq_len(ncol(x)))
     rownames(u) <- rownames(x)
     xx <- tcrossprod(x)
@@ -133,6 +136,7 @@
         if (max(crit, na.rm = TRUE) < EPS)
             break
         take <- which.max(crit)
+        ppoints[i] <- take
         u[,i] <- xx[take,]/sqrt(xx[take, take])
         eig[i] <- crit[take]
         xx <- xx - tcrossprod(u[,i])
@@ -143,7 +147,8 @@
     nit <- !is.na(colSums(u))
     out <- list("points" = u[, nit, drop=FALSE],
                 "totvar" = totvar,
-                "eig" = eig[nit])
+                "eig" = eig[nit],
+                "posits" = ppoints[nit])
     class(out) <- "posvectord"
     out
 }

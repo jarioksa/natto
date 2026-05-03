@@ -41,7 +41,7 @@ points and \code{"n"} for none.}
 \code{posvectord} returns an object of class
     \code{"posvectord"}, and \code{spvectord} returns an object of
     class \code{"spvectord"} that inherits from
-    \code{"posvectord"}. Both result objects have the following
+    \code{"posvectord"}. Result objects have the following
     elements:
 
 \itemize{
@@ -53,6 +53,8 @@ points and \code{"n"} for none.}
     (a low-rank approximation of) covariances.
    \item \code{totvar}: The total variance in the input data.
    \item \code{eig}: Eigenvalues of axes.
+   \item \code{posits}: Indices of points used to position axes in
+     \code{posvectord}.
 }
 }
 \description{
