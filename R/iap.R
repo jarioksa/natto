@@ -57,8 +57,10 @@
 #'     frequency, estimated quality \eqn{Q} and based on randomization
 #'     its standardized effect size (\code{SES}), expected value
 #'     (\code{E(Q)}), 2.5\% and 97.5\% quantiles and
-#'     \dQuote{significance}. \code{iap} returns a vector of estimated
-#'     IAP values for each site.
+#'     \dQuote{significance}. \code{summary} methods returns the same
+#'     \code{iap} object but ordered by \eqn{Q} and only for selected
+#'     taxa. \code{iap} returns a vector of estimated IAP values for
+#'     each site.
 #'
 #' @examples
 #' data(spurn)
