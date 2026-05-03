@@ -77,6 +77,8 @@
 #' (cl <- diverclust(spurn))
 #' plot(cl) # beta diversity based on Shannon diversity
 #' (cl <- diverclust(spurn, renyi=0, hill=TRUE))
+#' if (require(vegan, quietly=TRUE))
+#'    tabasco(spurn, cl)
 #' plot(cl) # increase in species richness when pooling sites
 #'
 #' @importFrom vegan decostand
