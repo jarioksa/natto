@@ -103,6 +103,7 @@
     n <- length(fvuniq)
     dev <- numeric(n)
     mu0 <- mean(y)
+    ## dev.null = dev.residual + dev.fit: below we find the deviance of fit
     for(i in seq_len(n)) {
         above <- fv >= fvuniq[i]
         mu <- tapply(y, above, mean)

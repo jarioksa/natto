@@ -1,7 +1,7 @@
 ### PCO of distconstrain should give same solutions as
 ### constrained/unconstrained components of dbrda
 require(vegan, quietly=TRUE)
-data(dune, dune.env)
+data(dune, dune.env, package="vegan")
 d <- canneddist(dune, "chord")
 mod <- dbrda(d ~ Management + Moisture, dune.env)
 expect_silent(dcon <- distconstrain(d ~ Management + Moisture,

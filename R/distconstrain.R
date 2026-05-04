@@ -57,12 +57,16 @@
 #'
 #' @examples
 #' if(require(vegan, quietly=TRUE)) {
-#' data(dune, dune.env)
+#' data(dune, dune.env, package = "vegan")
 #' d <- canneddist(dune, "chord")
 #' dcon <- distconstrain(d ~ Management + Moisture, dune.env)
-#' pco(dcon) # constrained component of dbrda
-#' dbrda(d ~ Management + Moisture, dune.env)
+#' mod <- pco(dcon) # constrained component of dbrda
+#' mod0 <- dbrda(d ~ Management + Moisture, dune.env)
 #' }
+#' ## PCoA with constrained dissimilarities
+#' mod
+#' ## vegan::dbrda - constrained component similar as with distconstrain
+#' mod0
 #'
 #' @export
 `distconstrain` <-
@@ -70,7 +74,7 @@
              squared = FALSE)
 {
     ## zap near-zero values to zero
-    ZAP <- 1e-14
+    ZAP <- sqrt(.Machine$double.eps)
     ## evaluate data and get the model matrix
     if (missing(data))
         data <- .GlobalEnv

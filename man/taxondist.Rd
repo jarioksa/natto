@@ -68,7 +68,11 @@ data(dune, dune.phylodis)
 ## phylogenetic data, but regard lineaages completely distict
 ## beyond K/T (K/Pg) age limit
 d <- taxondist(dune, dune.phylodis, dmax = 65.2)
-polarord(d)
+ord <- polarord(d)
+sppscores(ord) <- dune
+plot(ord)
+cl <- hclust(d)
+tabasco(dune, cl, hclust(dune.phylodis))
 }
 
 }

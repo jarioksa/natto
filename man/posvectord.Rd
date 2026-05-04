@@ -5,26 +5,43 @@
 \alias{posvectord}
 \alias{spvectord}
 \alias{plot.posvectord}
+\alias{sppscores<-.posvectord}
+\alias{scores.posvectord}
 \title{Position Vector and Species Vector Ordination}
 \usage{
 posvectord(x, scale = FALSE)
 
 spvectord(x, scale = FALSE)
 
-\method{plot}{posvectord}(x, ...)
+\method{plot}{posvectord}(x, choices = c(1, 2), type = "t", display = c("sites", "species"), ...)
+
+\method{sppscores}{posvectord}(object) <- value
+
+\method{scores}{posvectord}(x, display = c("sites", "species"), choices = 1:2, ...)
 }
 \arguments{
 \item{x}{Input data.}
 
 \item{scale}{Scale variables to unit variance.}
 
+\item{choices}{Axes shown.}
+
+\item{type}{Type of plot: \code{"t"} for text, \code{"p"} for
+points and \code{"n"} for none.}
+
+\item{display}{Scores shown.}
+
 \item{\dots}{Other arguments (passed to \code{\link[vegan]{ordiplot}}).}
+
+\item{object}{Ordination object to which species scores should be added.}
+
+\item{value}{Community for which species scores should be added.}
 }
 \value{
 \code{posvectord} returns an object of class
     \code{"posvectord"}, and \code{spvectord} returns an object of
     class \code{"spvectord"} that inherits from
-    \code{"posvectord"}. Both result objects have the following
+    \code{"posvectord"}. Result objects have the following
     elements:
 
 \itemize{
@@ -36,6 +53,8 @@ spvectord(x, scale = FALSE)
     (a low-rank approximation of) covariances.
    \item \code{totvar}: The total variance in the input data.
    \item \code{eig}: Eigenvalues of axes.
+   \item \code{posits}: Indices of points used to position axes in
+     \code{posvectord}.
 }
 }
 \description{
@@ -87,10 +106,20 @@ also be used for this purpose, although it is mainly geared for
 ordination. \CRANpkg{dave} package has function \code{orank}
 specifically written for variable or species selection using the
 same algorithm.
+
+Function \code{sppscores} can add species scores to the ordination
+results. The species scores should be regarded as arrow heads of
+vectors. Although the axes of \code{spvectord} are the species, the
+corresponding arrow is not usually parallel to the axis after axis
+1. the axis shows the residual abundance of the species after
+previous axes whereas the species score shows the correlated
+response with other species.
 }
 \examples{
 data(spurn)
-spvectord(spurn)
+m <- spvectord(spurn)
+sppscores(m) <- spurn
+plot(m)
 m <- posvectord(spurn)
 m
 plot(m)

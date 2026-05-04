@@ -1,7 +1,7 @@
 ### distMeans gives distances of all points to the mean of xy columns
 xy <- matrix(c(3,7,1,0,5,0,10,3,8,2), 5, 2)
-expect_equivalent(as.matrix(dist(rbind(xy, colMeans(xy))))[6,-6],
-                  distMeans(dist(xy)))
+expect_equivalent(distMeans(dist(xy)),
+                  as.matrix(dist(rbind(xy, colMeans(xy))))[6,-6])
 ### distMeans will be at the centroid of PCoA
 data(spurn)
 d <- canneddist(spurn, "whittaker")
@@ -18,5 +18,5 @@ expect_equal(distMeans(dist(dune) ~ Management, dune.env),
 ## formula with constant gives the same distances as the default
 ## method
 d <- canneddist(dune, "kulczynski")
-expect_equal(distMeans(d),
-             distMeans(d ~ 1))
+expect_equal(distMeans(d ~ 1),
+             distMeans(d))

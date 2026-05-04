@@ -1,7 +1,7 @@
 ### Tests for Rao diversity, distance & standardization
 
 require(vegan, quietly=TRUE)
-data(BCI)
+data(BCI, package = "vegan")
 ## Limiting cases: if all species are distinct, identical to basic methods.
 
 ## Simpson diversity:
