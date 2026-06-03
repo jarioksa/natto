@@ -14,6 +14,8 @@
 #' @importFrom stats glm.fit model.matrix coef weights quasipoisson
 #' @importFrom vegan scores
 #'
+#' @author Jari Oksanen
+#'
 #' @export
 `gausscircle` <-
     function(ord, comm, freqlim = 10, family = quasipoisson(), unit = FALSE,
@@ -51,3 +53,40 @@
     }
     out
 }
+
+###################################################
+
+### Notes for development
+
+### the tol-radius circles centred at (xopt, yopt) can be added to an
+### ordination graph with
+
+### plot(ord)
+### gm <- gausscircle(ord, comm)
+### vegan::ordilabel(gm) # optima
+### symbols(gm, circles = gm[,"tol"], inches=FALSE, add = TRUE)
+
+### vegan::tolerance functions use reciprocal averaging ideas of
+### estimating SD by axis. These can be added to the plot using
+### vegan:::veganCovEllipse(). These are ellipses with principal axes
+### parallel to the ordination axes, that is, based on covariance
+### matrix with off-diagonal 0 (uncorrelated) and tolerances at
+### diagonal.
+###
+### Simple way of adding these is:
+###
+### tol <- tolerance(ord) # notes on scaling below
+### sco <- scores(ord, dis="sp")
+### plot(ord)
+### for (i in 1:nrow(sco))
+###     lines(vegan:::veganCovEllipse(
+###         cov = diag(tol[i,1:2]),
+###         center = sco[i,1:2]),
+###     col=2)
+
+### It seems that in cca/ca we get average 1 species tolerances with
+### options scaling = "sites", hill = TRUE (or scaling = -1). In
+### decorana() the scaling cannot be changed in scores()/plot(), but
+### it should be OK and similar to above. It is essential to use same
+### scaling in scores(..., display="species") and tolerance(...,
+### which="species").
