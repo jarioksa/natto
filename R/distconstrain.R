@@ -35,7 +35,7 @@
 #'   redundancy analysis. \emph{Ecology} 82, 290--297.
 #'
 #' @importFrom stats delete.response terms model.frame model.matrix
-#' formula as.dist
+#' @importFrom stats formula as.dist
 #'
 #' @param formula The left-hand-side must be dissimilarities and the
 #' right-hand-side should list the constraining variables.
