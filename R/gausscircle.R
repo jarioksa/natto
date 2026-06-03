@@ -1,5 +1,7 @@
 ### Fit circular Gaussian responses on 2D ordination
 
+#' Circular Gaussian Response on 2D Ordination
+
 #' @param ord Ordination result.
 #' @param comm Community data.
 #' @param freqlim Frequency limit.
@@ -23,7 +25,8 @@
     rownames(out) <- colnames(comm)
     fr <- colSums(comm > 0)
     out[,5] <- fr
-    w <- weights(ord) %||% rep.int(1, nrow(x))
+    w <- if (is.atomic(ord)) NULL else weights(ord)
+    if (is.null(w)) w <- rep.int(1, nrow(x))
     if (unit) {
         off <- -0.5 * rowSums(x^2)
     } else {
