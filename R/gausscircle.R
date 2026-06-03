@@ -11,7 +11,7 @@
 #' @param display Ordination scores.
 #' @param \dots Other arguments passed to \code{\link{scores}}.
 #'
-#' @importFrom stats glm.fit model.matrix coef weights
+#' @importFrom stats glm.fit model.matrix coef weights quasipoisson
 #' @importFrom vegan scores
 #'
 #' @export
