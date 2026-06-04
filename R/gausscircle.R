@@ -121,26 +121,32 @@
     ## use names of Oksanen et al. Ecology 82 (2001), p. 1193, eq. 10
     ## mu = exp(a + b1*x + b2*x^2 + c1*y + c2*y^2 + d*x*y)
     colnames(x) <- c("b1", "c1", "b2", "c2", "d")
+    out <- matrix(NA, ncol(comm), 6)
+    colnames(out) <- c("xopt", "yopt", "xtol", "ytol", "rxy", "freq")
+    rownames(out) <- colnames(comm)
+    out[,"freq"] <- fr
     x <- model.matrix( ~ ., as.data.frame(x))
-    y <- comm[,species]
-    mod <- glm.fit(x, y, family = family, weights = w)
-    p <- coef(mod)
-    ## new constants
-    q0 <- 4 * p["b2"]*p["c2"] - p["d"]^2
-    if (q0 <= 0 || p["b2"] + p["c2"] >= 0)
-        stop("not a Gaussian surface")
-    p1 <- p["d"] - 2*p["b2"]*p["c1"]/p["b1"]
-    p2 <- p["d"] - 2*p["c2"]*p["b1"]/p["c1"]
-    ## joint optimum on (x,y), eqs. 11 & 12 in Oksanen et al.
-    xopt <- -p["b1"]/2/p["b2"] * (1 + p1 * p["d"] / q0)
-    yopt <- -p["c1"]/2/p["c2"] * (1 + p2 * p["d"] / q0)
-    ## tolerances, eqs 13 & 14 in Oksanen et al.
-    xtol <- sqrt(-1/2/p["b2"] * (1 + p["d"]^2 / q0))
-    ytol <- sqrt(-1/2/p["c2"] * (1 + p["d"]^2 / q0))
-    ## interaction term eq. 15 in Oksanen et al.
-    rxy <- p["d"] / sqrt(4 * p["b2"]*p["c2"])
-    ## return
-    out <- c(xopt, yopt, xtol, ytol, rxy)
-    names(out) <- c("xopt", "yopt", "xtol", "ytol", "rxy")
+    for (i in 1:ncol(comm)) {
+        if (fr[i] < freqlim)
+            next
+        y <- comm[,i]
+        mod <- glm.fit(x, y, family = family, weights = w)
+        p <- coef(mod)
+        ## new constants
+        q0 <- 4 * p["b2"]*p["c2"] - p["d"]^2
+        if (q0 <= 0 || p["b2"] + p["c2"] >= 0)
+            next
+        p1 <- p["d"] - 2*p["b2"]*p["c1"]/p["b1"]
+        p2 <- p["d"] - 2*p["c2"]*p["b1"]/p["c1"]
+        ## joint optimum on (x,y), eqs. 11 & 12 in Oksanen et al.
+        xopt <- -p["b1"]/2/p["b2"] * (1 + p1 * p["d"] / q0)
+        yopt <- -p["c1"]/2/p["c2"] * (1 + p2 * p["d"] / q0)
+        ## tolerances, eqs 13 & 14 in Oksanen et al.
+        xtol <- sqrt(-1/2/p["b2"] * (1 + p["d"]^2 / q0))
+        ytol <- sqrt(-1/2/p["c2"] * (1 + p["d"]^2 / q0))
+        ## interaction term eq. 15 in Oksanen et al.
+        rxy <- p["d"] / sqrt(4 * p["b2"]*p["c2"])
+        out[i,1:5] <- c(xopt, yopt, xtol, ytol, rxy)
+    }
     out
 }
