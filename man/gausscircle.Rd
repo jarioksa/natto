@@ -2,6 +2,7 @@
 % Please edit documentation in R/gausscircle.R
 \name{gausscircle}
 \alias{gausscircle}
+\alias{gaussellipse}
 \title{Circular Gaussian Response on 2D Ordination}
 \usage{
 gausscircle(
@@ -10,6 +11,16 @@ gausscircle(
   freqlim = 10,
   family = quasipoisson(),
   unit = FALSE,
+  choices = 1:2,
+  display = "sites",
+  ...
+)
+
+gaussellipse(
+  ord,
+  comm,
+  freqlim = 10,
+  family = quasipoisson(),
   choices = 1:2,
   display = "sites",
   ...
@@ -34,4 +45,7 @@ gausscircle(
 }
 \description{
 Circular Gaussian Response on 2D Ordination
+}
+\author{
+Jari Oksanen
 }

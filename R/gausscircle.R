@@ -109,9 +109,13 @@
 ###    lines(vegan:::veganCovEllipse(cv, gm[i,1:2]))
 
 ### Still preliminary and for testing only: handles only one species
+#' @importFrom stats glm.fit model.matrix coef weights quasipoisson
+#' @importFrom vegan scores
+#' @rdname gausscircle
+#' @export
 `gaussellipse` <-
     function(ord, comm, freqlim = 10, family = quasipoisson(),
-             choices = 1:2, display = "sites", species, ...)
+             choices = 1:2, display = "sites", ...)
 {
     x <- scores(ord, choices = choices, display = display, ...)
     fr <- colSums(comm > 0)

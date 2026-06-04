@@ -16,6 +16,12 @@ for(i in 1:nsp)
 ## Re-find input response paramaters p
 expect_silent(res <- gausscircle(x, y))
 expect_equal(res[, 1:4], p)
+## gausellipse: three first setup parameters should be equal, and in
+## gaussellipse xtol == ytol (except names) and rxy == 0
+expect_silent(res <- gaussellipse(x, y))
+expect_equivalent(res[, 1:3], p[, 1:3])
+expect_equivalent(res[, "ytol"], res[, "xtol"])
+expect_equal(res[, "rxy"], rep.int(0, nsp))
 ## test for unit-tolerance responses
 for (i in 1:nsp)
     y[,i] <- p[i,4] * exp(-rowSums(sweep(x, 2, p[i,1:2])^2)/2)
