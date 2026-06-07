@@ -1,15 +1,133 @@
-### Fit circular Gaussian responses on 2D ordination
+### Fit Gaussian responses on 2D ordination to estimate species
+### tolerances
 
-#' Circular Gaussian Response on 2D Ordination
+#' Gaussian Response Circles or Ellipses on 2D Ordination
+#'
+#' Correspondence Analysis (CA, CCA) is often represented as unimodal
+#' method approximating Gaussian responses. Axes of sites can be seen
+#' as proxies of environmental gradients, and species scores as
+#' estimates of species optima along those gradients. Ter Braak &
+#' Looman (1986) demonstrated this model to work well when species
+#' have Gaussian responses with equal response widths, known as
+#' tolerances. It would be possible to scale axes so that species by
+#' tolerance units, so that all species on average have tolerance
+#' 1. These functions help in illustrating and inspecting these
+#' conjectures by actually fitting Gaussian responses to species and
+#' returning their parameters, or the locations of optima and widths
+#' of tolerances for each species on 2D ordination graph. Function
+#' \code{gausscircle} assumes equal tolerances on both axes (and
+#' optionally forces this tolerance to 1), and \code{gaussellipse}
+#' fits Gaussian response with independent tolerances and with
+#' interaction terms on axes.
+#'
+#' The functions were written for curiosity, and they do not (yet)
+#' have good support functions. If you use these, you must be prepared
+#' to learn how to use the results (see Examples).
+#'
+#' For the supposed unit-tolerance you must use adequate scaling of
+#' ordination. For \code{\link[vegan]{cca}} and
+#' \code{\link[vegan]{ca}} \code{scaling = "sites"} with \code{hill =
+#' TRUE} (or numerical shortcut \code{scaling = -1}) should give
+#' average tolerance 1, and \code{\link[vegan]{decorana}} scaling
+#' should do so automatically. In addition, with rescaling (default)
+#' \code{decorana} tries to make the average tolerance 1 all along
+#' the axis.
+#'
+#' \pkg{vegan} function \code{\link[vegan]{tolerance}} for \code{cca}
+#' and \code{decorana} use weighted averages methods to find the
+#' tolerances of species, and these can be used and displayed in the
+#' same way as the results of these functions.
+#'
+#' The methods are based on curve fitting and need sufficient non-zero
+#' data. The parameters are \code{NA} for species below
+#' \code{freqlim}. They are based on fitting Gaussian model as
+#' polynomial regression, and translating polynomial coefficients to
+#' Gaussian parameters (ter Braak & Looman 1986). The translation in
+#' \code{gaussellipse} follows Oksanen et al. (2001). The polynomial
+#' models may find a model with no optimum type response, and these
+#' results are skipped and returned as \code{NA}.
+#'
+#' @references
+#'
+#' Oksanen, J., Läärä, E., Tolonen, K. & Warner, B.G. 2001. Confidence
+#' intervals for the optimum in the Gaussian response
+#' function. \emph{Ecology} 82, 1191--1197.
+#'
+#' ter Braak, C.J.F & Looman, C.W.N 1986. Weighted averaging, logistic
+#' regression and the Gaussian response model. \emph{Vegetatio} 65,
+#' 3--11.
 
-#' @param ord Ordination result.
+#' @param ord Ordination result. The unimodality is suggested for the
+#'     Correspondendence analysis of methods, but the function is
+#'     ignorant, and can also analyse other models, even when this
+#'     makes no sense (but \code{\link[vegan]{metaMDS}} results with
+#'     WA scores for species is a legitimate object).
 #' @param comm Community data.
-#' @param freqlim Frequency limit.
+#' @param freqlim Frequency limit, species below this limit are
+#'     skipped.
 #' @param family Error family.
 #' @param unit Force Gaussian responses to unit tolerances.
 #' @param choices Ordination axes.
-#' @param display Ordination scores.
+#' @param display Ordination scores on which responses are fitted. The
+#'     Gaussian models are for species, so this should be
+#'     \code{"sites"} or in \code{cca} alternatively \code{"lc"}.
 #' @param \dots Other arguments passed to \code{\link{scores}}.
+#'
+#' @return A matrix of Gaussian parameters. \code{xopt} and
+#'     \code{yopt} is the estimated location of the species optimum
+#'     (ordination scores should approximate this), \code{tol} the
+#'     estimated isometric tolerance (\code{gausscircle}) or
+#'     \code{xtol}, \code{ytol} and \code{rxy} tolerances for axes and
+#'     their correlation (\code{gaussellipse}), and \code{top} the
+#'     estimated height of the response at the optimum (only returned
+#'     in \code{gausscircle}), and finally a column for
+#'     frequency. Each row is for one species. If Gaussian parameters
+#'     are \code{NA}, the species was below \code{freqlim} or the
+#'     fitted model was not of Gaussian optimum type.
+#'
+#' @seealso \code{\link[vegan]{tolerance}} for weighted averages
+#'     estimates of tolerance, \code{\link[vegan]{wascores}} for
+#'     direct estimation of tolerances with observed gradients, and
+#'     \CRANpkg{analogue} package for extended use of tolerances in
+#'     environmental calibration. The response fitting uses
+#'     \code{\link{glm}}.
+#'
+#' @examples
+#' library(vegan)
+#' data(dune, package = "vegan")
+#' ord <- cca(dune)
+#' tol0 <- vegan::tolerance(ord, scaling = -1)
+#' summary(tol0)
+#' tol1 <- gausscircle(ord, dune, scaling = -1, freqlim=6)
+#' summary(tol1)
+#' tol2 <- gaussellipse(ord, dune, scaling = -1, freqlim=6)
+#' summary(tol2)
+#' ## plotting is harder, but let us start with the easier case with
+#' ## tolerance circles
+#' plot(ord, display = "species", scaling = -1)
+#' vegan::ordilabel(tol1)  # optima, should be close species score
+#' symbols(tol1, circles = tol1[,"tol"], inches = FALSE, add = TRUE)
+#' title(main = "Tolerance Circles")
+#' ## For other we need to add covariance ellipses. vegan::tolerance
+#' ## is simpler because there we have diagonal variance matrix. NB.,
+#' ## you must use squared tolerances for covariance ellipses.
+#' plot(ord, display = "species", scaling = -1)
+#' sco <- scores(ord, display = "species", choices = 1:2, scaling = -1)
+#' for (i in 1:nrow(tol0))
+#'     lines(vegan:::veganCovEllipse(
+#'         cov = diag(tol0[i, 1:2]^2, nrow = 2),
+#'         center = sco[i, 1:2]))
+#' title(main = "WA Tolerances")
+#' ## Ellipses need also off-diagonal component of covariances
+#' plot(ord, display = "species", scaling = -1)
+#' for (i in 1:nrow(tol2)) {
+#'     cv <- diag(tol2[i, 3:4]^2, nrow = 2)
+#'     cv[2:3] <- tol2[i, 3] * tol2[i, 4] * tol2[i, 5]
+#'     lines(vegan:::veganCovEllipse(cv, tol2[i, 1:2]))
+#' }
+#' vegan::ordilabel(tol2)
+#' title(main = "Tolerance Ellipses")
+#'
 #'
 #' @importFrom stats glm.fit model.matrix coef weights quasipoisson
 #' @importFrom vegan scores
