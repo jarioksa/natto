@@ -40,7 +40,7 @@ skipped.}
 
 \item{family}{Error family.}
 
-\item{unit}{Force Gaussian responses to unit tolerances.}
+\item{unit}{Fit Gaussian responses of unit tolerances.}
 
 \item{choices}{Ordination axes.}
 
@@ -52,8 +52,8 @@ Gaussian models are for species, so this should be
 }
 \value{
 A matrix of Gaussian parameters. \code{xopt} and
-    \code{yopt} is the estimated location of the species optimum
-    (ordination scores should approximate this), \code{tol} the
+    \code{yopt} are the estimated location of the species optimum
+    (ordination scores should approximate these ), \code{tol} the
     estimated isometric tolerance (\code{gausscircle}) or
     \code{xtol}, \code{ytol} and \code{rxy} tolerances for axes and
     their correlation (\code{gaussellipse}), and \code{top} the
@@ -70,33 +70,33 @@ as proxies of environmental gradients, and species scores as
 estimates of species optima along those gradients. Ter Braak &
 Looman (1986) demonstrated this model to work well when species
 have Gaussian responses with equal response widths, known as
-tolerances. It would be possible to scale axes so that species by
-tolerance units, so that all species on average have tolerance
-1. These functions help in illustrating and inspecting these
-conjectures by actually fitting Gaussian responses to species and
-returning their parameters, or the locations of optima and widths
-of tolerances for each species on 2D ordination graph. Function
-\code{gausscircle} assumes equal tolerances on both axes (and
-optionally forces this tolerance to 1), and \code{gaussellipse}
-fits Gaussian response with independent tolerances and with
-interaction terms on axes.
+tolerances. It is possible to scale axes by species tolerance
+units, so that all species have tolerance 1 on average. Functions
+\code{gausscircle} and \code{gaussellipse} help in illustrating and
+inspecting these conjectures by actually fitting Gaussian responses
+for species and returning their parameters, or the locations of
+optima and widths of tolerances for each species on 2D ordination
+graph. Function \code{gausscircle} assumes equal tolerances on both
+axes (and optionally forces this tolerance to 1), and
+\code{gaussellipse} fits Gaussian response with independent
+tolerances and with interaction terms.
 }
 \details{
 The functions were written for curiosity, and they do not (yet)
 have good support functions. If you use these, you must be prepared
-to learn how to use the results (see Examples).
+to learn how to apply the results (see Examples).
 
 For the supposed unit-tolerance you must use adequate scaling of
 ordination. For \code{\link[vegan]{cca}} and
-\code{\link[vegan]{ca}} \code{scaling = "sites"} with \code{hill =
+\code{\link[vegan]{ca}}, \code{scaling = "sites"} with \code{hill =
 TRUE} (or numerical shortcut \code{scaling = -1}) should give
 average tolerance 1, and \code{\link[vegan]{decorana}} scaling
 should do so automatically. In addition, with rescaling (default)
-\code{decorana} tries to make the average tolerance 1 all along
-the axis.
+\code{decorana} tries to make the average tolerance 1 all along the
+axis.
 
 \pkg{vegan} function \code{\link[vegan]{tolerance}} for \code{cca}
-and \code{decorana} use weighted averages methods to find the
+and \code{decorana} uses weighted averages methods to find the
 tolerances of species, and these can be used and displayed in the
 same way as the results of these functions.
 
@@ -140,7 +140,8 @@ plot(ord, display = "species", scaling = -1)
 for (i in 1:nrow(tol2)) {
     cv <- diag(tol2[i, 3:4]^2, nrow = 2)
     cv[2:3] <- tol2[i, 3] * tol2[i, 4] * tol2[i, 5]
-    lines(vegan:::veganCovEllipse(cv, tol2[i, 1:2]))
+    if (!anyNA(cv))
+        lines(vegan:::veganCovEllipse(cv, tol2[i, 1:2]))
 }
 vegan::ordilabel(tol2)
 title(main = "Tolerance Ellipses")
@@ -160,7 +161,7 @@ regression and the Gaussian response model. \emph{Vegetatio} 65,
 \code{\link[vegan]{tolerance}} for weighted averages
     estimates of tolerance, \code{\link[vegan]{wascores}} for
     direct estimation of tolerances with observed gradients, and
-    \CRANpkg{analogue} package for extended use of tolerances in
+    \CRANpkg{analogue} package for extensive use of tolerances in
     environmental calibration. The response fitting uses
     \code{\link{glm}}.
 }
