@@ -2,6 +2,7 @@
 ## Generate error-free 2D Gaussian response, and estimate its
 ## generating species parameters with gausscircle.
 
+## set up simulation model
 nobs <- 30
 nsp <- 6
 p <- matrix(0, nsp, 4)
@@ -13,15 +14,19 @@ x <- matrix(runif(2 * nobs, -2, 2), nrow = nobs)
 y <- matrix(NA, nrow = nobs, ncol = nsp)
 for(i in 1:nsp)
     y[,i] <- p[i,4] * exp(-rowSums(sweep(x, 2, p[i,1:2])^2)/2/p[i,3]^2)
-## Re-find input response paramaters p
+
+## gausscircle() finds the set up parameters
 expect_silent(res <- gausscircle(x, y))
 expect_equal(res[, 1:4], p)
-## gausellipse: three first setup parameters should be equal, and in
-## gaussellipse xtol == ytol (except names) and rxy == 0
+
+## gaussellipse: xopt and yopt should be equal to setup, xtol and ytol
+## should be identical and both equal to tol of setup, and rxy should
+## be 0
 expect_silent(res <- gaussellipse(x, y))
 expect_equivalent(res[, 1:3], p[, 1:3])
 expect_equivalent(res[, "ytol"], res[, "xtol"])
 expect_equal(res[, "rxy"], rep.int(0, nsp))
+
 ## test for unit-tolerance responses
 for (i in 1:nsp)
     y[,i] <- p[i,4] * exp(-rowSums(sweep(x, 2, p[i,1:2])^2)/2)

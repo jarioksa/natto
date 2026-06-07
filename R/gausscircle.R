@@ -154,3 +154,53 @@
     }
     out
 }
+
+### USER INTERFACE
+
+### Algebra seems to be OK: checked by verification test and
+### vegan::ordisurf(..., knots = 2, family = quasipoisson,
+### scaling=...) gives contours fitting ellipses. Not too
+### user-friendly at the moment, but needs hacker mind, in particular
+### in plotting which needs vegan:::veganCovEllipse and transforming
+### tolerances to squared tolerances for variance-covariance matrix.
+
+### Which class? Discussion also handles vegan::tolerance with classes
+### "tolerance.cca" & "tolerance.decorana", both inheriting from
+### "tolerance". The basic class is defined in analogue, but there it
+### references specifically Weighted Averages, and there is no real
+### inheritance from analogue::tolerance -> vegan::tolerance.cca. It
+### is attractive to call these here tolerance.* classes, but the lack
+### of real inheritance does not make this useful, for instance
+### analogue:::print.tolerance() hard-codes header as "Weighted
+### Averages Tolerances", and making a generic print.tolerance() here
+### would conflict with analogue (and it is prudent to assume these
+### may be used together). Naturally, we could keep the output as a
+### simple matrix (like now) and let the potential user to figure out
+### what to do with the result.
+
+### Method functions?
+###
+### If we have class, we need a print for cleaner output. We do not
+### need it with matrix. Also summary() works meaningfully with matrix.
+###
+### The only really needed method is plotting
+### circles/ellipses. symbols() works nicely with gausscircles(), but
+### vegan:::tolerance.cca/decorana and gaussellipses would plot
+### covariance ellipses, and in this file I have used unexported
+### vegan:::veganCovEllipse() in a loop over rows of matrix. This or
+### something similar could need wrapping to a function (with yet
+### unknown name) to add ellipses to a graph or to draw a new
+### graph. vegan:::tolerance.cca/decorana add ellipses to centred to
+### species scores, but species optima change from ordination in
+### ordicircle(), ordiellipse(), and these alternative species scores
+### should be added as well. Construction of covariance matrix needs
+### some care, and it could be helpful to have a vcov() method
+### (generic in stats), which could return either vcov matrix for a
+### single row (species) or a list of vcov matrices for all
+### species. The vcov matrix is diagonal in
+### vegan:::tolerance.cca/decorana and in gausscircle(), but
+### gaussellipse has covariance elements filled as well. For single
+### species we need there something like:
+###
+### cv <- diag(x[i, 3:4]^2, nrow=2)     # xtol^2, ytol^2
+### cv[2:3] <- x[i,3] * x[i,4] * x[i,5] # xtol * ytol * rxy
