@@ -35,7 +35,6 @@
 #' to traditional ones. I challenge you to inspect Euclidean distance,
 #' and once you see how it is derived, try Chord distance.
 #'
-#' @encoding UTF-8
 #' @references
 #'
 #' Barkman, J.J. (1958). Phytosociology and ecology of cryptogamic

@@ -9,8 +9,6 @@
 #' point that has the maximal total distance to all remaining
 #' points or longest Mahalanobis distance to the group.
 
-#' @encoding UTF-8
-#'
 #' @param pts Coordinates of points, a two-column matrix
 #' @param keep Proportion of points kept
 #' @param criterion Criterion to remove a point on the
