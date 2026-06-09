@@ -1,11 +1,10 @@
 Package: natto
 Title: An Extreme 'vegan' Package of Experimental Code
 Version: 0.3
-Authors@R: person(given = "Jari", family = "Oksanen",
-                  role = c("cre","aut"),
-                  email = "jhoksane@gmail.com")
-Description: Random code that is too experimental or
-    too weird to be included in the vegan package.
+Authors@R: person(given = "Jari", family = "Oksanen", role =
+        c("cre","aut"), email = "jhoksane@gmail.com")
+Description: Random code that is too experimental or too weird to be
+        included in the 'vegan' package.
 License: MIT + file LICENCE
 Depends: R (>= 4.4.0)
 Imports: vegan (>= 2.7.1), cluster
@@ -14,4 +13,3 @@ VignetteBuilder: knitr
 URL: https://github.com/jarioksa/natto
 LazyData: true
 Encoding: UTF-8
-Config/roxygen2/version: 8.0.0
