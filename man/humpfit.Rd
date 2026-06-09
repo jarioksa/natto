@@ -154,7 +154,9 @@ speculate about \dQuote{competition} and \dQuote{stress} (Al-Mufti
 et al. 1977), but humped response can be produced as an artifact of
 using fixed plot size for varying plant sizes and densities.
 }
-\note{
+\section{Note}{
+
+
 The function is a replacement for the original \code{GLIM4}
 function at the archive of Journal of Ecology.  There the function
 was represented as a mixed \code{\link{glm}} with one non-linear
@@ -177,6 +179,7 @@ approach are:
    \code{\link{family}} models might become easier, too.
    }
 }
+
 \examples{
 
 ## Data of Al-Mufti et al. (1977)
