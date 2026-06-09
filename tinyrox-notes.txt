@@ -1,0 +1,37 @@
+tinyrox problems
+
+Checked with tinyrox 0.3.3 on June 9, 2026
+
+- Does not recognize S3 methods outside a fixed list:
+  as.dist (would be in stats, but not recognized), eigenvals (vegan),
+  scores (vegan), but exports these as export(as.dist.deldir) etc.
+  Should be S3method(as.dist,deldir) etc. Gives a R CMD check Warning
+  "S3 methods shown with full name in Rd file". 
+
+- Does not recognize importFrom in some cases. Happens with rdecorana
+  where we have
+
+  foo1 <- function() {}
+  ##
+  #' importFrom stats filter
+  ##
+  foo2 <- function() {}
+
+  imports filter (twice) and approx are in such positions and are not
+  listed in imports in NAMESPACE. Gives a NOTE in R CMD check
+  "Undefined global functions or variables".
+
+- Does not handle replacement functions properly. This
+
+  #' @export
+  `sppscores<-.posvectord` <-
+    function(object, value) {}
+
+  is rendered in man page as
+
+  sppscores<-.posvectord(object, value)
+
+  which gives a Warning in R CMD check for "assignment in \usage". The
+  correct rendering is:
+
+  \method{sppscores}{posvectord}(object) <- value
