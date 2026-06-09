@@ -34,8 +34,9 @@ Checked with tinyrox 0.3.3 on June 9, 2026
   which gives a Warning in R CMD check for "assignment in \usage". The
   correct rendering is:
 
+  \method{sppscores}{posvectord}(object) <- value
+
 - @author tag is non-functional. It is formally recognized, but \author{}
   field is not rendered in Rd file.
 
 
-  \method{sppscores}{posvectord}(object) <- value
