@@ -56,8 +56,6 @@
 #' previous axes whereas the species score shows the correlated
 #' response with other species.
 #'
-#' @encoding UTF-8
-#'
 #' @param x Input data.
 #' @param scale Scale variables to unit variance.
 #' @param \dots Other arguments (passed to \code{\link[vegan]{ordiplot}}).

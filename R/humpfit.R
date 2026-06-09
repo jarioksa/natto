@@ -84,7 +84,7 @@
 #' richness and biomass an artefact due to plot size? \emph{Journal of
 #' Ecology} 84, 293--295.
 #'
-#' @note
+#' @section Note:
 #'
 #' The function is a replacement for the original \code{GLIM4}
 #' function at the archive of Journal of Ecology.  There the function
