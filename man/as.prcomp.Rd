@@ -3,7 +3,7 @@
 \name{as.prcomp}
 \alias{as.prcomp}
 \alias{as.prcomp.rda}
-\title{Cast vegan::rda Result to base::prcomp}
+\title{Cast vegan::rda Result to stats::prcomp}
 \usage{
 as.prcomp(x)
 
@@ -17,7 +17,11 @@ A \code{\link{prcomp}} result object.
 }
 \description{
 Function casts a result object of unconstrained
-\code{\link[vegan]{rda}} to a \code{\link{prcomp}} result object.
+\code{\link[vegan]{rda}} or \code{\link[vegan]{pca}} to a
+\code{\link{prcomp}} result object, but without the last zero
+eigenvalue and rubbish eigenvectors of \code{prcomp}. The
+translation is best evaluated by looking at the code of the
+function.
 }
 \author{
 Jari Oksanen
