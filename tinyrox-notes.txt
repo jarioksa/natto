@@ -11,7 +11,7 @@ Checked with tinyrox 0.3.3 on June 9, 2026
   be in stats, but not recognized), eigenvals (vegan), scores (vegan),
   but exports these as export(as.dist.deldir) etc.  Should be
   S3method(as.dist,deldir) etc. In Rd files these are given as dotted
-  names (as.dist.prcomp instead of \method{as.dist}{deldir}). Gives a
+  names (as.dist.deldir instead of \method{as.dist}{deldir}). Gives a
   R CMD check Warning "S3 methods shown with full name in Rd
   file". This looks like a serious design issue, since known S3
   methods are hard-coded in tinyrox:::KNOWN_S3_GENERICS. If so, there
@@ -23,7 +23,7 @@ Checked with tinyrox 0.3.3 on June 9, 2026
 
   foo1 <- function() {}
   ##
-  #' importFrom stats filter
+  #' @importFrom stats filter
   ##
   foo2 <- function() {}
 
@@ -47,13 +47,18 @@ Checked with tinyrox 0.3.3 on June 9, 2026
 
   \method{sppscores}{posvectord}(object) <- value
 
+  This may be due to inability to handle S3 methods outside
+  tinyrox:::KNOWN_S3_GENERICS since the tinyrox code has an attempt to
+  handle replacement functions.
+
 - @author tag is non-functional. It is formally recognized, but
   \author{} field is not rendered in Rd file. Could be failed
   understanding of CRAN policy: some comments in tinyrox code say that
-  author should be taken from DESCRIPTION and "not duplicated", but
-  function authors and package authors have different scope and
-  resolution, and R-exts manual makes that distinction, and has a file
-  specific \author{} field for reason.
+  author should be taken from DESCRIPTION and "no duplication in the R
+  file", but function authors and package authors have different
+  scopes and resolution, and CRAN has a file specific \author{} field
+  for reason. Currently not a problem in natto with only one author so
+  far, but would be a show stopper in, say, vegan.
 
 - aesthetic: sometimes fails to automatically distinguish sections
   title, description and details when these are not explicitly
