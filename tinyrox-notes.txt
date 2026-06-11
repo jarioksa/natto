@@ -7,16 +7,16 @@ which mangles DESCRIPTION and uses ugly air-formatting in Rd files.
 
 Checked with tinyrox 0.3.3 on June 9, 2026
 
-- Does not recognize S3 methods outside a fixed list: as.dist (would
-  be in stats, but not recognized), eigenvals (vegan), scores (vegan),
-  but exports these as export(as.dist.deldir) etc.  Should be
+- Recognizes only S3 methods from a fixed list
+  tinyrox:::KNOWN_S3_GENERICS plus generics defined within the
+  package. KNOWN_S3_GENERICS is manually maintained in file
+  namespace.R and it lacks as.dist and profile of stats. The design
+  files to recognize generics imported from other packages and does
+  not know eigenvals, scores and sppscores<- of vegan.  NAMESPACE
+  exports these as export(as.dist.deldir) etc.  Should be
   S3method(as.dist,deldir) etc. In Rd files these are given as dotted
   names (as.dist.deldir instead of \method{as.dist}{deldir}). Gives a
-  R CMD check Warning "S3 methods shown with full name in Rd
-  file". This looks like a serious design issue, since known S3
-  methods are hard-coded in tinyrox:::KNOWN_S3_GENERICS. If so, there
-  may be no hope to have usable tinyrox with S3 vegan generics such as
-  scores, eigenvalues, sppscores.
+  R CMD check Warning "S3 methods shown with full name in Rd file".
 
 - Does not recognize importFrom in some cases. Happens with rdecorana.R
   where we have
@@ -63,11 +63,13 @@ Checked with tinyrox 0.3.3 on June 9, 2026
 - aesthetic: sometimes fails to automatically distinguish sections
   title, description and details when these are not explicitly
   tagged. tinyrox tries to do this, but fails in many natto files, and
-  description and details are fused in one huge section. This seems to
-  happen when the description is short (one sentence, like in
-  rdecorana.R), but I did not study this systematically. In one case
-  when a title had text in parentheses (iap.R), only that parenthesis
-  segment was taken as the full title. These can be probably
-  circumvented with explicit use of @title, @description and @details,
-  but as other problems make the current tinyrox unusable, I did not
-  try to fix this.
+  description and details are fused in one huge section. This was seen
+  cNMDS.Rd, gausscircle.Rd, posvectord.Rd, qrao.Rd, rdecorana.Rd,
+  sdca.Rd and slopediff.Rd (and perhaps unnoticed elsewhere). In one
+  case both the title and description were given only as iap. These
+  can be probably circumvented with explicit use of @title,
+  @description and @details, but as other problems make the current
+  tinyrox unusable, I did not try to fix this.
+
+- Accepts only one section (paragraph) in @return and rest are
+  dropped.
