@@ -28,7 +28,7 @@ rdecorana(
 \item{ira}{Type of analysis with numeric values \code{0} classic
 detrending by segments, \code{1} orthogonal for standard
 correspondence analysis a.k.a. reciprocal averaging, \code{2}
-quadratic detrending by second degree polynomials, \code{3}
+cubic detrending by third degree polynomials, \code{3}
 smooth detrending using \code{\link{loess}}, \code{4}
 \code{\link{smooth.spline}} with \code{cv = TRUE}.}
 
@@ -123,7 +123,7 @@ decorana(spurn)
 ## Comparison of detrending choices
 op <- par(mfrow=c(2,2), mar=c(4,4,1,1))
 ordiplot(rdecorana(spurn)) # default: DCA
-ordiplot(rdecorana(spurn, ira=2)) # quadratic DCA
+ordiplot(rdecorana(spurn, ira=2)) # cubic DCA
 ordiplot(rdecorana(spurn, ira=3)) # smooth DCA
 ordiplot(rdecorana(spurn, ira=4)) # smoothing spline with CV
 par(op)

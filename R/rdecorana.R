@@ -79,7 +79,7 @@
 #' ## Comparison of detrending choices
 #' op <- par(mfrow=c(2,2), mar=c(4,4,1,1))
 #' ordiplot(rdecorana(spurn)) # default: DCA
-#' ordiplot(rdecorana(spurn, ira=2)) # quadratic DCA
+#' ordiplot(rdecorana(spurn, ira=2)) # cubic DCA
 #' ordiplot(rdecorana(spurn, ira=3)) # smooth DCA
 #' ordiplot(rdecorana(spurn, ira=4)) # smoothing spline with CV
 #' par(op)
@@ -91,7 +91,7 @@
 #' @param ira Type of analysis with numeric values \code{0} classic
 #'     detrending by segments, \code{1} orthogonal for standard
 #'     correspondence analysis a.k.a. reciprocal averaging, \code{2}
-#'     quadratic detrending by second degree polynomials, \code{3}
+#'     cubic detrending by third degree polynomials, \code{3}
 #'     smooth detrending using \code{\link{loess}}, \code{4}
 #'     \code{\link{smooth.spline}} with \code{cv = TRUE}.
 #' @param mk Number of segments in classic detrending.
@@ -128,7 +128,7 @@
         paste0(switch(as.character(ira),
                       "0" = "DCA",
                       "1" = "RA",
-                      "2" = "qDCA",   # quadratic
+                      "2" = "cuDCA",  # cubic
                       "3" = "loDCA",  # loess
                       "4" = "splDCA", # smoothing spline
                       "Dim"), # forgot to define axis name to a new method
@@ -319,7 +319,7 @@
     switch(as.character(ira),
            "0" = detrend0(x, aidot, x1, mk),
            "1" = x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1,
-           "2" = residuals(lm.wfit(poly(x1, 2), x, w = aidot)),
+           "2" = residuals(lm.wfit(poly(x1, 3), x, w = aidot)),
            "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
            "4" = residuals(smooth.spline(x1, x, w = aidot, cv = TRUE)),
            stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
