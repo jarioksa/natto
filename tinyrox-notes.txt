@@ -10,13 +10,13 @@ Checked with tinyrox 0.3.3 on June 9, 2026
 - Recognizes only S3 methods from a fixed list
   tinyrox:::KNOWN_S3_GENERICS plus generics defined within the
   package. KNOWN_S3_GENERICS is manually maintained in file
-  namespace.R and it lacks as.dist and profile of stats. The design
-  files to recognize generics imported from other packages and does
-  not know eigenvals, scores and sppscores<- of vegan.  NAMESPACE
-  exports these as export(as.dist.deldir) etc.  Should be
-  S3method(as.dist,deldir) etc. In Rd files these are given as dotted
-  names (as.dist.deldir instead of \method{as.dist}{deldir}). Gives a
-  R CMD check Warning "S3 methods shown with full name in Rd file".
+  namespace.R and it lacks as.dist and profile of stats. Does not
+  recognize generics imported from other packages and does not know
+  eigenvals, scores and sppscores<- of vegan.  NAMESPACE exports these
+  as export(as.dist.deldir) etc.  Should be S3method(as.dist,deldir)
+  etc. In Rd files these are given as dotted names (as.dist.deldir
+  instead of \method{as.dist}{deldir}). Gives an R CMD check Warning
+  "S3 methods shown with full name in Rd file".
 
 - Does not recognize importFrom in some cases. Happens with rdecorana.R
   where we have
@@ -73,3 +73,10 @@ Checked with tinyrox 0.3.3 on June 9, 2026
 
 - Accepts only one section (paragraph) in @return and rest are
   dropped.
+
+- Superfluous warnigs:
+  "Avoid print()/cat() - use message() or verbose parameter" in a
+  print() function!
+  Same warning when cat() used within if(trace).
+  "Avoid modifying .GlobalEnv" when .GlobalEnv was not modified (if
+  missing(data) data <- .GlobalEnv).
