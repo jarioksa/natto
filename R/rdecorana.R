@@ -320,7 +320,7 @@
            "0" = detrend0(x, aidot, x1, mk),
            "1" = x - sum(x * aidot * x1) / sum(aidot * x1^2) * x1,
            "2" = residuals(lm.wfit(poly(x1, 3), x, w = aidot)),
-           "3" = residuals(loess(x ~ x1, weights = aidot, degree = 1)),
+           "3" = residuals(loess(x ~ x1, weights = aidot, degree = 2)),
            "4" = residuals(smooth.spline(x1, x, w = aidot, cv = TRUE)),
            stop(gettextf("argument ira = %s is unknown", ira), call. = FALSE)
            )
