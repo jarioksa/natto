@@ -9,15 +9,15 @@
 #' Constrained Non-metric Multidimensional Scaling
 #'
 #' Constrained non-metric Multidimensional scaling is a monotonous
-#' (isometric) regression (code{\link[stats]{isoreg}}) of observed
+#' (isometric) regression (\code{\link[stats]{isoreg}}) of observed
 #' (community) dissimilarities on dimensions that are linear
 #' combinations of constraints.
 #'
 #' This is a proof-of-concept function based on the idea of Bert van
 #' der Veen.
 #'
-#' @seealso \code(\link{cNMDS}} which provides an alternative and
-#'     worse alternative that is bsed on monotonous (isomteric)
+#' @seealso \code{\link{cNMDS}} which provides an alternative and
+#'     worse alternative that is based on monotonous (isometric)
 #'     regression of constrained dissimilarities
 #'     \code{\link{distconstrain}}.
 #'

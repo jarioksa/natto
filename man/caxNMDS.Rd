@@ -8,7 +8,7 @@ caxNMDS(formula, data, k = 2)
 }
 \description{
 Constrained non-metric Multidimensional scaling is a monotonous
-(isometric) regression (code{\link[stats]{isoreg}}) of observed
+(isometric) regression (\code{\link[stats]{isoreg}}) of observed
 (community) dissimilarities on dimensions that are linear
 combinations of constraints.
 }
@@ -26,5 +26,8 @@ coef(mod)
 mod$ef
 }
 \seealso{
-
+\code{\link{cNMDS}} which provides an alternative and
+    worse alternative that is based on monotonous (isometric)
+    regression of constrained dissimilarities
+    \code{\link{distconstrain}}.
 }
