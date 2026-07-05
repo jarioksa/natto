@@ -6,6 +6,15 @@
 \usage{
 caxNMDS(formula, data, k = 2)
 }
+\arguments{
+\item{formula}{Model formula where the left-hand-side is a distance
+structure for depenedent (community) dissimilarity and
+right-hand-side specifies the contraints.}
+
+\item{data}{Data frame of constraints.}
+
+\item{k}{Number of dimensions in NMDS.}
+}
 \description{
 Constrained non-metric Multidimensional scaling is a monotonous
 (isometric) regression (\code{\link[stats]{isoreg}}) of observed

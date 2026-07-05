@@ -21,6 +21,12 @@
 #'     regression of constrained dissimilarities
 #'     \code{\link{distconstrain}}.
 #'
+#' @param formula Model formula where the left-hand-side is a distance
+#'     structure for depenedent (community) dissimilarity and
+#'     right-hand-side specifies the contraints.
+#' @param data Data frame of constraints.
+#' @param k Number of dimensions in NMDS.
+#'
 #' @examples
 #' data(mite, mite.env, package = "vegan")
 #' mod <- caxNMDS(vegdist(mite) ~ WatrCont + SubsDens + Shrub + Topo,
