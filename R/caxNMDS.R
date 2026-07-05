@@ -57,9 +57,40 @@
         s <- isoreg(y[ord])
         sqrt(sum((s$y - s$yf)^2)/sum(s$y^2))
     }
+    ## analytic gradient of stress() wrt B (Kruskal 1964): the isotonic
+    ## fit yf is already optimal for the current y, so its own
+    ## sensitivity to a change in B drops out of the total derivative
+    ## (envelope theorem) -- only the derivative of the Euclidean
+    ## distance y wrt B remains
+    stress_grad <- function(B, D, mm, k) {
+        n <- nrow(mm)
+        B <- matrix(B, ncol = k)
+        Conf <- mm %*% B
+        y <- dist(Conf)
+        lt <- lower.tri(matrix(0, n, n))
+        ord <- order(D, y)
+        s <- isoreg(y[ord])
+        yhat <- numeric(length(y))
+        yhat[ord] <- s$yf
+
+        Usum <- sum(y^2)
+        Q <- sum((y - yhat)^2)/Usum
+        dQ_dy <- 2*((y - yhat) - Q*y)/Usum
+
+        ## spread the per-pair sensitivity over the points: each pair's
+        ## sensitivity becomes a pull between the two points, and each
+        ## point's total gradient is the sum of pulls from its partners
+        W <- matrix(0, n, n)
+        W[lt] <- dQ_dy/y
+        W <- W + t(W)
+        L <- diag(rowSums(W)) - W
+
+        ## chain rule: stress = sqrt(Q), then Conf = mm %*% B
+        as.vector(t(mm) %*% (L %*% Conf)) / (2*sqrt(Q))
+    }
     u <- wcmdscale(D, k = k)
     B <- qr.coef(qr(mm), u)
-    out <- optim(B, stress, D = D, mm = mm, k = k, method="L-BFGS-B")
+    out <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k, method="L-BFGS-B")
     B <- matrix(out$par, ncol = k)
     rownames(B) <- colnames(mm)
     U <- mm %*% B
