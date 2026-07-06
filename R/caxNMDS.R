@@ -90,12 +90,20 @@
     }
     u <- wcmdscale(D, k = k)
     B <- qr.coef(qr(mm), u)
-    out <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k, method="L-BFGS-B")
-    B <- matrix(out$par, ncol = k)
+    sol <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k,
+                 method="BFGS")
+    ## check & report optim result
+    if (sol$convergence != 0)
+        message("'optim' reported convergence issue ", sol$convergence,
+                ": see ?optim")
+    if (!is.null(sol$message))
+        message(sol$message)
+    B <- matrix(sol$par, ncol = k)
     rownames(B) <- colnames(mm)
     U <- mm %*% B
     ef <- envfit(U, df, permutations = 0)
-    out <- list(formula = formula, coefficients = B, points = U, ef = ef)
+    out <- list(formula = formula, stress = sol$value, coefficients = B,
+                points = U, ef = ef)
     class(out) <- c("caxNMDS")
     out
 }
