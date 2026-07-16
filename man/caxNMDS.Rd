@@ -27,9 +27,10 @@ der Veen.
 }
 \examples{
 data(mite, mite.env, package = "vegan")
-mod <- caxNMDS(vegdist(mite) ~ WatrCont + SubsDens + Shrub + Topo,
+dis <- vegan::vegdist(mite)
+mod <- caxNMDS(dis ~ WatrCont + SubsDens + Shrub + Topo,
   data = mite.env)
-ordiplot(mod, display = "sites")
+vegan::ordiplot(mod, display = "sites")
 plot(mod$ef)
 coef(mod)
 mod$ef
