@@ -3,7 +3,7 @@
 ### in June 2026. Constrained NMDS is a monotonous (isometric)
 ### regression of observed dissimilarities on sample scores that are
 ### linear combinations of constraints (model matrix). This is a
-### better idea than in natto::cNMDS which is a monotonous (isometric)
+### better idea than in natto::cdisNMDS which is a monotonous (isometric)
 ### regression of constrainted dissmilarities.
 
 #' Constrained Non-metric Multidimensional Scaling
@@ -16,7 +16,7 @@
 #' This is a proof-of-concept function based on the idea of Bert van
 #' der Veen.
 #'
-#' @seealso \code{\link{cNMDS}} which provides an alternative and
+#' @seealso \code{\link{cdisNMDS}} which provides an alternative and
 #'     worse alternative that is based on monotonous (isometric)
 #'     regression of constrained dissimilarities
 #'     \code{\link{distconstrain}}.

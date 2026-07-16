@@ -1,4 +1,4 @@
-#' Constrained Nonmetric Multidimensional Scaling
+#' Constrained Distance Nonmetric Multidimensional Scaling
 #'
 #' Constraints are estimated as non-metric MDS of constrained
 #' distances (\code{\link{distconstrain}}). These are similar as the
@@ -23,7 +23,7 @@
 #' ordination distance-based RDA (db-RDA, \code{\link[vegan]{dbrda}}).
 #' The constrained component is similar to linear combination (LC)
 #' scores and the site NMDS analogous to to weighted average (WA) or
-#' site scores of db-RDA. The \code{cNMDS} site scores are found by
+#' site scores of db-RDA. The \code{cdisNMDS} site scores are found by
 #' adding the sites with their community dissimilarities as new points
 #' to the ordination of constraints.  Instead of raw dissimilarities,
 #' both the constrained ordination and the site ordination
@@ -42,7 +42,7 @@
 #' well only when the constraints describe the community
 #' dissimilarities sufficiently well.
 #'
-#' @return Function returns an object of class \code{"cNMDS"} that
+#' @return Function returns an object of class \code{"cdisNMDS"} that
 #'     inherits from \pkg{vegan} function
 #'     \code{\link[vegan]{monoMDS}}. but it has rudimentary
 #'     \code{scores} and \code{plot} methods. The \code{plot} only
@@ -69,7 +69,7 @@
 #' if (require(vegan)) { # vegan needed for data
 #' data(mite, mite.env)
 #' dis <- canneddist(mite, "chord")
-#' mod <- cNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
+#' mod <- cdisNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
 #' print(mod)
 #' plot(mod, type = "p") |>
 #'    points("constraints", pch = 16, col = 2) |>
@@ -92,7 +92,7 @@
 #' @importFrom vegan metaMDS MDSaddpoints envfit scores
 #'
 #' @export
-`cNMDS` <-
+`cdisNMDS` <-
     function(formula, data, k = 2, add = FALSE)
 {
     ## step 1: constrained dissimilarities
@@ -131,19 +131,19 @@
     sol$iters <- m2$iters
     sol$icause <- m2$cause
     sol$iscal <- FALSE
-    class(sol) <- c("cNMDS", "monoMDS")
+    class(sol) <- c("cdisNMDS", "monoMDS")
     sol
 }
 
-#' @rdname cNMDS
-#' @param x \code{cNMDS} result object.
+#' @rdname cdisNMDS
+#' @param x \code{cdisNMDS} result object.
 #' @param display Kind of scores to display. In \code{scores} this can
 #'     be one or several of \code{"sites"}, \code{"constraints"},
 #'     \code{"biplot"}, \code{"centroids"}, or alternative
 #'     \code{"all"} for all these. \code{plot} accepts only one
 #'     alternative (and no \code{"all"}).
 #' @export
-`scores.cNMDS` <-
+`scores.cdisNMDS` <-
     function(x, display = "sites", ...)
 {
     scores <- c("sites", "constraints", "biplot", "centroids")
@@ -158,12 +158,12 @@
     out
 }
 
-#' @rdname cNMDS
+#' @rdname cdisNMDS
 #' @param type Either \code{"t"}ext, \code{"p"}oints or \code{"n"}one.
 #' @param \dots Other arguments passed to graphics functions.
 #'
 #' @export
-`plot.cNMDS` <-
+`plot.cdisNMDS` <-
     function(x, display = "sites", type = "p", ...)
 {
     if (length(display) > 1)
@@ -173,6 +173,6 @@
     ylim <- range(sapply(out, function(z) z[,2]))
     plt <- scores(x, display = display)
     suppressMessages(ordiplot(plt, type = type, xlim = xlim, ylim = ylim, ...))
-    class(out) <- c("cNMDS", "ordiplot")
+    class(out) <- c("cdisNMDS", "ordiplot")
     invisible(out)
 }

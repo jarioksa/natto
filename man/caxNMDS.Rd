@@ -35,7 +35,7 @@ coef(mod)
 mod$ef
 }
 \seealso{
-\code{\link{cNMDS}} which provides an alternative and
+\code{\link{cdisNMDS}} which provides an alternative and
     worse alternative that is based on monotonous (isometric)
     regression of constrained dissimilarities
     \code{\link{distconstrain}}.
