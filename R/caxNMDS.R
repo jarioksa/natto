@@ -21,11 +21,14 @@
 #'     regression of constrained dissimilarities
 #'     \code{\link{distconstrain}}.
 #'
+#' @author Jari Oksanen and Bert van der Veen.
+#'
 #' @param formula Model formula where the left-hand-side is a distance
 #'     structure for depenedent (community) dissimilarity and
 #'     right-hand-side specifies the contraints.
 #' @param data Data frame of constraints.
 #' @param k Number of dimensions in NMDS.
+#' @param method Optimization method used in \code{\link{optim}}.
 #'
 #' @examples
 #' data(mite, mite.env, package = "vegan")
@@ -36,13 +39,17 @@
 #' plot(mod$ef)
 #' coef(mod)
 #' mod$ef
+#' ## using as metaMDS engine
+#' modelmatrix <- model.matrix(~ WatrCont + SubsDens + Shrub + Topo,
+#'   data = mite.env)[, -1] # drop constant
+#' vegan::metaMDS(dis, engine = caxNMDSengine, mm = modelmatrix)
 
 #' @importFrom stats delete.response terms formula model.frame model.matrix
 #' @importFrom stats dist isoreg optim
 #' @importFrom vegan wcmdscale envfit
 #' @export
 `caxNMDS` <-
-    function(formula, data, k = 2)
+    function(formula, data, k = 2, u, method = "BFGS")
 {
     ## Get data & response
     Trms <- delete.response(terms(formula, data = data))
@@ -50,6 +57,33 @@
     mm <- model.matrix(Trms, df)[,-1, drop=FALSE]
     mm <- scale(mm, scale=FALSE)
     D <- eval(formula[[2]], parent.frame(), environment(formula))
+    ## optimize!
+    sol <- caxNMDSengine(D = D, k = k, mm = mm, method = method)
+    ## check & report optim result
+    if (sol$convergence != 0)
+        message("'optim' reported convergence issue ", sol$convergence,
+                ": see ?optim")
+    if (!is.null(sol$message))
+        message(sol$message)
+    ## output object
+    ef <- envfit(sol$points, df, permutations = 0)
+    out <- list(formula = formula, stress = sol$stress,
+                coefficients = sol$coefficients, points = sol$points,
+                ef = ef, call = match.call())
+    class(out) <- "caxNMDS"
+    out
+}
+
+#' @param D Dissimilarities.
+#' @param u Initial configuration used for starting values in
+#'     \code{\link{optim}}.
+#' @param mm \code{\link{model.matrix}} of constraints.
+
+#' @rdname caxNMDS
+#' @export
+`caxNMDSengine` <-
+    function(D, u, k, mm, method = "BFGS")
+{
     ## stress
     stress <- function(B, D, mm, k) {
         B <- matrix(B, ncol = k)
@@ -89,22 +123,16 @@
         ## chain rule: stress = sqrt(Q), then Conf = mm %*% B
         as.vector(t(mm) %*% (L %*% Conf)) / (2*sqrt(Q))
     }
-    u <- wcmdscale(D, k = k)
+    if (missing(u) || is.null(u))
+        u <- wcmdscale(D, k = k)
     B <- qr.coef(qr(mm), u)
     sol <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k,
-                 method="BFGS")
-    ## check & report optim result
-    if (sol$convergence != 0)
-        message("'optim' reported convergence issue ", sol$convergence,
-                ": see ?optim")
-    if (!is.null(sol$message))
-        message(sol$message)
+                 method = method)
     B <- matrix(sol$par, ncol = k)
     rownames(B) <- colnames(mm)
     U <- mm %*% B
-    ef <- envfit(U, df, permutations = 0)
-    out <- list(formula = formula, stress = sol$value, coefficients = B,
-                points = U, ef = ef)
-    class(out) <- c("caxNMDS")
-    out
+    sol$points <- U
+    sol$coefficients <- B
+    sol$stress <- sol$value
+    sol
 }
