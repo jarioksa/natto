@@ -2,9 +2,12 @@
 % Please edit documentation in R/caxNMDS.R
 \name{caxNMDS}
 \alias{caxNMDS}
+\alias{caxNMDSengine}
 \title{Constrained Non-metric Multidimensional Scaling}
 \usage{
-caxNMDS(formula, data, k = 2)
+caxNMDS(formula, data, k = 2, u, method = "BFGS")
+
+caxNMDSengine(D, u, k, mm, method = "BFGS")
 }
 \arguments{
 \item{formula}{Model formula where the left-hand-side is a distance
@@ -14,6 +17,15 @@ right-hand-side specifies the contraints.}
 \item{data}{Data frame of constraints.}
 
 \item{k}{Number of dimensions in NMDS.}
+
+\item{u}{Initial configuration used for starting values in
+\code{\link{optim}}.}
+
+\item{method}{Optimization method used in \code{\link{optim}}.}
+
+\item{D}{Dissimilarities.}
+
+\item{mm}{\code{\link{model.matrix}} of constraints.}
 }
 \description{
 Constrained non-metric Multidimensional scaling is a monotonous
@@ -34,10 +46,17 @@ vegan::ordiplot(mod, display = "sites")
 plot(mod$ef)
 coef(mod)
 mod$ef
+## using as metaMDS engine
+modelmatrix <- model.matrix(~ WatrCont + SubsDens + Shrub + Topo,
+  data = mite.env)[, -1] # drop constant
+vegan::metaMDS(dis, engine = caxNMDSengine, mm = modelmatrix)
 }
 \seealso{
 \code{\link{cdisNMDS}} which provides an alternative and
     worse alternative that is based on monotonous (isometric)
     regression of constrained dissimilarities
     \code{\link{distconstrain}}.
+}
+\author{
+Jari Oksanen and Bert van der Veen.
 }
