@@ -3,11 +3,17 @@
 \name{caxNMDS}
 \alias{caxNMDS}
 \alias{caxNMDSengine}
+\alias{plot.caxNMDS}
+\alias{stressplot.caxNMDS}
 \title{Constrained Non-metric Multidimensional Scaling}
 \usage{
 caxNMDS(formula, data, k = 2, method = "BFGS")
 
 caxNMDSengine(D, u, k, mm, method = "BFGS")
+
+\method{plot}{caxNMDS}(x, ...)
+
+\method{stressplot}{caxNMDS}(object, dis, p.col = "blue", l.col = "red", lwd = 2, ...)
 }
 \arguments{
 \item{formula}{Model formula where the left-hand-side is a distance
@@ -27,6 +33,20 @@ right-hand-side specifies the contraints.}
 (\code{\link[vegan]{wcmdscale}}) is used if this is missing.}
 
 \item{mm}{\code{\link{model.matrix}} of constraints.}
+
+\item{x}{Result object from \code{caxNMDS}.}
+
+\item{\dots}{Other arguments passed to graphical functions.}
+
+\item{object}{Result object from \code{caxNMDS}.}
+
+\item{dis}{Original community dissimilarities used in
+\code{caxNMDS} (must be supplied).}
+
+\item{p.col}{Colour of points}
+
+\item{l.col, lwd}{Colour and width of expected values form isotonic
+regression.}
 }
 \value{
 \code{caxNMDSengine} returns the \code{\link{optim}} result
@@ -89,11 +109,11 @@ data(mite, mite.env, package = "vegan")
 dis <- vegan::vegdist(mite)
 mod <- caxNMDS(dis ~ WatrCont + SubsDens + Shrub + Topo,
   data = mite.env)
-vegan::ordiplot(mod, display = "sites")
 plot(mod$ef)
 coef(mod)
 mod$ef
-
+plot(mod)
+stressplot(mod, dis, cex = 0.3)
 }
 \seealso{
 \code{\link{cdisNMDS}} which provides an alternative and

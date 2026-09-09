@@ -12,6 +12,7 @@ S3method(eigenvals,polarord)
 S3method(lines,humpfit)
 S3method(plot,bjdbrda)
 S3method(plot,bjnmds)
+S3method(plot,caxNMDS)
 S3method(plot,cdisNMDS)
 S3method(plot,humpfit)
 S3method(plot,iapq)
@@ -40,6 +41,7 @@ S3method(scores,bjdbrda)
 S3method(scores,cdisNMDS)
 S3method(scores,posvectord)
 S3method(scores,rdecorana)
+S3method(stressplot,caxNMDS)
 S3method(summary,gnlmod)
 S3method(summary,humpfit)
 S3method(summary,iapq)
@@ -89,6 +91,7 @@ export(sdca)
 export(slopediff)
 export(slopediff2)
 export(spvectord)
+export(stressplot)
 export(subdiag)
 export(swanrandom)
 export(taxondist)
@@ -199,6 +202,7 @@ importFrom(vegan,
   renyi,
   rrarefy,
   scores,
+  stressplot,
   swan,
   wascores,
   wcmdscale

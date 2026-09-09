@@ -79,11 +79,11 @@
 #' dis <- vegan::vegdist(mite)
 #' mod <- caxNMDS(dis ~ WatrCont + SubsDens + Shrub + Topo,
 #'   data = mite.env)
-#' vegan::ordiplot(mod, display = "sites")
 #' plot(mod$ef)
 #' coef(mod)
 #' mod$ef
-#'
+#' plot(mod)
+#' stressplot(mod, dis, cex = 0.3)
 
 #' @importFrom vegan envfit
 #' @export
@@ -179,4 +179,40 @@
     sol$coefficients <- B
     sol$stress <- sol$value
     sol
+}
+
+#' @rdname caxNMDS
+#' @param x Result object from \code{caxNMDS}.
+#' @param \dots Other arguments passed to graphical functions.
+#'
+#' @importFrom vegan ordiplot
+#' @export
+`plot.caxNMDS` <-
+    function(x, ...)
+{
+    ordiplot(x, display = "sites", ...)
+    plot(x$ef, ...)
+}
+
+#' @rdname caxNMDS
+#' @param object Result object from \code{caxNMDS}.
+#' @param dis Original community dissimilarities used in
+#'     \code{caxNMDS} (must be supplied).
+#' @param p.col Colour of points
+#' @param l.col,lwd Colour and width of expected values form isotonic
+#'     regression.
+#' @param \dots Other arguments passed to graphical functions.
+#'
+#' @importFrom stats isoreg
+#' @importFrom vegan stressplot
+#' @export
+`stressplot.caxNMDS` <-
+    function(object, dis, p.col = "blue", l.col = "red", lwd = 2, ...)
+{
+    dord <- dist(object$points)
+    i <- order(dis, dord)
+    iso <- isoreg(dord[i])
+    plot(dis, dord, col = p.col, xlab = "Observed Dissimilarity",
+         ylab = "Ordination Distance", type = "p", ...)
+    lines(dis[order(dis)], iso$yf, col = l.col, lwd = lwd, type = "S", ...)
 }
