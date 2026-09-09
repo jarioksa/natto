@@ -86,12 +86,14 @@ constrained and community components are rank-order similar.
 Although the idea of the algorithm is simple and obvious, the
 results are often far from satisfactory. Quite often the community
 dissimilarities and constrained dissimilarities differ from each
-other so strongly that the site points (community) are
-expelled from the constrained configuration and are located at the
-outskirts of the ordination instead of being mixed with the
-constrained points. The community (site) points and constraints mix
-well only when the constraints describe the community
-dissimilarities sufficiently well.
+other so strongly that the site points (community) are expelled
+from the constrained configuration and are located at the outskirts
+of the ordination instead of being mixed with the constrained
+points. The community (site) points and constraints mix well only
+when the constraints describe the community dissimilarities
+sufficiently well. Function \code{\link{caxNMDS}} in this package
+provides an alternative and more robust alternative which
+constraints the axes (dimensions) instead of dissimilarities.
 }
 \section{Warning}{
 
@@ -99,7 +101,8 @@ dissimilarities sufficiently well.
 The function is provided as an exhibit of the algorithm. The
 results are often poor, and the function should not be used for any
 other purposes than inspecting the method and as an inspiration for
-alternative implementations.
+alternative implementations. See \code{\link{caxNMDS}} for more
+promising alternative algorithm.
 }
 
 \examples{
@@ -119,7 +122,11 @@ legend("topleft", c("LC Scores", "NMDS Scores", "Constraints"),
 }
 \seealso{
 \code{\link{distconstrain}}, \code{\link[vegan]{dbrda}},
-    \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{MDSaddpoints}}.
+    \code{\link[vegan]{monoMDS}},
+    \code{\link[vegan]{MDSaddpoints}}.  Function
+    \code{\link{caxNMDS}} is a more robust alternative that
+    constraints the dimensions (\dQuote{LC scores}) instead of
+    dissimilarities.
 }
 \author{
 Jari Oksanen

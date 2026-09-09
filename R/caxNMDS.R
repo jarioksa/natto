@@ -13,6 +13,37 @@
 #' (community) dissimilarities on dimensions that are linear
 #' combinations of constraints.
 #'
+#' Ordinary non-constrained NMDS is a monotonous (isometric)
+#' regression (\code{\link[stats]{isoreg}}) of observed (community)
+#' dissimilarities on ordination scores. Constrained NMDS is similar,
+#' but restricts the ordination scores to linear combinations of
+#' constraining variables.
+#'
+#' Function uses standard \code{\link[stats]{optim}} to find the
+#' regression coefficients of constraints. The regression coefficients
+#' are the primary result of optimization, and ordination scores are
+#' found applying regression coefficients on the model matrix of
+#' constraints. The criterion variable to be minimized is
+#' \code{stress} which is identical to stress in non-constrained NMDS
+#' (\code{\link[vegan]{monoMDS}}, \code{\link[vegan]{metaMDS}} in
+#' \pkg{vegan}). Function uses \dQuote{weak} ties, or allow breaking
+#' tied values in monotonous regression.
+#'
+#' Function \code{caxNMDSengine} is the numerical core of the
+#' method. It needs the input dissimilarities and model matrix
+#' (without constant intercept). Function \code{caxNMDS} is more
+#' user-friendly interface with model formula for constraints, and
+#' also adds fitted vectors of continuous constraints and level
+#' centroids of factor constraints. These are similar to biplot scores
+#' and constraints in constrained ordination methods such as
+#' \pkg{vegan} \code{\link[vegan]{rda}} and
+#' \code{\link[vegan]{dbrda}}.
+#'
+#' Function \code{\link{cdisNMDS}} in this package provides an
+#' alternative method based on constrained dissimilarities
+#' (\code{\link{distconstrain}}) instead of constrained axes. The
+#' current \code{caxNMDS} function seems to be more robust.
+#'
 #' This is a proof-of-concept function based on the idea of Bert van
 #' der Veen.
 #'
@@ -23,9 +54,18 @@
 #'
 #' @author Jari Oksanen and Bert van der Veen.
 #'
-#' @note Function \code{caxNMDS} can be used as \code{engine} in
+#' @note Function \code{caxNMDSengine} can be used as \code{engine} in
 #'     \code{\link[vegan]{metaMDS}} in \pkg{vegan} development version
 #'     (2.8-0; not yet released).
+#'
+#' @return \code{caxNMDSengine} returns the \code{\link{optim}} result
+#'     object and adds items \code{points} for ordination scores,
+#'     \code{stress} for goodness of fit (\sQuote{stress}), and
+#'     \code{coefficients} for a matrix of regression coefficients of
+#'     constraints. Function \code{caxNMDS} returns these added items
+#'     plus \code{formula}, \code{call} and fitted vectors and factor
+#'     centroids of constraints in element \code{ef} with \pkg{vegan}
+#'     function \code{\link[vegan]{envfit}}.
 #'
 #' @param formula Model formula where the left-hand-side is a distance
 #'     structure for depenedent (community) dissimilarity and
@@ -44,12 +84,11 @@
 #' coef(mod)
 #' mod$ef
 #'
-#' @importFrom stats delete.response terms formula model.frame model.matrix
-#' @importFrom stats dist isoreg optim
-#' @importFrom vegan wcmdscale envfit
+
+#' @importFrom vegan envfit
 #' @export
 `caxNMDS` <-
-    function(formula, data, k = 2, u, method = "BFGS")
+    function(formula, data, k = 2, method = "BFGS")
 {
     ## Get data & response
     Trms <- delete.response(terms(formula, data = data))
@@ -76,9 +115,14 @@
 
 #' @param D Dissimilarities.
 #' @param u Initial configuration used for starting values in
-#'     \code{\link{optim}}.
+#'     \code{\link{optim}}. Solution from metric scaling
+#'     (\code{\link[vegan]{wcmdscale}}) is used if this is missing.
 #' @param mm \code{\link{model.matrix}} of constraints.
 
+#' @importFrom stats delete.response terms formula model.frame model.matrix
+#' @importFrom stats dist isoreg optim
+#' @importFrom vegan wcmdscale
+#'
 #' @rdname caxNMDS
 #' @export
 `caxNMDSengine` <-
