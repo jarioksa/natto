@@ -37,6 +37,11 @@ combinations of constraints.
 This is a proof-of-concept function based on the idea of Bert van
 der Veen.
 }
+\note{
+Function \code{caxNMDS} can be used as \code{engine} in
+    \code{\link[vegan]{metaMDS}} in \pkg{vegan} development version
+    (2.8-0; not yet released).
+}
 \examples{
 data(mite, mite.env, package = "vegan")
 dis <- vegan::vegdist(mite)
@@ -46,10 +51,7 @@ vegan::ordiplot(mod, display = "sites")
 plot(mod$ef)
 coef(mod)
 mod$ef
-## using as metaMDS engine
-modelmatrix <- model.matrix(~ WatrCont + SubsDens + Shrub + Topo,
-  data = mite.env)[, -1] # drop constant
-vegan::metaMDS(dis, engine = caxNMDSengine, mm = modelmatrix)
+
 }
 \seealso{
 \code{\link{cdisNMDS}} which provides an alternative and

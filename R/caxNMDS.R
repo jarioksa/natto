@@ -23,6 +23,10 @@
 #'
 #' @author Jari Oksanen and Bert van der Veen.
 #'
+#' @note Function \code{caxNMDS} can be used as \code{engine} in
+#'     \code{\link[vegan]{metaMDS}} in \pkg{vegan} development version
+#'     (2.8-0; not yet released).
+#'
 #' @param formula Model formula where the left-hand-side is a distance
 #'     structure for depenedent (community) dissimilarity and
 #'     right-hand-side specifies the contraints.
@@ -39,11 +43,7 @@
 #' plot(mod$ef)
 #' coef(mod)
 #' mod$ef
-#' ## using as metaMDS engine
-#' modelmatrix <- model.matrix(~ WatrCont + SubsDens + Shrub + Topo,
-#'   data = mite.env)[, -1] # drop constant
-#' vegan::metaMDS(dis, engine = caxNMDSengine, mm = modelmatrix)
-
+#'
 #' @importFrom stats delete.response terms formula model.frame model.matrix
 #' @importFrom stats dist isoreg optim
 #' @importFrom vegan wcmdscale envfit
