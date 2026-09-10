@@ -175,7 +175,7 @@
     sol <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k,
                  method = method)
     B <- matrix(sol$par, ncol = k)
-    rownames(B) <- colnames(mm)
+    dimnames(B) <- list(colnames(mm), paste0("cNMDS", seq_len(k)))
     U <- mm %*% B
     sol$points <- U
     sol$coefficients <- B
