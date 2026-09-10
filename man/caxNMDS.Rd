@@ -106,10 +106,10 @@ Function \code{caxNMDSengine} can be used as \code{engine} in
 }
 \examples{
 data(mite, mite.env, package = "vegan")
-dis <- vegan::vegdist(mite)
+dis <- canneddist(mite, "geodesic")
 mod <- caxNMDS(dis ~ WatrCont + SubsDens + Shrub + Topo,
   data = mite.env)
-plot(mod$ef)
+mod
 coef(mod)
 mod$ef
 plot(mod)

@@ -76,10 +76,10 @@
 #'
 #' @examples
 #' data(mite, mite.env, package = "vegan")
-#' dis <- vegan::vegdist(mite)
+#' dis <- canneddist(mite, "geodesic")
 #' mod <- caxNMDS(dis ~ WatrCont + SubsDens + Shrub + Topo,
 #'   data = mite.env)
-#' plot(mod$ef)
+#' mod
 #' coef(mod)
 #' mod$ef
 #' plot(mod)
@@ -108,7 +108,9 @@
     ef <- envfit(sol$points, df, permutations = 0)
     out <- list(formula = formula, stress = sol$stress,
                 coefficients = sol$coefficients, points = sol$points,
-                ef = ef, call = match.call())
+                nobs = nrow(sol$points), ef = ef, call = match.call(),
+                ndim = k, distmethod = attr(D, "method"),
+                convergence = sol$convergence)
     class(out) <- "caxNMDS"
     out
 }
@@ -217,4 +219,24 @@
     plot(dis, dord, col = p.col, xlab = "Observed Dissimilarity",
          ylab = "Ordination Distance", type = "p", ...)
     lines(dis[order(dis)], iso$yf, col = l.col, lwd = lwd, type = "S", ...)
+}
+
+#' @export
+`print.caxNMDS` <-
+    function(x, ...)
+{
+    cat("\nCall:\n")
+    cat(deparse(x$call), "\n\n")
+    cat("Constrained axes non-metric Multidimensional Scaling\n\n")
+    cat(x$nobs, "points")
+    cat(", dissimilarity", sQuote(x$distmethod), "\n\n")
+    cat("Dimensions:", x$ndim, "\n")
+    cat("Stress:    ", x$stress, "\n")
+    if(x$convergence > 0) {
+        cat("\nno convergence: ")
+        if (x$convergence == 1)
+            cat("iteration limit exceeded\n")
+        else
+            cat("'optim' error no.", x$convergence, "\n")
+    }
 }

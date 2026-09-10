@@ -132,7 +132,7 @@
     sol$stress <- sol$stress + m2$deltastress
     attr(sol$points, "pc") <- FALSE
     sol$call <- match.call()
-    sol$model <- "Constrained non-metric"
+    sol$model <- "Constrained distances non-metric"
     sol$distmethod <- attr(dis, "method")
     sol$distcall <- NULL
     sol$iters <- m2$iters
