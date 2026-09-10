@@ -110,11 +110,11 @@
     }
     ## step 2: NMDS of constrained dissimilarities
     m0 <- cmdscale(sqrt(cdis), k = k)
-    cdis[] <- rank(round(cdis, 12), ties.method = "min")
+    cdis[] <- rank(round(cdis, 9), ties.method = "min")
     sol <- metaMDS(cdis, m0, k = k, trace = FALSE)
     ## step 3: Constrained community ordination
     dis <- eval(formula[[2]])
-    dis[] <- rank(round(dis, 12), ties.method = "min")
+    dis[] <- rank(round(dis, 9), ties.method = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
     ## This was the last step: the rest is janitorial and adding candies
     terms <- delete.response(terms(formula, data = data))

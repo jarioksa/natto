@@ -167,6 +167,8 @@
         ## chain rule: stress = sqrt(Q), then Conf = mm %*% B
         as.vector(t(mm) %*% (L %*% Conf)) / (2*sqrt(Q))
     }
+    ## round to avoid false ordering of tied dissimilarities
+    D <- round(D, 9) # since sqrt(.Machine$double.eps) is 1.5e-8
     if (missing(u) || is.null(u))
         u <- wcmdscale(D, k = k)
     B <- qr.coef(qr(mm), u)
