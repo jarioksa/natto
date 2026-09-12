@@ -205,6 +205,5 @@ importFrom(vegan,
   scores,
   stressplot,
   swan,
-  wascores,
-  wcmdscale
+  wascores
 )

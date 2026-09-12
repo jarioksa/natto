@@ -62,10 +62,26 @@
 #'     object and adds items \code{points} for ordination scores,
 #'     \code{stress} for goodness of fit (\sQuote{stress}), and
 #'     \code{coefficients} for a matrix of regression coefficients of
-#'     constraints. Function \code{caxNMDS} returns these added items
-#'     plus \code{formula}, \code{call} and fitted vectors and factor
-#'     centroids of constraints in element \code{ef} with \pkg{vegan}
-#'     function \code{\link[vegan]{envfit}}.
+#'     constraints. Function \code{caxNMDS} returns an object of class
+#'     \code{"caxNMDS"} with items
+#' \itemize{
+#'   \item \code{formula}.
+#'   \item \code{stress}.
+#'   \item \code{diss}: input dissimmilarities.
+#'   \item \code{model.matrix} model matrix of constraints.
+#'   \item \code{coefficients}: regression coefficients.
+#'   \item \code{points}: ordination scores for observations found applying
+#'      regression coefficients on model matrix. These correspond to the
+#'      linear combination (LC) scores in constrained metric ordination like
+#'      \pkg{vegan} \code{\link[vegan]{dbrda}}.
+#'   \item \code{nobs}: number of observations.
+#'   \item \code{ef}: original constraints fitted to ordination scores with
+#'      \code{\link[vegan]{envfit}}.
+#'   \item \code{call}.
+#'   \item \code{ndim}: number of dimensions (argument \code{k}).
+#'   \item \code{distmethod}: distance function \code{method}.
+#'   \item \code{convergence}: convergence status from \code{\link{optim}}.
+#' }
 #'
 #' @param formula Model formula where the left-hand-side is a distance
 #'     structure for depenedent (community) dissimilarity and
@@ -83,7 +99,7 @@
 #' coef(mod)
 #' mod$ef
 #' plot(mod)
-#' stressplot(mod, dis, cex = 0.3)
+#' stressplot(mod, cex = 0.3)
 
 #' @importFrom vegan envfit
 #' @export
@@ -108,6 +124,7 @@
     ## output object
     ef <- envfit(sol$points, df, permutations = 0)
     out <- list(formula = formula, stress = sol$stress,
+                diss = D, model.matrix = mm,
                 coefficients = sol$coefficients, points = sol$points,
                 nobs = nrow(sol$points), ef = ef, call = match.call(),
                 ndim = k, distmethod = attr(D, "method"),
@@ -123,8 +140,7 @@
 #' @param mm \code{\link{model.matrix}} of constraints.
 
 #' @importFrom stats delete.response terms formula model.frame model.matrix
-#' @importFrom stats dist isoreg optim
-#' @importFrom vegan wcmdscale
+#' @importFrom stats cmdscale dist isoreg optim
 #'
 #' @rdname caxNMDS
 #' @export
@@ -173,7 +189,7 @@
     ## round to avoid false ordering of tied dissimilarities
     D <- round(D, 9) # since sqrt(.Machine$double.eps) is 1.5e-8
     if (missing(u) || is.null(u))
-        u <- wcmdscale(D, k = k)
+        u <- cmdscale(D, k = k)
     B <- qr.coef(qr(mm), u)
     sol <- optim(B, stress, gr = stress_grad, D = D, mm = mm, k = k,
                  method = method)
@@ -216,6 +232,8 @@
 `stressplot.caxNMDS` <-
     function(object, dis, p.col = "blue", l.col = "red", lwd = 2, ...)
 {
+    if (missing(dis))
+        dis <- object$diss
     dord <- dist(object$points)
     i <- order(dis, dord)
     iso <- isoreg(dord[i])

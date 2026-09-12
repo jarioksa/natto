@@ -56,10 +56,26 @@ regression.}
     object and adds items \code{points} for ordination scores,
     \code{stress} for goodness of fit (\sQuote{stress}), and
     \code{coefficients} for a matrix of regression coefficients of
-    constraints. Function \code{caxNMDS} returns these added items
-    plus \code{formula}, \code{call} and fitted vectors and factor
-    centroids of constraints in element \code{ef} with \pkg{vegan}
-    function \code{\link[vegan]{envfit}}.
+    constraints. Function \code{caxNMDS} returns an object of class
+    \code{"caxNMDS"} with items
+\itemize{
+  \item \code{formula}.
+  \item \code{stress}.
+  \item \code{diss}: input dissimmilarities.
+  \item \code{model.matrix} model matrix of constraints.
+  \item \code{coefficients}: regression coefficients.
+  \item \code{points}: ordination scores for observations found applying
+     regression coefficients on model matrix. These correspond to the
+     linear combination (LC) scores in constrained metric ordination like
+     \pkg{vegan} \code{\link[vegan]{dbrda}}.
+  \item \code{nobs}: number of observations.
+  \item \code{ef}: original constraints fitted to ordination scores with
+     \code{\link[vegan]{envfit}}.
+  \item \code{call}.
+  \item \code{ndim}: number of dimensions (argument \code{k}).
+  \item \code{distmethod}: distance function \code{method}.
+  \item \code{convergence}: convergence status from \code{\link{optim}}.
+}
 }
 \description{
 Constrained non-metric Multidimensional scaling is a monotonous
@@ -116,7 +132,7 @@ mod
 coef(mod)
 mod$ef
 plot(mod)
-stressplot(mod, dis, cex = 0.3)
+stressplot(mod, cex = 0.3)
 }
 \seealso{
 \code{\link{cdisNMDS}} which provides an alternative and
