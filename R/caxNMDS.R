@@ -90,6 +90,8 @@
 `caxNMDS` <-
     function(formula, data, k = 2, method = "BFGS")
 {
+    if (missing(data))
+        data <- parent.frame()
     Trms <- delete.response(terms(formula, data = data))
     df <- model.frame(Trms, data = data)
     mm <- model.matrix(Trms, df)[,-1, drop=FALSE]

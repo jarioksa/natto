@@ -102,6 +102,8 @@
 `cdisNMDS` <-
     function(formula, data, k = 2, add = FALSE)
 {
+    if (missing(data))
+        data <- parent.frame()
     ## step 1: constrained dissimilarities
     cdis <- distconstrain(formula, data, add = add, squared = TRUE)
     if (any(cdis < 0)) {
