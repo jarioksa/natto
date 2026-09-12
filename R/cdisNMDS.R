@@ -1,4 +1,4 @@
-#' Constrained Nonmetric Multidimensional Scaling
+#' Constrained Distance Nonmetric Multidimensional Scaling
 #'
 #' Constraints are estimated as non-metric MDS of constrained
 #' distances (\code{\link{distconstrain}}). These are similar as the
@@ -23,7 +23,7 @@
 #' ordination distance-based RDA (db-RDA, \code{\link[vegan]{dbrda}}).
 #' The constrained component is similar to linear combination (LC)
 #' scores and the site NMDS analogous to to weighted average (WA) or
-#' site scores of db-RDA. The \code{cNMDS} site scores are found by
+#' site scores of db-RDA. The \code{cdisNMDS} site scores are found by
 #' adding the sites with their community dissimilarities as new points
 #' to the ordination of constraints.  Instead of raw dissimilarities,
 #' both the constrained ordination and the site ordination
@@ -35,14 +35,16 @@
 #' Although the idea of the algorithm is simple and obvious, the
 #' results are often far from satisfactory. Quite often the community
 #' dissimilarities and constrained dissimilarities differ from each
-#' other so strongly that the site points (community) are
-#' expelled from the constrained configuration and are located at the
-#' outskirts of the ordination instead of being mixed with the
-#' constrained points. The community (site) points and constraints mix
-#' well only when the constraints describe the community
-#' dissimilarities sufficiently well.
+#' other so strongly that the site points (community) are expelled
+#' from the constrained configuration and are located at the outskirts
+#' of the ordination instead of being mixed with the constrained
+#' points. The community (site) points and constraints mix well only
+#' when the constraints describe the community dissimilarities
+#' sufficiently well. Function \code{\link{caxNMDS}} in this package
+#' provides an alternative and more robust alternative which
+#' constraints the axes (dimensions) instead of dissimilarities.
 #'
-#' @return Function returns an object of class \code{"cNMDS"} that
+#' @return Function returns an object of class \code{"cdisNMDS"} that
 #'     inherits from \pkg{vegan} function
 #'     \code{\link[vegan]{monoMDS}}. but it has rudimentary
 #'     \code{scores} and \code{plot} methods. The \code{plot} only
@@ -54,14 +56,19 @@
 #'     \code{\link[vegan]{envfit}}. Species scores are not available.
 #'
 #' @seealso \code{\link{distconstrain}}, \code{\link[vegan]{dbrda}},
-#'     \code{\link[vegan]{monoMDS}}, \code{\link[vegan]{MDSaddpoints}}.
+#'     \code{\link[vegan]{monoMDS}},
+#'     \code{\link[vegan]{MDSaddpoints}}.  Function
+#'     \code{\link{caxNMDS}} is a more robust alternative that
+#'     constraints the dimensions (\dQuote{LC scores}) instead of
+#'     dissimilarities.
 #'
 #' @section Warning:
 #'
 #' The function is provided as an exhibit of the algorithm. The
 #' results are often poor, and the function should not be used for any
 #' other purposes than inspecting the method and as an inspiration for
-#' alternative implementations.
+#' alternative implementations. See \code{\link{caxNMDS}} for more
+#' promising alternative algorithm.
 #'
 #' @author Jari Oksanen
 
@@ -69,7 +76,7 @@
 #' if (require(vegan)) { # vegan needed for data
 #' data(mite, mite.env)
 #' dis <- canneddist(mite, "chord")
-#' mod <- cNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
+#' mod <- cdisNMDS(dis ~ WatrCont + SubsDens + Topo + Shrub, mite.env)
 #' print(mod)
 #' plot(mod, type = "p") |>
 #'    points("constraints", pch = 16, col = 2) |>
@@ -92,9 +99,11 @@
 #' @importFrom vegan metaMDS MDSaddpoints envfit scores
 #'
 #' @export
-`cNMDS` <-
+`cdisNMDS` <-
     function(formula, data, k = 2, add = FALSE)
 {
+    if (missing(data))
+        data <- parent.frame()
     ## step 1: constrained dissimilarities
     cdis <- distconstrain(formula, data, add = add, squared = TRUE)
     if (any(cdis < 0)) {
@@ -103,11 +112,11 @@
     }
     ## step 2: NMDS of constrained dissimilarities
     m0 <- cmdscale(sqrt(cdis), k = k)
-    cdis[] <- rank(round(cdis, 12), ties.method = "min")
+    cdis[] <- rank(round(cdis, 9), ties.method = "min")
     sol <- metaMDS(cdis, m0, k = k, trace = FALSE)
     ## step 3: Constrained community ordination
     dis <- eval(formula[[2]])
-    dis[] <- rank(round(dis, 12), ties.method = "min")
+    dis[] <- rank(round(dis, 9), ties.method = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
     ## This was the last step: the rest is janitorial and adding candies
     terms <- delete.response(terms(formula, data = data))
@@ -125,25 +134,25 @@
     sol$stress <- sol$stress + m2$deltastress
     attr(sol$points, "pc") <- FALSE
     sol$call <- match.call()
-    sol$model <- "Constrained non-metric"
+    sol$model <- "Constrained distances non-metric"
     sol$distmethod <- attr(dis, "method")
     sol$distcall <- NULL
     sol$iters <- m2$iters
     sol$icause <- m2$cause
     sol$iscal <- FALSE
-    class(sol) <- c("cNMDS", "monoMDS")
+    class(sol) <- c("cdisNMDS", "monoMDS")
     sol
 }
 
-#' @rdname cNMDS
-#' @param x \code{cNMDS} result object.
+#' @rdname cdisNMDS
+#' @param x \code{cdisNMDS} result object.
 #' @param display Kind of scores to display. In \code{scores} this can
 #'     be one or several of \code{"sites"}, \code{"constraints"},
 #'     \code{"biplot"}, \code{"centroids"}, or alternative
 #'     \code{"all"} for all these. \code{plot} accepts only one
 #'     alternative (and no \code{"all"}).
 #' @export
-`scores.cNMDS` <-
+`scores.cdisNMDS` <-
     function(x, display = "sites", ...)
 {
     scores <- c("sites", "constraints", "biplot", "centroids")
@@ -158,12 +167,12 @@
     out
 }
 
-#' @rdname cNMDS
+#' @rdname cdisNMDS
 #' @param type Either \code{"t"}ext, \code{"p"}oints or \code{"n"}one.
 #' @param \dots Other arguments passed to graphics functions.
 #'
 #' @export
-`plot.cNMDS` <-
+`plot.cdisNMDS` <-
     function(x, display = "sites", type = "p", ...)
 {
     if (length(display) > 1)
@@ -173,6 +182,6 @@
     ylim <- range(sapply(out, function(z) z[,2]))
     plt <- scores(x, display = display)
     suppressMessages(ordiplot(plt, type = type, xlim = xlim, ylim = ylim, ...))
-    class(out) <- c("cNMDS", "ordiplot")
+    class(out) <- c("cdisNMDS", "ordiplot")
     invisible(out)
 }

@@ -4,6 +4,7 @@
 \name{reexports}
 \alias{reexports}
 \alias{scores}
+\alias{stressplot}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -11,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{vegan}{\code{\link[vegan:scores]{scores()}}}
+  \item{vegan}{\code{\link[vegan:scores]{scores()}}, \code{\link[vegan:stressplot]{stressplot()}}}
 }}
 
