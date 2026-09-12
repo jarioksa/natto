@@ -90,7 +90,6 @@
 `caxNMDS` <-
     function(formula, data, k = 2, method = "BFGS")
 {
-    ## Get data & response
     Trms <- delete.response(terms(formula, data = data))
     df <- model.frame(Trms, data = data)
     mm <- model.matrix(Trms, df)[,-1, drop=FALSE]
@@ -187,14 +186,16 @@
 
 #' @rdname caxNMDS
 #' @param x Result object from \code{caxNMDS}.
+#' @param type Type of plot: \code{"t"}ext, \code{"p"}oints or
+#'     \code{"n"}one.
 #' @param \dots Other arguments passed to graphical functions.
 #'
 #' @importFrom vegan ordiplot
 #' @export
 `plot.caxNMDS` <-
-    function(x, ...)
+    function(x, type = "t", ...)
 {
-    ordiplot(x, display = "sites", ...)
+    ordiplot(x, display = "sites", type = type, ...)
     plot(x$ef, ...)
 }
 

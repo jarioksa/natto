@@ -11,7 +11,7 @@ caxNMDS(formula, data, k = 2, method = "BFGS")
 
 caxNMDSengine(D, u, k, mm, method = "BFGS")
 
-\method{plot}{caxNMDS}(x, ...)
+\method{plot}{caxNMDS}(x, type = "t", ...)
 
 \method{stressplot}{caxNMDS}(object, dis, p.col = "blue", l.col = "red", lwd = 2, ...)
 }
@@ -35,6 +35,9 @@ right-hand-side specifies the contraints.}
 \item{mm}{\code{\link{model.matrix}} of constraints.}
 
 \item{x}{Result object from \code{caxNMDS}.}
+
+\item{type}{Type of plot: \code{"t"}ext, \code{"p"}oints or
+\code{"n"}one.}
 
 \item{\dots}{Other arguments passed to graphical functions.}
 
