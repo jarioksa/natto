@@ -115,7 +115,7 @@
     cdis[] <- rank(round(cdis, 9), ties.method = "min")
     sol <- metaMDS(cdis, m0, k = k, trace = FALSE)
     ## step 3: Constrained community ordination
-    dis <- eval(formula[[2]])
+    dis <- eval(formula[[2]], parent.frame(), environment(formula))
     dis[] <- rank(round(dis, 9), ties.method = "min")
     m2 <- MDSaddpoints(sol, as.matrix(dis))
     ## This was the last step: the rest is janitorial and adding candies

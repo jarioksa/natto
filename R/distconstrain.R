@@ -84,7 +84,7 @@
     mm <- scale(mm, scale = FALSE) # centre
     ## extract dissimilarities (or the left-hand-side of formula) and
     ## perform the Gower standardization
-    dis <- eval(formula[[2]], parent.frame(), environment(formula))
+    dis <- eval(formula[[2]], environment(formula), globalenv())
     dis <- as.matrix(dis)
     ## handle add constant to make dis Euclidean
     if (is.logical(add) && isTRUE(add))
