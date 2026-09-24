@@ -27,3 +27,11 @@ max <- caxNMDS(d ~ dummy)
 ## mdis$sites were added by MDSaddpoints and have symmetric SS 2e-6
 expect_equal(vegan::procrustes(m0, mdis$constraints, symmetric = TRUE)$ss, 0)
 expect_equal(vegan::procrustes(m0, max)$ss, 0)
+
+## check that optimization does not stop at starting values with
+## duplicated constraints.
+data(dune, dune.env, package = "vegan")
+d <- canneddist(dune, "barkman")
+## 12 discrete combinations of constraints for 20 points
+expect_silent(m <- caxNMDS(d ~ Management + Moisture, dune.env))
+expect_true(m$counts[1] > 1)
