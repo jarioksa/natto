@@ -181,7 +181,7 @@
         ## sensitivity becomes a pull between the two points, and each
         ## point's total gradient is the sum of pulls from its partners
         W <- matrix(0, n, n)
-        W[lt] <- dQ_dy/y
+        W[lt] <- ifelse(y > 0, dQ_dy/y, 0) # y==0: duplicated constraints
         W <- W + t(W)
         L <- diag(rowSums(W)) - W
 
