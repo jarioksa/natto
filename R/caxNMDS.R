@@ -119,6 +119,8 @@
     if (sol$convergence != 0)
         message("'optim' reported convergence issue ", sol$convergence,
                 ": see ?optim")
+    if (sol$counts[1] <= 1)
+        message("'optim' did not optimize, but stopped at starting values")
     if (!is.null(sol$message))
         message(sol$message)
     ## output object
@@ -128,7 +130,7 @@
                 coefficients = sol$coefficients, points = sol$points,
                 nobs = nrow(sol$points), ef = ef, call = match.call(),
                 ndim = k, distmethod = attr(D, "method"),
-                convergence = sol$convergence)
+                counts = sol$counts, convergence = sol$convergence)
     class(out) <- "caxNMDS"
     out
 }
