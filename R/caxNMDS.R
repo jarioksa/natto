@@ -119,6 +119,8 @@
     if (sol$convergence != 0)
         message("'optim' reported convergence issue ", sol$convergence,
                 ": see ?optim")
+    if (sol$counts[1] <= 1)
+        message("'optim' did not optimize, but stopped at starting values")
     if (!is.null(sol$message))
         message(sol$message)
     ## output object
@@ -128,7 +130,7 @@
                 coefficients = sol$coefficients, points = sol$points,
                 nobs = nrow(sol$points), ef = ef, call = match.call(),
                 ndim = k, distmethod = attr(D, "method"),
-                convergence = sol$convergence)
+                counts = sol$counts, convergence = sol$convergence)
     class(out) <- "caxNMDS"
     out
 }
@@ -179,7 +181,7 @@
         ## sensitivity becomes a pull between the two points, and each
         ## point's total gradient is the sum of pulls from its partners
         W <- matrix(0, n, n)
-        W[lt] <- dQ_dy/y
+        W[lt] <- ifelse(y > 0, dQ_dy/y, 0) # y==0: duplicated constraints
         W <- W + t(W)
         L <- diag(rowSums(W)) - W
 
