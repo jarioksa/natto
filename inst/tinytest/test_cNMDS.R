@@ -32,6 +32,7 @@ expect_equal(vegan::procrustes(m0, max)$ss, 0)
 ## duplicated constraints.
 data(dune, dune.env, package = "vegan")
 d <- canneddist(dune, "barkman")
-## 12 discrete combinations of constraints for 20 points
+## 12 distinct combinations of constraints for 20 points
 expect_silent(m <- caxNMDS(d ~ Management + Moisture, dune.env))
-expect_true(m$counts[1] > 1)
+expect_true(m$counts[1] > 1) # optim progressed
+expect_identical(duplicated(scores(m)), duplicated(m$model.matrix))
