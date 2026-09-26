@@ -19,6 +19,13 @@ Currently **natto** contains
  * Rao's quadratic entropy, phylogenetic dissimilarities and
    phylogenetic data standardization, plus related Clarke's taxonomic
    dissimilarity.
+ * Constrained Non-metric Multidimensional Scaling. Function `caxNMDS`
+   finds NMDS axis as linear combination of constraints (external
+   variables) so that these axes have minimum-stress non-metric
+   relation to observed dissimilarities. A weaker method `cdisNMDS`
+   performs NMDS on constrained dissimilarities. Both methods can add
+   ordination points based on their community similarity to
+   constrained points.
  * Polar Ordination A.K.A. Bray-Curtis Ordination.
  * Orlóci's Position Vector Ordination and a related method using
    species as ordination axes.
