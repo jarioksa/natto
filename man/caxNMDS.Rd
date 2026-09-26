@@ -7,7 +7,7 @@
 \alias{stressplot.caxNMDS}
 \title{Constrained Non-metric Multidimensional Scaling}
 \usage{
-caxNMDS(formula, data, k = 2, method = "BFGS")
+caxNMDS(formula, data, k = 2, method = "BFGS", addpoints = FALSE)
 
 caxNMDSengine(D, u, k, mm, method = "BFGS")
 
@@ -25,6 +25,13 @@ right-hand-side specifies the contraints.}
 \item{k}{Number of dimensions in NMDS.}
 
 \item{method}{Optimization method used in \code{\link{optim}}.}
+
+\item{addpoints}{Add site scores that are based on the observed
+dissimilarities of points to constrained points. These
+correspond to \dQuote{WA} scores in contrained metric
+ordination (such as \code{\link[vegan]{dbrda}} or
+\code{\link[vegan]{rda}}, while the constrained scores
+correspond to \dQuote{LC} or linear combination scores.}
 
 \item{D}{Dissimilarities.}
 
@@ -75,6 +82,10 @@ regression.}
   \item \code{ndim}: number of dimensions (argument \code{k}).
   \item \code{distmethod}: distance function \code{method}.
   \item \code{convergence}: convergence status from \code{\link{optim}}.
+  \item{counts}: Numbers of time stress and its derivative functions were
+    evaluated in \code{\link{optim}}
+  \item{predpoints}: ordination scores based on the observed dissimilarities
+    of observations to linear combination scores \code{points}.
 }
 }
 \description{

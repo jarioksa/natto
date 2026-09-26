@@ -81,6 +81,10 @@
 #'   \item \code{ndim}: number of dimensions (argument \code{k}).
 #'   \item \code{distmethod}: distance function \code{method}.
 #'   \item \code{convergence}: convergence status from \code{\link{optim}}.
+#'   \item{counts}: Numbers of time stress and its derivative functions were
+#'     evaluated in \code{\link{optim}}
+#'   \item{predpoints}: ordination scores based on the observed dissimilarities
+#'     of observations to linear combination scores \code{points}.
 #' }
 #'
 #' @param formula Model formula where the left-hand-side is a distance
@@ -89,6 +93,12 @@
 #' @param data Data frame of constraints.
 #' @param k Number of dimensions in NMDS.
 #' @param method Optimization method used in \code{\link{optim}}.
+#' @param addpoints Add site scores that are based on the observed
+#'     dissimilarities of points to constrained points. These
+#'     correspond to \dQuote{WA} scores in contrained metric
+#'     ordination (such as \code{\link[vegan]{dbrda}} or
+#'     \code{\link[vegan]{rda}}, while the constrained scores
+#'     correspond to \dQuote{LC} or linear combination scores.
 #'
 #' @examples
 #' data(mite, mite.env, package = "vegan")
@@ -101,10 +111,12 @@
 #' plot(mod)
 #' stressplot(mod, cex = 0.3)
 
-#' @importFrom vegan envfit
+#' @importFrom vegan envfit MDSaddpoints
+#' @importFrom utils modifyList
+#'
 #' @export
 `caxNMDS` <-
-    function(formula, data, k = 2, method = "BFGS")
+    function(formula, data, k = 2, method = "BFGS", addpoints = FALSE)
 {
     if (missing(data))
         data <- parent.frame()
@@ -123,7 +135,7 @@
         message("'optim' did not optimize, but stopped at starting values")
     if (!is.null(sol$message))
         message(sol$message)
-    ## output object
+    ## result object
     ef <- envfit(sol$points, df, permutations = 0)
     out <- list(formula = formula, stress = sol$stress,
                 diss = D, model.matrix = mm,
@@ -131,6 +143,19 @@
                 nobs = nrow(sol$points), ef = ef, call = match.call(),
                 ndim = k, distmethod = attr(D, "method"),
                 counts = sol$counts, convergence = sol$convergence)
+    ## Add scores based on observed dissimilarities to constrained
+    ## points. We need to prepare a mock-monoMDS object for
+    ## vegan::MDSaddpoints
+    if (addpoints) {
+        mat <- matrix(0, out$nobs, out$nobs)
+        ltri <- col(mat) < row(mat)
+        out$predpoints <-
+            MDSaddpoints(modifyList(out,
+                         list(iidx = row(mat)[ltri], jidx = col(mat)[ltri],
+                           isform = 1, iregn = 1, sratmx = 1 - 1e-6,
+                           strmin = 1e-4, sfgrmin = 1e-7)),
+                         as.matrix(round(D, 9), neighbours = 1))$points
+    }
     class(out) <- "caxNMDS"
     out
 }
